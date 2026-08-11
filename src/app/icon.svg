@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="background" x1="24" y1="16" x2="224" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#123653"/>
+      <stop offset="0.48" stop-color="#0c1722"/>
+      <stop offset="1" stop-color="#050709"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="32" y1="20" x2="224" y2="236" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8deaff" stop-opacity="0.8"/>
+      <stop offset="0.45" stop-color="#00d2ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="58" fill="url(#background)"/>
+  <rect x="9" y="9" width="238" height="238" rx="57" fill="none" stroke="url(#edge)" stroke-width="2"/>
+  <g fill="#ffffff" transform="translate(40 40) scale(.6875)">
+    <path d="M0 128c70.692 0 128 57.308 128 128H64c0-35.346-28.654-64-64-64zm256 64c-35.346 0-64 28.654-64 64h-64c0-70.692 57.308-128 128-128zM128 0c0 70.692-57.308 128-128 128V64c35.346 0 64-28.654 64-64zm64 0c0 35.346 28.654 64 64 64v64C185.308 128 128 70.692 128 0z"/>
+  </g>
+</svg>
