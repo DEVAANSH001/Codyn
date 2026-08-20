@@ -4,38 +4,38 @@ import { SectionEyebrow } from './SectionEyebrow';
 
 const triageCategories = [
   {
-    name: 'Priority',
-    count: 4,
+    name: 'Planning',
+    count: 6,
     color: '#fb7185',
-    items: ['Security: Unsanitized DOM prop in SSR', 'Architecture: Circular dependency in Auth module']
+    items: ['Outcome and constraints understood', 'Execution plan and success criteria created']
   },
   {
-    name: 'Follow-up',
-    count: 7,
+    name: 'Market Signals',
+    count: 27,
     color: '#fbbf24',
-    items: ['Code Review: FiberNode memory pool allocation', 'PR #28410 Context Impact Analysis']
+    items: ['Competitor launches researched', 'Positioning and pricing changes compared']
   },
   {
-    name: 'Tech Stack',
-    count: 18,
+    name: 'Customer Context',
+    count: 48,
     color: '#38bdf8',
-    items: ['TypeScript 5.8 · Rollup · Hermes · Jest · Babel']
+    items: ['Feedback themes analyzed · Campaign metrics connected']
   },
   {
-    name: 'Archived',
-    count: 13,
+    name: 'Delivered',
+    count: 12,
     color: '#71717a',
-    items: ['Clean dependencies · Passed 38 security checks']
+    items: ['Launch brief ready · Prioritized actions assigned']
   }
 ];
 
 const chips = [
-  'Agentic CAG',
-  'Architecture Maps',
-  'Context Code Review',
-  'Security Audit',
-  'Tech Stack Analyzer',
-  'Due Diligence'
+  'Think',
+  'Browse',
+  'Act',
+  'Reason',
+  'Verify',
+  'Deliver'
 ];
 
 export const FeatureTriage: React.FC = () => {
@@ -50,15 +50,15 @@ export const FeatureTriage: React.FC = () => {
           transition={{ duration: 0.7 }}
           className="flex flex-col items-start"
         >
-          <SectionEyebrow label="Triage" />
+          <SectionEyebrow label="Autonomous Execution" />
 
           <h2 className="mt-5 text-3xl md:text-5xl font-semibold tracking-tight leading-[1.02] text-white">
-            Clear your <span className="blue-gradient-text">codebase</span> <br />
-            in a single pass.
+            AI that doesn’t stop <br />
+            at an <span className="blue-gradient-text">answer.</span>
           </h2>
 
           <p className="mt-6 text-white/60 text-base leading-[1.6] max-w-md">
-            Codyn reads <span className="text-[#8deaff]">complete files</span>, retains dependency relationships, and routes noise away from signal. Understand complex architecture without cloning or opening 100 tabs.
+            Most AI tools give you information. Codyn <span className="text-[#8deaff]">does something with it</span>—reasoning through the goal, operating tools, checking its work, and delivering the outcome.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-2.5">
@@ -82,7 +82,7 @@ export const FeatureTriage: React.FC = () => {
           className="triage-panel rounded-2xl p-5 border border-white/10 space-y-4 shadow-2xl"
         >
           <div className="text-xs font-medium uppercase tracking-wider text-white/50 px-1">
-            Today · 42 repository signals triaged
+            Live agent · Product launch workflow in progress
           </div>
 
           <div className="space-y-3">

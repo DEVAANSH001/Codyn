@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Star, ArrowUpRight, Github } from 'lucide-react';
+import { Star, ArrowUpRight, Sparkles } from 'lucide-react';
 import { SectionEyebrow } from './SectionEyebrow';
 
 interface TrendingRepo {
@@ -13,14 +13,14 @@ interface TrendingRepo {
 }
 
 const trendingList: TrendingRepo[] = [
-  { owner: 'facebook', name: 'react', stars: '228k', description: 'The library for web and native user interfaces.', language: 'JavaScript', langColor: '#f1e05a' },
-  { owner: 'vercel', name: 'next.js', stars: '124k', description: 'The React Framework for the Web.', language: 'TypeScript', langColor: '#3178c6' },
-  { owner: 'gitlabhq', name: 'gitlabhq', stars: '24.5k', description: 'GitLab CE Mirror and open-source DevOps platform.', language: 'Ruby', langColor: '#cc342d' },
-  { owner: 'goodrain', name: 'rainbond', stars: '4.2k', description: 'Multi-cloud application management platform.', language: 'Go', langColor: '#00ADD8' },
-  { owner: 'ProxyScrape', name: 'free-proxy-list', stars: '2.1k', description: 'A free proxy list updated every five minutes.', language: 'Python', langColor: '#3572A5' },
-  { owner: 'kamegoro', name: 'tobira.nvim', stars: '1.8k', description: 'Seamless workspace and session navigation for Neovim.', language: 'Lua', langColor: '#6f78ff' },
-  { owner: 'Tauber01', name: 'ZENCHE', stars: '1.2k', description: 'Lightweight web performance intelligence toolkit.', language: 'TypeScript', langColor: '#3178c6' },
-  { owner: 'umamoorg', name: 'umamo', stars: '950', description: 'Distributed microservice context tracing framework.', language: 'Rust', langColor: '#dea584' },
+  { owner: 'Growth', name: 'Lead Generation', stars: '20 leads', description: 'Find prospects, buying signals, and verified company information.', language: 'Research', langColor: '#f1e05a' },
+  { owner: 'Strategy', name: 'Market Research', stars: '32 sources', description: 'Explore competitors, communities, trends, and emerging opportunities.', language: 'Analysis', langColor: '#3178c6' },
+  { owner: 'Knowledge', name: 'Web Research', stars: '8 verified', description: 'Follow relevant information across sources and create a clear report.', language: 'Evidence', langColor: '#cc342d' },
+  { owner: 'Operations', name: 'Data Collection', stars: '1,240 rows', description: 'Gather information from websites and transform it into structured data.', language: 'Extraction', langColor: '#00ADD8' },
+  { owner: 'Teams', name: 'Repetitive Work', stars: '12h saved', description: 'Complete browser workflows that normally require hours of manual effort.', language: 'Automation', langColor: '#3572A5' },
+  { owner: 'Developers', name: 'API Workflows', stars: '6 tools', description: 'Connect AI reasoning with APIs, databases, code, and custom tools.', language: 'Integration', langColor: '#6f78ff' },
+  { owner: 'Sales', name: 'Account Research', stars: '45 accounts', description: 'Build concise account briefs with context, signals, and source trails.', language: 'Intelligence', langColor: '#3178c6' },
+  { owner: 'Product', name: 'Voice of Customer', stars: '180 insights', description: 'Synthesize customer opinions into themes, needs, and opportunities.', language: 'Synthesis', langColor: '#dea584' },
 ];
 
 interface TrendingReposProps {
@@ -42,13 +42,13 @@ export const TrendingRepos: React.FC<TrendingReposProps> = ({ onSelectRepo }) =>
         type="button"
         tabIndex={clone ? -1 : 0}
         aria-hidden={clone || undefined}
-        aria-label={clone ? undefined : `Analyze ${fullPath}`}
+        aria-label={clone ? undefined : `Explore ${repo.name}`}
         onClick={() => handleAnalyze(fullPath)}
         className="repo-marquee-card group"
       >
         <span className="flex items-center justify-between text-xs pb-4 border-b border-white/10">
           <span className="flex items-center gap-2 text-white/48 font-mono group-hover:text-[#8deaff] transition-colors">
-            <Github className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
             {repo.owner}
           </span>
           <span className="flex items-center gap-1.5 text-white/70 font-mono">
@@ -72,7 +72,7 @@ export const TrendingRepos: React.FC<TrendingReposProps> = ({ onSelectRepo }) =>
             {repo.language}
           </span>
           <span className="inline-flex items-center gap-1.5 text-[#63b3ff] translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-            Analyze <ArrowUpRight className="w-3.5 h-3.5" />
+            Explore <ArrowUpRight className="w-3.5 h-3.5" />
           </span>
         </span>
       </button>
@@ -80,7 +80,7 @@ export const TrendingRepos: React.FC<TrendingReposProps> = ({ onSelectRepo }) =>
   });
 
   return (
-    <section className="max-w-6xl mx-auto py-20 md:py-28 relative z-10 border-x border-t border-white/10 overflow-hidden">
+    <section id="discovery" className="max-w-6xl mx-auto py-20 md:py-28 relative z-10 border-x border-t border-white/10 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -88,16 +88,16 @@ export const TrendingRepos: React.FC<TrendingReposProps> = ({ onSelectRepo }) =>
         transition={{ duration: 0.55 }}
         className="max-w-6xl mx-auto px-6 mb-10"
       >
-        <SectionEyebrow label="Discovery" />
+        <SectionEyebrow label="Use Cases" />
         <h2 className="mt-3 text-2xl md:text-4xl font-semibold text-white">
-          Trending Repositories
+          One agent. Infinite workflows.
         </h2>
         <p className="mt-2 text-sm text-white/60">
-          Explore and analyze open-source codebases moving through the developer community.
+          Codyn is built to handle the workflows you have not automated yet.
         </p>
       </motion.div>
 
-      <div className="repo-marquee" aria-label="Trending repositories">
+      <div className="repo-marquee" aria-label="Autonomous agent use cases">
         <div className="repo-marquee-track">
           <div className="repo-marquee-group">{renderCards()}</div>
           <div className="repo-marquee-group" aria-hidden="true">{renderCards(true)}</div>

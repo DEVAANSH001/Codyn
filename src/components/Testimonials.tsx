@@ -15,58 +15,58 @@ interface Testimonial {
 
 const testimonialsData: Testimonial[] = [
   {
-    quote: "Codyn gave our engineering team four hours of their week back. Understanding complex legacy codebases without manual AST parsing or local clones feels effortless.",
+    quote: "Codyn took a broad research goal and returned a clean, sourced report. I never had to shepherd it from one search to the next.",
     author: "Parker Wilf",
     handle: "@pwilf_dev",
-    role: "Lead Systems Engineer",
+    role: "Growth Lead",
     company: "MERCURY",
     avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    badge: "Verified Developer"
+    badge: "Verified User"
   },
   {
-    quote: "Agentic CAG completely transformed how we perform code reviews. It understands cross-file dependencies, controller bindings, and edge-case logic flaws in seconds.",
+    quote: "The agent adapted when a data source changed, found another path, and still delivered the finished list without breaking the workflow.",
     author: "Andrew von Rosenbach",
     handle: "@andrew_vr",
-    role: "Senior Infrastructure Lead",
+    role: "Revenue Operations Lead",
     company: "COHERE",
     avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    badge: "Tech Lead"
+    badge: "Operations Lead"
   },
   {
-    quote: "The security triage feature surfaced an unsanitized DOM prop vector in our SSR hydration flow that standard static security scanners missed entirely.",
+    quote: "The evidence trail is the difference. Every important finding came with the source and original context our team needed to trust it.",
     author: "Elena Rostova",
     handle: "@erostova_sec",
-    role: "Principal Security Auditor",
+    role: "Research Director",
     company: "DATADOG",
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
-    badge: "Security Researcher"
+    badge: "Research Leader"
   },
   {
-    quote: "Architecture mapping that actually reflects real control flow! What used to take new engineering hires days of manual code browsing now takes under 5 minutes.",
+    quote: "A workflow that used to consume most of a day now starts with one sentence and ends with a structured result we can immediately use.",
     author: "Mathies Christensen",
     handle: "@mchristensen",
-    role: "Engineering Manager",
+    role: "Product Operations Manager",
     company: "LUNAR",
     avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-    badge: "Engineering Manager"
+    badge: "Team Manager"
   },
   {
-    quote: "Being able to paste a GitHub URL and generate an accurate Mermaid dependency flowchart on the fly has streamlined our architectural review sessions.",
+    quote: "We connected our internal APIs and let Codyn reason across them. It feels less like a chatbot and more like a capable teammate.",
     author: "David K. Liang",
     handle: "@dliang_infra",
-    role: "Staff Platform Engineer",
+    role: "Staff Automation Engineer",
     company: "CLOUDFLARE",
     avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
-    badge: "Platform Lead"
+    badge: "Automation Lead"
   },
   {
-    quote: "Querying full file contexts without token truncation means zero hallucinated import paths. Codyn is now an essential part of our core developer workflow.",
+    quote: "It does not just summarize what it finds. It checks gaps, decides what to do next, and keeps working until the outcome is actually complete.",
     author: "Sophia Martinez",
     handle: "@smartinez_ui",
-    role: "Principal Frontend Architect",
+    role: "Principal Product Strategist",
     company: "VERCEL ECOSYSTEM",
     avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
-    badge: "Core Contributor"
+    badge: "Verified User"
   }
 ];
 
@@ -75,12 +75,12 @@ export const Testimonials: React.FC = () => {
     <section className="max-w-6xl mx-auto px-6 py-24 md:py-32 relative z-10 border-t border-white/10" id="testimonials">
       {/* Section Header */}
       <div className="text-center max-w-2xl mx-auto mb-16">
-        <SectionEyebrow label="Testimonials" tag="Developer Feedback" />
+        <SectionEyebrow label="Testimonials" tag="Customer Feedback" />
         <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
-          Engineers rely on Codyn every day.
+          Teams give Codyn the work they want done.
         </h2>
         <p className="mt-4 text-white/60 text-base leading-relaxed">
-          Real feedback from software architects, infrastructure engineers, and security leads using Codyn to master codebases.
+          Real feedback from people using autonomous agents to research, operate tools, and complete real-world workflows.
         </p>
       </div>
 

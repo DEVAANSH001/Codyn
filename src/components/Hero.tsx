@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Github, Code, Zap, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Sparkles, BrainCircuit, Zap, ShieldCheck } from 'lucide-react';
 
 const gradientStyle: React.CSSProperties = {
   backgroundImage: 'linear-gradient(to right, #07152f 0%, #1769d2 22%, #42a5ff 42%, #8deaff 50%, #42a5ff 58%, #1769d2 78%, #07152f 100%)',
@@ -17,7 +17,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
-  const [repoInput, setRepoInput] = useState('github.com/facebook/react');
+  const [repoInput, setRepoInput] = useState('Prepare a product launch brief and prioritize the next actions');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +48,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
         transition={{ duration: 0.5 }}
         className="hidden"
       >
-        <span>Agentic CAG Architecture • Zero Token Truncation</span>
+        <span>Autonomous agents • Real-world execution</span>
       </motion.div>
 
       {/* Motion Headline */}
@@ -58,9 +58,9 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
         transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[0.95] text-white mt-5"
       >
-        <span className="block">Talk with your</span>
+        <span className="block">Give AI a goal.</span>
         <span className="animate-shiny inline-block mt-2 md:mt-4" style={gradientStyle}>
-          codebase.
+          It gets the work done.
         </span>
 
       </motion.h1>
@@ -72,7 +72,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="mt-7 text-white/70 max-w-2xl text-base md:text-lg leading-[1.65]"
       >
-        Understand repositories faster with context-aware AI. Go from URL to architecture mapping, deep code review, and security triage in seconds without cloning.
+        Codyn can reason, browse, use tools, and execute multi-step tasks—from one instruction to a completed outcome. Stop telling AI what to do next. Tell it what you want done.
       </motion.p>
 
       {/* Interactive URL Input Box */}
@@ -85,12 +85,12 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
       >
         <div className="relative rounded-2xl p-2 border border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col sm:flex-row items-center gap-2 bg-black/70 backdrop-blur-xl">
           <div className="flex items-center gap-3 pl-3 pr-2 py-2 w-full">
-            <Github className="w-5 h-5 text-[#00d2ff] flex-shrink-0" />
+            <Sparkles className="w-5 h-5 text-[#00d2ff] flex-shrink-0" />
             <input
               type="text"
               value={repoInput}
               onChange={(e) => setRepoInput(e.target.value)}
-              placeholder="GitHub URL, username, or repo (e.g. facebook/react)"
+              placeholder="Describe the outcome you want Codyn to deliver"
               className="bg-transparent border-none outline-none text-sm text-white placeholder-white/40 w-full font-mono focus:ring-0"
             />
           </div>
@@ -99,15 +99,15 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
             type="submit"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold text-sm px-6 py-3.5 hover:bg-[#00d2ff] transition-all duration-300 active:scale-[0.98] cursor-pointer flex-shrink-0 shadow-lg"
           >
-            <span>Analyze Repo</span>
+            <span>Start Building</span>
             <ArrowRight className="w-4 h-4 text-black" />
           </button>
         </div>
 
         {/* Quick suggestions */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-white/60">
-          <span className="text-white/40 font-medium">Try analyzing:</span>
-          {['facebook/react', 'vercel/next.js', 'tailwindlabs/tailwindcss'].map((repo) => (
+          <span className="text-white/40 font-medium">Try a workflow:</span>
+          {['Compare competitors', 'Analyze customer feedback', 'Plan a product launch'].map((repo) => (
             <button
               key={repo}
               type="button"
@@ -129,15 +129,15 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
       >
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-[#00d2ff]" />
-          <span>Instant CAG AST Context</span>
+          <span>Plans multi-step work</span>
         </div>
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Security & Vulnerability Triage</span>
+          <span>Verifies important findings</span>
         </div>
         <div className="flex items-center gap-2">
-          <Code className="w-4 h-4 text-purple-400" />
-          <span>Mermaid Diagram Generator</span>
+          <BrainCircuit className="w-4 h-4 text-purple-400" />
+          <span>Adapts as it works</span>
         </div>
       </motion.div>
     </section>

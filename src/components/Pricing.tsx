@@ -10,10 +10,10 @@ export const Pricing: React.FC = () => {
       <div className="text-center max-w-2xl mx-auto mb-12">
         <SectionEyebrow label="Pricing" tag="Flexible Plans" />
         <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
-          Simple, transparent pricing for every developer & team.
+          Simple, transparent pricing for every kind of work.
         </h2>
         <p className="mt-4 text-white/60 text-base leading-relaxed">
-          Start exploring open-source repositories for free. Upgrade as your codebase context window and team scale.
+          Start with your first autonomous workflows for free. Upgrade as your tasks, tools, and team scale.
         </p>
 
       </div>
@@ -42,15 +42,15 @@ export const Pricing: React.FC = () => {
             </div>
 
             <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For individual developers exploring open-source repositories with Codyn.
+              For individuals exploring what autonomous agents can do.
             </p>
 
             <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/80">
               {[
-                'Up to 3 public repos analyzed',
-                'Basic architecture flowcharts',
-                'Ask Your Repo (10 queries/day)',
-                'Tech stack & dependency detection',
+                'Up to 3 active workflows',
+                'Web search and browsing',
+                '10 agent runs per day',
+                'Structured result delivery',
                 'Access via web interface and CLI'
               ].map((feat) => (
                 <div key={feat} className="flex items-center gap-2.5">
@@ -102,16 +102,16 @@ export const Pricing: React.FC = () => {
             </div>
 
             <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For engineers and developers who need deep, full-file repository intelligence.
+              For professionals who want agents to execute recurring, multi-step work.
             </p>
 
             <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/90">
               {[
-                'Up to 50 public & private repos',
-                'Agentic CAG full-file AST context',
-                'Context-aware PR & code review',
-                'Security audit & risk prioritization',
-                'Export Mermaid diagrams & PDF reports'
+                'Up to 50 active workflows',
+                'Autonomous planning and execution',
+                'Browser, API, and tool access',
+                'Source trails and verification',
+                'Export structured reports and data'
               ].map((feat) => (
                 <div key={feat} className="flex items-center gap-2.5">
                   <div className="w-4 h-4 rounded-full bg-[#00d2ff]/20 border border-[#00d2ff]/40 flex items-center justify-center text-[#00d2ff] flex-shrink-0">
@@ -161,16 +161,16 @@ export const Pricing: React.FC = () => {
             </div>
 
             <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For high-velocity engineering teams, security auditors, and lead architects.
+              For teams running high-volume workflows across shared systems and data.
             </p>
 
             <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/80">
               {[
-                'Unlimited public & private repos',
-                'Unlimited Agentic CAG queries',
-                'Developer Intel & contributor mapping',
-                'Priority AI processing pipeline',
-                '5 team seats & custom integrations'
+                'Unlimited active workflows',
+                'Unlimited autonomous agent runs',
+                'Shared knowledge and workflow library',
+                'Priority AI execution pipeline',
+                '5 team seats and custom integrations'
               ].map((feat) => (
                 <div key={feat} className="flex items-center gap-2.5">
                   <div className="w-4 h-4 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 flex-shrink-0">

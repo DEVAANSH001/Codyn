@@ -1,21 +1,21 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { AlertTriangle, ArrowRight, ChevronRight, PackageCheck, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Bot, ChevronRight, ShieldCheck } from 'lucide-react';
 
-const chips = ['express', 'React 19', 'Next.js', 'Security advisories', 'Upgrade planning'];
+const chips = ['Browse', 'Use APIs', 'Read Data', 'Create', 'Deliver'];
 
 const dependencyRows = [
-  { name: 'express', current: '4.18.2', target: '5.x', impact: 'HIGH', tone: '#f8b84f' },
-  { name: 'react', current: '18.3.0', target: '19.x', impact: 'MEDIUM', tone: '#8deaff' },
-  { name: 'next', current: '15.3.2', target: '16.x', impact: 'MEDIUM', tone: '#63b3ff' },
+  { name: 'Market evidence', current: '27 found', target: '18 verified', impact: 'DONE', tone: '#8deaff' },
+  { name: 'Customer signals', current: '48 found', target: '12 prioritized', impact: 'DONE', tone: '#8deaff' },
+  { name: 'Launch brief', current: 'Drafted', target: 'Decision-ready', impact: 'READY', tone: '#63b3ff' },
 ];
 
 const upgradePlan = [
-  'Upgrade Next.js to the compatible release line',
-  'Align React + react-dom versions',
-  'Resolve testing-library compatibility warnings',
-  'Replace deprecated APIs in app shell',
-  'Run the affected suite and security checks',
+  'Define the outcome, constraints, and success criteria',
+  'Research the market and gather external evidence',
+  'Pull customer, CRM, and performance context',
+  'Reconcile conflicts and verify important claims',
+  'Deliver the launch brief and prioritized action plan',
 ];
 
 export const DependencyIntelligenceSection: React.FC = () => {
@@ -34,17 +34,17 @@ export const DependencyIntelligenceSection: React.FC = () => {
           <div className="flex flex-col justify-start pt-2">
             <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.24em] text-white/75">
               <span className="h-2 w-2 rounded-full bg-[#3D81E3]" />
-              Dependency Intelligence
+              Autonomous Tool Use
             </div>
 
             <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-[0.98] tracking-[-0.06em] text-white md:text-[3.2rem]">
-              See what’s <span className="blue-gradient-text">outdated</span>,<br />
-              risky, and breaking.
+              Your tools become your <br />
+              agent’s <span className="blue-gradient-text">workspace.</span>
             </h2>
 
             <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/60 md:text-[0.96rem]">
-              Codyn doesn’t stop at “what libraries are installed.” It identifies version drift, compatibility risks,
-              upgrade impact, and the code paths that could break when a dependency changes.
+              Codyn moves across the web, APIs, business systems, and documents—collecting context, taking action,
+              and producing the deliverable instead of handing the workflow back to you.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-2">
@@ -67,31 +67,31 @@ export const DependencyIntelligenceSection: React.FC = () => {
             <div className="relative mt-8 flex-1 min-h-[220px] overflow-hidden rounded-[22px] border border-white/10 bg-[#050d19] p-4 flex items-end justify-center">
               <div className="w-full rounded-[16px] border border-white/10 bg-black/20 px-4 py-3 text-[11px] text-white/75">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="font-medium text-white/90">Dependency signal</span>
-                  <span className="text-[#8deaff]">High risk</span>
+                  <span className="font-medium text-white/90">Agent activity</span>
+                  <span className="text-[#8deaff]">In progress</span>
                 </div>
                 <div className="space-y-2 text-white/80">
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    Codyn flags version drift, framework compatibility gaps, and deprecated APIs before they become migration blockers.
+                    Researching competitor launches, pricing changes, positioning, and market response.
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    It traces the dependency chain across runtime packages, shared services, and framework boundaries to show what will break first.
+                    Pulling customer feedback, CRM notes, campaign metrics, and the team’s existing launch context.
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    It then estimates upgrade impact, highlights the affected packages, and recommends the safest sequence to move forward.
+                    Connecting external evidence with internal data to identify the strongest opportunities and risks.
                   </div>
                   <div className="flex items-center justify-between rounded-md border border-white/10 bg-white/3 px-2.5 py-2 text-white/65">
-                    <span>Upgrade readiness</span>
-                    <span className="text-[#8deaff]">42% blocked</span>
+                    <span>Workflow progress</span>
+                    <span className="text-[#8deaff]">72% complete</span>
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    It surfaces the package-level risk, package ownership, and likely breakage surface before a major upgrade lands.
+                    Resolving conflicting metrics and checking important claims against their original sources.
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    Security advisories, compatibility constraints, and dead-end version paths are grouped into one actionable recommendation.
+                    Preserving source links, tool outputs, and original context so each recommendation is inspectable.
                   </div>
                   <div className="rounded-md border border-white/10 bg-white/3 px-2.5 py-2">
-                    The result is a cleaner migration plan: what to upgrade, what to hold, and what to fix before release.
+                    Producing a decision-ready launch brief with owners, priorities, and clear next actions.
                   </div>
                 </div>
               </div>
@@ -101,30 +101,30 @@ export const DependencyIntelligenceSection: React.FC = () => {
           <div className="flex items-start pt-1">
             <div className="w-full rounded-[20px] border border-white/10 bg-[#0d1724]/90 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-5">
               <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-white/50">
-                <span>Dependency graph</span>
-                <span className="text-[#8deaff]">2 advisories</span>
+                <span>Execution trace</span>
+                <span className="text-[#8deaff]">27 sources · 3 tools</span>
               </div>
 
               <div className="mt-5 rounded-[16px] border border-white/10 bg-black/30 p-4">
                 <div className="flex items-center justify-between gap-3 text-sm text-white">
                   <div className="flex items-center gap-2">
-                    <PackageCheck className="h-4 w-4 text-[#8deaff]" />
-                    <span className="font-medium">express</span>
+                    <Bot className="h-4 w-4 text-[#8deaff]" />
+                    <span className="font-medium">Product launch workflow</span>
                   </div>
-                  <span className="text-[11px] text-[#f8b84f]">Current: 4.18.2</span>
+                  <span className="text-[11px] text-[#f8b84f]">Status: Running</span>
                 </div>
 
                 <div className="mt-3 space-y-2 text-[11px] text-white/70">
                   <div className="flex items-center justify-between">
-                    <span>Latest</span>
-                    <span className="text-white/90">5.x</span>
+                    <span>Sources explored</span>
+                    <span className="text-white/90">27</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Used by</span>
-                    <span className="text-white/90">API, Auth, Admin</span>
+                    <span>Connected tools</span>
+                    <span className="text-white/90">3</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Upgrade impact</span>
+                    <span>Confidence</span>
                     <span className="font-semibold text-[#f8b84f]">HIGH</span>
                   </div>
                 </div>
@@ -132,17 +132,17 @@ export const DependencyIntelligenceSection: React.FC = () => {
                 <div className="mt-4 rounded-[12px] border border-amber-400/30 bg-amber-500/8 p-3">
                   <div className="flex items-center gap-2 text-[11px] font-medium text-amber-300">
                     <AlertTriangle className="h-3.5 w-3.5" />
-                    Known issues
+                    Needs verification
                   </div>
 
                   <ul className="mt-2 space-y-2 text-[11px] text-white/70">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="mt-0.5 h-3.5 w-3.5 text-amber-300" />
-                      <span>2 security advisories</span>
+                      <span>2 campaign metrics are missing date ranges</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="mt-0.5 h-3.5 w-3.5 text-amber-300" />
-                      <span>Deprecated API usage detected</span>
+                      <span>2 competitor claims need a second source</span>
                     </li>
                   </ul>
                 </div>
@@ -152,9 +152,9 @@ export const DependencyIntelligenceSection: React.FC = () => {
                 <div className="flex items-center justify-between gap-3 text-sm text-white">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-[#8deaff]" />
-                    <span className="font-medium">React 18 → React 19</span>
+                    <span className="font-medium">Plan → Act → Verify</span>
                   </div>
-                  <span className="text-[11px] font-medium text-[#8deaff]">Risk: HIGH</span>
+                  <span className="text-[11px] font-medium text-[#8deaff]">On track</span>
                 </div>
 
                 <div className="mt-3 space-y-2">
@@ -187,7 +187,7 @@ export const DependencyIntelligenceSection: React.FC = () => {
                 <div className="mt-4 rounded-[12px] border border-[#8deaff]/20 bg-[#8deaff]/6 p-3">
                   <div className="flex items-center gap-2 text-[11px] font-medium text-[#8deaff]">
                     <ShieldCheck className="h-3.5 w-3.5" />
-                    Recommended upgrade order
+                    Autonomous execution plan
                   </div>
 
                   <ol className="mt-2 space-y-1.5 text-[11px] leading-relaxed text-white/75">
@@ -202,9 +202,9 @@ export const DependencyIntelligenceSection: React.FC = () => {
               </div>
 
               <div className="mt-4 flex items-center justify-between gap-3 rounded-[12px] border border-white/10 bg-[#0a1623]/80 px-3 py-2 text-[11px] text-white/70">
-                <span>Dependency upgrade plan generated</span>
+                <span>Verified launch brief and action plan generated</span>
                 <button className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 font-medium text-black transition hover:bg-white/90">
-                  Review plan <ArrowRight className="h-3 w-3" />
+                  Review result <ArrowRight className="h-3 w-3" />
                 </button>
               </div>
             </div>

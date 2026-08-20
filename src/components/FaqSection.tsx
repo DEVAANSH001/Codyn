@@ -10,24 +10,28 @@ interface FaqItem {
 
 const faqData: FaqItem[] = [
   {
-    q: "Can AI truly understand complete GitHub codebases?",
-    a: "Yes. Through Agentic CAG (Context-Augmented Generation), Codyn loads full relevant files into large context windows rather than retrieving fragmented text chunks. This allows the model to preserve structural, dependency, and control-flow relationships across the entire project."
+    q: "What makes Codyn an autonomous AI agent?",
+    a: "Codyn does more than return an answer. It understands your objective, creates an execution plan, uses browsers and tools, evaluates what it finds, adapts when conditions change, and keeps working until it can deliver the requested outcome."
   },
   {
-    q: "How is Agentic CAG different from traditional chat-with-code tools?",
-    a: "Traditional RAG breaks files into small isolated chunks, causing the LLM to miss cross-file controllers, services, and database bindings. Codyn selects complete source files, retaining full dependency trees and architectural control flow for higher accuracy."
+    q: "How is Codyn different from a chatbot?",
+    a: "A chatbot usually waits for the next instruction. Codyn can pursue a goal across multiple steps: searching, navigating websites, calling APIs, processing data, checking gaps, and deciding what to do next without requiring you to orchestrate every action."
   },
   {
-    q: "Can I visualize repository architecture without cloning?",
-    a: "Absolutely. Codyn automatically maps high-level system components, controller-service patterns, and generates editable Mermaid flowcharts directly from the repository URL without requiring local cloning or environment setup."
+    q: "What kinds of workflows can Codyn handle?",
+    a: "Codyn can support lead generation, market and web research, data collection, repetitive browser work, account intelligence, developer workflows, and specialized processes built around your own tools and data."
   },
   {
-    q: "Does Codyn perform security auditing and vulnerability scanning?",
-    a: "Yes. Codyn scans application code and dependency trees for security flaws, prioritizing risk signals based on real engineering context and providing severity-framed remediation steps."
+    q: "Can I see what the agent is doing?",
+    a: "Yes. Codyn provides a visible execution trail so you can follow the plan, sources, actions, progress, and verification steps behind the result instead of wondering what happened behind the scenes."
   },
   {
-    q: "Can Codyn analyze private repositories and developer profiles?",
-    a: "Yes. Codyn connects securely to GitHub to analyze private repositories with end-to-end encryption. It also offers Developer Intel to analyze contributor profiles, expertise areas, and open-source impact."
+    q: "Can developers connect their own tools and data?",
+    a: "Yes. You can connect Codyn to AI models, browsers, APIs, databases, custom tools, and code to build specialized agents around the systems and workflows your team already uses."
+  },
+  {
+    q: "How does Codyn handle changing or incomplete workflows?",
+    a: "Codyn observes the result of each action, checks what is still missing, and can revise its plan when pages change, data conflicts, or a tool returns an unexpected result. It is designed to pursue the outcome rather than blindly replay a brittle script."
   }
 ];
 
@@ -46,7 +50,7 @@ export const FaqSection: React.FC = () => {
           Frequently Asked Questions
         </h2>
         <p className="mt-3 text-white/60 text-base">
-          Everything you need to know about Codyn and Agentic CAG architecture.
+          Everything you need to know about Codyn and autonomous execution.
         </p>
       </div>
 

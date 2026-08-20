@@ -6,34 +6,34 @@ import { SectionEyebrow } from './SectionEyebrow';
 const steps = [
   {
     number: '01',
-    label: 'Connect',
-    title: 'Point Codyn at a repository',
-    description: 'Paste a GitHub URL. Public repositories start instantly; private repositories connect with scoped access.',
-    detail: 'Repository verified',
+    label: 'Goal',
+    title: 'Describe the outcome',
+    description: 'Tell Codyn what you want completed in plain language. There is no need to translate the work into a rigid sequence of commands.',
+    detail: 'Objective understood',
     icon: GitBranch,
   },
   {
     number: '02',
-    label: 'Map',
-    title: 'Build complete code context',
-    description: 'Codyn reads whole files and traces imports, control flow, and dependencies without flattening the code into fragments.',
-    detail: '34 files mapped',
+    label: 'Plan',
+    title: 'Build the execution plan',
+    description: 'Codyn breaks the goal into actionable steps, chooses the right tools, and identifies the information it needs to finish.',
+    detail: 'Workflow created',
     icon: Layers3,
   },
   {
     number: '03',
-    label: 'Review',
-    title: 'Surface the decisions that matter',
-    description: 'Architecture gaps, security risks, and review notes are grouped by priority so signal stays ahead of noise.',
-    detail: '4 priority findings',
+    label: 'Execute',
+    title: 'Browse, act, and adapt',
+    description: 'The agent navigates the web, calls APIs, processes data, and changes course when a page, result, or assumption changes.',
+    detail: 'Tools in motion',
     icon: ScanSearch,
   },
   {
     number: '04',
-    label: 'Act',
-    title: 'Ask, export, and keep moving',
-    description: 'Turn the result into answers, Mermaid diagrams, or reports your team can use immediately.',
-    detail: 'Ready to export',
+    label: 'Deliver',
+    title: 'Verify and return the result',
+    description: 'Codyn checks important findings, resolves missing information, and turns the work into a useful, structured deliverable.',
+    detail: 'Outcome delivered',
     icon: FileOutput,
   },
 ];
@@ -45,14 +45,14 @@ export const WorkflowSection: React.FC = () => {
         <div className="lg:sticky lg:top-28">
           <SectionEyebrow label="Workflow" />
           <h2 className="mt-5 text-3xl md:text-5xl font-semibold tracking-tight text-white leading-[1.05]">
-            One clear path from URL to <span className="blue-gradient-text">understanding.</span>
+            From a goal to a <span className="blue-gradient-text">finished task.</span>
           </h2>
           <p className="mt-5 text-white/60 text-base leading-relaxed max-w-md">
-            No setup maze and no decorative process theatre. Each stage produces something useful for the next one.
+            Real workflows change as they unfold. Codyn observes what happened, reassesses the plan, and chooses the next best action until the result is complete.
           </p>
           <div className="mt-8 flex items-center gap-3 text-sm text-[#8deaff]">
             <span className="h-px w-10 bg-gradient-to-r from-[#1769d2] to-[#8deaff]" />
-            Typical first pass: under a minute
+            Plan → Act → Observe → Reason → Adapt
           </div>
         </div>
 
