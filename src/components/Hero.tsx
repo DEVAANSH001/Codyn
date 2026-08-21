@@ -56,7 +56,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[0.95] text-white mt-5"
+        className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[1.02] text-white mt-5"
       >
         <span className="block">Give AI a goal.</span>
         <span className="animate-shiny inline-block mt-2 md:mt-4" style={gradientStyle}>
