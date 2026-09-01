@@ -37,3 +37,6 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
+
+# Local upstream reference checkout (never ship as part of Codyn)
+/repomind-main/
