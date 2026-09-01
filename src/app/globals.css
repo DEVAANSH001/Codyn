@@ -12,6 +12,37 @@
   --blue-core: #1769d2;
   --blue-bright: #42a5ff;
   --blue-ice: #8deaff;
+  --codyn-bg: #0c0c0c;
+  --codyn-panel: #121417;
+  --codyn-panel-raised: #171a1f;
+  --codyn-border: rgba(255, 255, 255, 0.09);
+  --codyn-muted: #8d939f;
+  --codyn-accent: #00d2ff;
+}
+
+body {
+  margin: 0;
+}
+
+.dashboard-grid {
+  background-color: var(--codyn-bg);
+  background-image:
+    radial-gradient(circle at 88% 8%, rgba(0, 210, 255, 0.1), transparent 28rem),
+    radial-gradient(circle at 15% 92%, rgba(23, 105, 210, 0.13), transparent 32rem),
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+}
+
+.dashboard-panel {
+  border: 1px solid var(--codyn-border);
+  background: linear-gradient(145deg, rgba(23, 26, 31, 0.94), rgba(14, 16, 19, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.dashboard-focus:focus-visible {
+  outline: 2px solid var(--codyn-accent);
+  outline-offset: 3px;
 }
 
 h1,
