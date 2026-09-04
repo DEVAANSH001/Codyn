@@ -3,6 +3,8 @@ import type { RepoSnapshot } from './github-public';
 import type { Finding, ScanDepth, ScanRecord } from './codyn-dashboard';
 import { lockedDependencies, scanPatterns, summarizeFindings } from './security-triage';
 
+export class AnalysisError extends Error {}
+
 export async function collectContext(owner: string, repo: string, depth: ScanDepth, question = '', snapshot?: RepoSnapshot) {
   const data = snapshot ?? await getSnapshot(owner, repo);
   const terms: string[] = question.toLowerCase().match(/[a-z]{3,}/g) ?? [];
@@ -29,7 +31,7 @@ export async function collectContext(owner: string, repo: string, depth: ScanDep
 
 export async function runTriage(owner: string, repo: string, depth: ScanDepth): Promise<ScanRecord> {
   const { snapshot, files, skipped, eligible } = await collectContext(owner, repo, depth, 'auth security api server');
-  if (!files.length) throw new Error('No supported source files could be read. No scan result was produced.');
+  if (!files.length) throw new AnalysisError('No supported source files could be read. No scan result was produced.');
   const findings = scanPatterns(files);
   const limitations = [
     `Read ${files.length} of ${eligible} eligible files at revision ${snapshot.revision.slice(0, 7)}. ${depth === 'deep' ? 'Deep' : 'Quick'} mode caps selection at ${depth === 'deep' ? 24 : 8} files, 128 KB each, and 180,000 total characters.`,

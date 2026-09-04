@@ -8,7 +8,7 @@ PROJECT = {
     "name": "Codyn",
     "product": "AI-native GitHub repository intelligence and security workspace",
     "stack": [
-        "Next.js 15 App Router",
+        "Next.js 16 App Router",
         "React 19",
         "TypeScript",
         "Tailwind CSS 4",
@@ -29,7 +29,7 @@ PROJECT = {
         "It must not become a second runtime or be committed wholesale."
     ),
     "product_direction": (
-        "Keep the existing Codyn landing page. Rebuild RepoMind's authenticated "
+        "Keep the existing Codyn landing page. Rebuild RepoMind's dashboard "
         "dashboard and repository-understanding journeys as native Codyn routes, "
         "using Codyn copy, logo, cyan/blue tokens, and current dependencies."
     ),
@@ -49,9 +49,25 @@ PROJECT = {
         "5. Build the repository intelligence workspace and server APIs.",
         "6. Connect the landing page and complete responsive/build validation.",
     ],
+    "implemented": [
+        "Responsive overview, scan history, repository, saved-repository, and settings views.",
+        "Live public GitHub metadata, revision-pinned tree/source previews, structure map, and recent commits.",
+        "Streaming Gemini chat grounded in bounded, question-ranked public source context.",
+        "Deterministic review candidates plus exact-version npm OSV advisory lookups.",
+        "Device-local bookmarks, preferences, up to 30 reports, and JSON/Markdown export.",
+        "Automated checks for parsing, exclusions, false claims, lockfiles, private data, and storage.",
+    ],
+    "intentional_limits": [
+        "Public repositories only; no private-repository OAuth.",
+        "Browser-local state only; no account, cloud sync, billing, team workspace, or database.",
+        "AI chat needs a server GEMINI_API_KEY and sends selected public context to Google Gemini.",
+        "Security output is bounded triage, not full static analysis, exploit verification, or certification.",
+        "Architecture view is structural; deeper dependency relationships come from source-grounded chat.",
+    ],
     "current_state": (
-        "Milestone 1 started: the reference checkout is isolated and this living "
-        "project brief records the agreed migration strategy."
+        "Milestones 1-6 form a complete public-repository intelligence MVP. The next "
+        "phase is private repositories and server-backed accounts, requiring an explicit "
+        "identity, storage, deployment, and credential decision."
     ),
 }
 

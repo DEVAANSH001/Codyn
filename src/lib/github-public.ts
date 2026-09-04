@@ -15,11 +15,11 @@ export class GitHubError extends Error {
   constructor(message: string, public status = 502) { super(message); }
 }
 
-async function githubFetch<T>(path: string): Promise<T> {
+async function githubFetch<T>(path: string, cache: 'revalidate' | 'none' = 'revalidate'): Promise<T> {
   const token = process.env.GITHUB_TOKEN;
   const response = await fetch(`https://api.github.com${path}`, {
     headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'Codyn', 'X-GitHub-Api-Version': '2022-11-28', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-    next: { revalidate: 300 }, signal: AbortSignal.timeout(15000), redirect: 'error',
+    ...(cache === 'none' ? { cache: 'no-store' as const } : { next: { revalidate: 300 } }), signal: AbortSignal.timeout(15000), redirect: 'follow',
   });
   if (!response.ok) {
     if (response.status === 404) throw new GitHubError('Public GitHub repository or profile not found.', 404);
@@ -67,7 +67,7 @@ export async function getSnapshot(owner: string, repo: string): Promise<RepoSnap
   const commitsRaw = await githubFetch<{ sha: string; commit: { message: string; author: { name: string; date: string } }; html_url: string }[]>(`${base}/commits?per_page=5`);
   const revision = commitsRaw[0]?.sha;
   if (!revision) throw new GitHubError('No commits are available for this repository.', 422);
-  const tree = await githubFetch<{ tree: RepoFile[]; truncated: boolean }>(`${base}/git/trees/${revision}?recursive=1`);
+  const tree = await githubFetch<{ tree: RepoFile[]; truncated: boolean }>(`${base}/git/trees/${revision}?recursive=1`, 'none');
   const warnings: string[] = [];
   const [readmeResult, languageResult] = await Promise.allSettled([
     githubFetch<{ content: string; encoding: string }>(`${base}/readme?ref=${revision}`),
@@ -88,8 +88,19 @@ export async function readRepoFile(owner: string, repo: string, path: string, sn
   const context = snapshot ?? await getSnapshot(owner, repo);
   const file = context.files.find(file => file.path === path);
   if (!file || !isReadableFile(file)) throw new GitHubError('This file is excluded, binary, too large, or not in the current tree.', 422);
-  const data = await githubFetch<{ content: string; size: number; encoding: string }>(`${repoPath(owner, repo)}/git/blobs/${file.sha}`);
+  const data = await githubFetch<{ content: string; size: number; encoding: string }>(`${repoPath(owner, repo)}/git/blobs/${file.sha}`, 'none');
   if (data.size > 128000 || data.encoding !== 'base64') throw new GitHubError('This file cannot be previewed.', 422);
+  const content = Buffer.from(data.content, 'base64').toString('utf8');
+  if (content.includes('\u0000')) throw new GitHubError('Binary files cannot be previewed.', 422);
+  return content;
+}
+
+export async function readRepoFileAtRevision(owner: string, repo: string, path: string, revision: string) {
+  if (!/^[0-9a-f]{40}$/i.test(revision) || !path || path.length > 400 || path.startsWith('/') || path.includes('\\') || path.split('/').some(part => !part || part === '.' || part === '..')) throw new GitHubError('Invalid file reference.', 400);
+  await getRepository(owner, repo); // Enforce the public-repository boundary before content access.
+  const safePath = path.split('/').map(encodeURIComponent).join('/');
+  const data = await githubFetch<{ content?: string; size: number; encoding?: string; type: string; path: string }>(`${repoPath(owner, repo)}/contents/${safePath}?ref=${revision}`, 'none');
+  if (data.type !== 'file' || data.size > 128000 || data.encoding !== 'base64' || !data.content || !isReadableFile({ path: data.path, type: 'blob', size: data.size, sha: revision, mode: '100644' })) throw new GitHubError('This file is excluded, binary, too large, symlinked, or not in the pinned revision.', 422);
   const content = Buffer.from(data.content, 'base64').toString('utf8');
   if (content.includes('\u0000')) throw new GitHubError('Binary files cannot be previewed.', 422);
   return content;

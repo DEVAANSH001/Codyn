@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { parseRepositoryInput, validUsername } from '../src/lib/codyn-dashboard';
-import { isReadableFile, getRepository } from '../src/lib/github-public';
+import { isReadableFile, getRepository, readRepoFileAtRevision } from '../src/lib/github-public';
 import { lockedDependencies, scanPatterns, summarizeFindings } from '../src/lib/security-triage';
 
 test('accepts repository names and GitHub URLs', () => {
@@ -46,4 +46,8 @@ test('never returns private repository metadata even with a server token', async
   globalThis.fetch = async () => new Response(JSON.stringify({ private: true }), { status: 200 });
   try { await assert.rejects(() => getRepository('owner', 'private'), /public repositories only/); }
   finally { globalThis.fetch = original; }
+});
+test('rejects invalid revision and source path before contacting GitHub', async () => {
+  await assert.rejects(() => readRepoFileAtRevision('owner', 'repo', '../.env', 'bad'), /Invalid file reference/);
+  await assert.rejects(() => readRepoFileAtRevision('owner', 'repo', 'src/index.ts', 'abc'), /Invalid file reference/);
 });

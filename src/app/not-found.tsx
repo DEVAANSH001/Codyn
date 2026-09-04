@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound() { return <main className="grid min-h-dvh place-items-center bg-[#0c0c0c] p-6 text-center text-white"><div><p className="text-sm font-semibold uppercase tracking-[.2em] text-[#00d2ff]">404</p><h1 className="mt-3 text-3xl font-semibold">This Codyn view does not exist</h1><p className="mt-3 text-white/45">Check the repository name or return to the dashboard.</p><Link href="/dashboard" className="mt-6 inline-flex rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black">Open dashboard</Link></div></main>; }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Github, Code, Zap, ShieldCheck } from 'lucide-react';
+import { parseRepositoryInput } from '@/lib/codyn-dashboard';
 
 const gradientStyle: React.CSSProperties = {
   backgroundImage: 'linear-gradient(to right, #07152f 0%, #1769d2 22%, #42a5ff 42%, #8deaff 50%, #42a5ff 58%, #1769d2 78%, #07152f 100%)',
@@ -18,9 +19,12 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
   const [repoInput, setRepoInput] = useState('github.com/facebook/react');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!parseRepositoryInput(repoInput)) { setError('Enter a public GitHub repository such as facebook/react.'); return; }
+    setError('');
     if (onAnalyze) {
       onAnalyze(repoInput);
     } else {
@@ -92,6 +96,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
               onChange={(e) => setRepoInput(e.target.value)}
               placeholder="GitHub URL, username, or repo (e.g. facebook/react)"
               className="bg-transparent border-none outline-none text-sm text-white placeholder-white/40 w-full font-mono focus:ring-0"
+              aria-describedby={error ? 'hero-repository-error' : undefined}
             />
           </div>
 
@@ -103,6 +108,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
             <ArrowRight className="w-4 h-4 text-black" />
           </button>
         </div>
+        {error && <p id="hero-repository-error" role="alert" className="mt-3 text-sm text-rose-300">{error}</p>}
 
         {/* Quick suggestions */}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-white/60">

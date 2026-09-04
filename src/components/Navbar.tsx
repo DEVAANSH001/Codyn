@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { LogoMark } from './LogoMark';
+import Link from 'next/link';
 
 const navLinks = [
   { name: 'Features', target: 'features' },
@@ -73,6 +74,7 @@ export const Navbar: React.FC = () => {
 
         {/* Right Desktop: Header CTA focused on use case */}
         <div className="hidden md:flex items-center gap-3">
+          <Link href="/dashboard" className="text-sm font-medium text-white/60 transition-colors hover:text-white">Dashboard</Link>
           <button
             onClick={handleAnalyzeClick}
             className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-[#00d2ff] transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_25px_rgba(0,210,255,0.5)] active:scale-95 cursor-pointer"
@@ -117,6 +119,7 @@ export const Navbar: React.FC = () => {
               </a>
             ))}
             <div className="pt-3 border-t border-white/10">
+              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="mb-3 block text-center text-sm font-medium text-white/70">Open dashboard</Link>
               <button
                 onClick={handleAnalyzeClick}
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#00d2ff] text-black font-semibold text-sm active:scale-95 transition-all"

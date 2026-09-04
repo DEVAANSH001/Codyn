@@ -14,12 +14,14 @@ import { Pricing } from '../components/Pricing';
 import { FaqSection } from '../components/FaqSection';
 import { FinalCTA } from '../components/FinalCTA';
 import { Footer } from '../components/Footer';
+import { useRouter } from 'next/navigation';
+import { parseRepositoryInput } from '@/lib/codyn-dashboard';
 
 export default function Page() {
+  const router = useRouter();
   const handleAnalyzeRepo = (url: string) => {
-    console.log('Analyzing repo:', url);
-    const el = document.getElementById('mockup');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    const repository = parseRepositoryInput(url);
+    if (repository) router.push(`/repo/${repository.owner}/${repository.repo}?scan=deep`);
   };
 
   return (
