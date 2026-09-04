@@ -16,11 +16,12 @@ export function ScanList({ scans, title = 'Recent scans', showAll = false }: { s
         </div>
       </header>
       <div className="divide-y divide-white/[0.065]">
+        {!scans.length && <div className="p-10 text-center"><History className="mx-auto h-8 w-8 text-white/25" /><h3 className="mt-4 font-semibold">Your first scan starts here</h3><p className="mt-2 text-sm leading-6 text-white/45">Analyze a repository, then run security triage. Reports are saved on this browser, not shared across devices.</p></div>}
         {scans.map((scan) => {
           const total = issueTotal(scan);
           const safe = scan.issues.high === 0;
           return (
-            <Link key={scan.id} href={`/repo/${scan.owner}/${scan.repo}`} className="dashboard-focus group flex items-center justify-between gap-4 px-5 py-5 transition hover:bg-white/[0.035] sm:px-6">
+            <Link key={scan.id} href={`/report/${encodeURIComponent(scan.id)}`} className="dashboard-focus group flex items-center justify-between gap-4 px-5 py-5 transition hover:bg-white/[0.035] sm:px-6">
               <div className="flex min-w-0 items-center gap-4">
                 <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${safe ? 'bg-emerald-400/10 text-emerald-400' : 'bg-rose-400/10 text-rose-400'}`}>
                   {safe ? <ShieldCheck className="h-5 w-5" /> : <ShieldAlert className="h-5 w-5" />}
@@ -33,7 +34,7 @@ export function ScanList({ scans, title = 'Recent scans', showAll = false }: { s
                   <div className="mt-1 flex items-center gap-2 text-xs text-white/35">
                     <span>{new Date(scan.createdAt).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <span aria-hidden="true">•</span>
-                    {total === 0 ? <span className="text-emerald-400">Secure</span> : (
+                    {total === 0 ? <span className="text-emerald-400">No candidates in scope</span> : (
                       <span className={scan.issues.high ? 'text-rose-400' : 'text-amber-300'}>
                         {scan.issues.high ? `${scan.issues.high} high · ` : ''}{total} issues
                       </span>

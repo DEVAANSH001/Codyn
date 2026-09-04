@@ -3,16 +3,25 @@
 import { Activity, CalendarDays, Github, ScanSearch, ShieldAlert, Sparkles, Zap } from 'lucide-react';
 import { RepositoryAnalyzer } from './RepositoryAnalyzer';
 import { ScanList } from './ScanList';
-import { issueTotal, SAMPLE_SCANS } from '@/lib/codyn-dashboard';
-
-const stats = [
-  { label: 'Repositories scanned', value: SAMPLE_SCANS.length, icon: ScanSearch, color: 'text-[#00d2ff]', tint: 'bg-[#00d2ff]/10' },
-  { label: 'Issues surfaced', value: SAMPLE_SCANS.reduce((total, scan) => total + issueTotal(scan), 0), icon: ShieldAlert, color: 'text-rose-400', tint: 'bg-rose-400/10' },
-  { label: 'Deep analyses', value: SAMPLE_SCANS.filter((scan) => scan.depth === 'deep').length, icon: Zap, color: 'text-[#8deaff]', tint: 'bg-[#8deaff]/10' },
-];
+import { issueTotal, ScanRecord } from '@/lib/codyn-dashboard';
+import { readScans } from '@/lib/dashboard-storage';
+import { useEffect, useState } from 'react';
 
 export function DashboardOverview() {
-  const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
+  const [scans, setScans] = useState<ScanRecord[]>([]);
+  const [today, setToday] = useState('Your repository workspace');
+  useEffect(() => {
+    const sync = () => setScans(readScans());
+    sync();
+    setToday(new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date()));
+    window.addEventListener('codyn:scans-updated', sync);
+    return () => window.removeEventListener('codyn:scans-updated', sync);
+  }, []);
+  const stats = [
+    { label: 'Repositories scanned', value: new Set(scans.map(scan => `${scan.owner}/${scan.repo}`)).size, icon: ScanSearch, color: 'text-[#00d2ff]', tint: 'bg-[#00d2ff]/10' },
+    { label: 'Review candidates', value: scans.reduce((total, scan) => total + issueTotal(scan), 0), icon: ShieldAlert, color: 'text-rose-400', tint: 'bg-rose-400/10' },
+    { label: 'Deep analyses', value: scans.filter(scan => scan.depth === 'deep').length, icon: Zap, color: 'text-[#8deaff]', tint: 'bg-[#8deaff]/10' },
+  ];
 
   return (
     <div className="space-y-6 lg:space-y-8">
@@ -41,7 +50,7 @@ export function DashboardOverview() {
       <RepositoryAnalyzer />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <ScanList scans={SAMPLE_SCANS} showAll />
+        <ScanList scans={scans.slice(0, 5)} showAll />
         <aside className="space-y-4">
           {stats.map(({ label, value, icon: Icon, color, tint }) => (
             <div key={label} className="dashboard-panel rounded-[22px] p-5">

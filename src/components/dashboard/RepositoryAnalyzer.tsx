@@ -2,7 +2,8 @@
 
 import { ArrowRight, Github, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import { readDefaultDepth } from '@/lib/dashboard-storage';
 import { parseRepositoryInput, ScanDepth } from '@/lib/codyn-dashboard';
 
 export function RepositoryAnalyzer({ compact = false }: { compact?: boolean }) {
@@ -10,6 +11,7 @@ export function RepositoryAnalyzer({ compact = false }: { compact?: boolean }) {
   const [value, setValue] = useState('github.com/facebook/react');
   const [depth, setDepth] = useState<ScanDepth>('deep');
   const [error, setError] = useState('');
+  useEffect(() => setDepth(readDefaultDepth()), []);
 
   function submit(event: FormEvent) {
     event.preventDefault();
