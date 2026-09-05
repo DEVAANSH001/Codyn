@@ -14,7 +14,7 @@ The site, landing page, public content, and bundled blog posts work without serv
 
 - `GITHUB_TOKEN` raises GitHub API limits.
 - `GEMINI_API_KEY` enables AI chat, analysis, diagrams, and security reasoning.
-- `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, and `AUTH_SECRET` enable GitHub sign-in.
+- `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_SECRET`, and `AUTH_TRUST_HOST=true` enable GitHub sign-in.
 - `DATABASE_URL` and `DIRECT_URL` enable users, sessions, chat history, scans, reports, sharing, analytics, and admin content.
 - Vercel KV/Blob variables enable shared cache and artifact persistence.
 - Resend variables enable welcome and operational email.

@@ -75,7 +75,7 @@ PROJECT = {
     ],
     "environment": {
         "core_ai": ["GEMINI_API_KEY", "GEMINI_FILE_SELECTOR_MODEL", "GEMINI_LITE_MODEL", "GEMINI_THINKING_MODEL"],
-        "github": ["GITHUB_TOKEN", "AUTH_GITHUB_ID", "AUTH_GITHUB_SECRET", "AUTH_SECRET"],
+        "github": ["GITHUB_TOKEN", "AUTH_GITHUB_ID", "AUTH_GITHUB_SECRET", "AUTH_SECRET", "AUTH_TRUST_HOST"],
         "database": ["DATABASE_URL", "DIRECT_URL"],
         "optional_storage": ["KV_REST_API_URL", "KV_REST_API_TOKEN", "BLOB_READ_WRITE_TOKEN"],
         "optional_email": ["RESEND_API_KEY", "RESEND_FROM_EMAIL", "RESEND_WEBHOOK_SECRET"],
