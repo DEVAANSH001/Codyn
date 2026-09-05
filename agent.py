@@ -1,86 +1,132 @@
-"""Living project context for humans and coding agents working on Codyn.
+"""Authoritative project context for humans and coding agents working on Codyn.
 
-Run ``python agent.py`` for a concise project briefing. Keep this file updated
-when a milestone materially changes the product architecture or delivery state.
+Run ``python agent.py`` for a compact briefing. Update this file whenever a
+milestone changes the architecture, operating requirements, or verified state.
 """
 
 PROJECT = {
     "name": "Codyn",
-    "product": "AI-native GitHub repository intelligence and security workspace",
+    "product": "Full-context GitHub repository intelligence, review, and security workspace",
     "stack": [
-        "Next.js 16 App Router",
-        "React 19",
-        "TypeScript",
-        "Tailwind CSS 4",
-        "Motion",
-        "Lucide icons",
-        "Google Gemini",
+        "Next.js 16 App Router and React 19",
+        "TypeScript and Tailwind CSS 4",
+        "NextAuth v5 with GitHub OAuth",
+        "Prisma 6 with PostgreSQL/Neon",
+        "Google Gemini context selection, chat, diagrams, and security analysis",
+        "GitHub REST/GraphQL through Octokit",
+        "Vercel KV and Blob for optional cache/artifact persistence",
+        "Resend for optional transactional email",
+        "Vitest, ESLint, and Next.js production validation",
     ],
     "brand": {
+        "identity": "Codyn",
         "background": "#0c0c0c",
+        "surface": "#121417",
         "accent": "#00d2ff",
         "supporting_blue": "#1769d2",
-        "surface": "translucent near-black glass",
+        "highlight": "#8deaff",
         "tone": "precise, technical, calm, and premium",
     },
-    "source_of_truth": "The root Next.js app is the only Codyn application.",
-    "reference": (
-        "repomind-main/ is a local, git-ignored MIT-licensed product reference. "
-        "It must not become a second runtime or be committed wholesale."
+    "source_of_truth": (
+        "The root Next.js application is the only runtime. repomind-main/ is an ignored, "
+        "local upstream snapshot and must never be deployed or treated as a second app."
     ),
-    "product_direction": (
-        "Keep the existing Codyn landing page. Rebuild RepoMind's dashboard "
-        "dashboard and repository-understanding journeys as native Codyn routes, "
-        "using Codyn copy, logo, cyan/blue tokens, and current dependencies."
+    "provenance": (
+        "The full product foundation was integrated from the MIT-licensed RepoMind source. "
+        "LICENSE and THIRD_PARTY_NOTICES.md preserve the upstream copyright and permission. "
+        "Visible product branding, repository links, metadata, prompts, routes, and color tokens "
+        "were adapted to Codyn."
     ),
+    "architecture": {
+        "landing": "src/app/page.tsx and the original Codyn marketing components remain the public entry point.",
+        "product_ui": (
+            "src/app/dashboard, src/app/chat, src/app/repo, src/app/report, and src/components "
+            "provide authenticated history, repository/profile chat, file exploration, diagrams, "
+            "scan reports, sharing, and exports."
+        ),
+        "server": (
+            "src/app/actions.ts plus src/app/api contain GitHub, chat-run, dashboard, badge, admin, "
+            "email, report, and Mermaid endpoints. src/proxy.ts applies NextAuth and API CORS handling."
+        ),
+        "analysis": (
+            "src/lib/github.ts fetches repository/profile context; generator.ts and search-engine.ts "
+            "select files; prompt-builder.ts and gemini.ts run grounded AI workflows; "
+            "security-scanner.ts and src/lib/services implement scan, verification, and reporting."
+        ),
+        "persistence": (
+            "Prisma/PostgreSQL stores users, OAuth sessions, conversations, chat runs, scans, share "
+            "links, false-positive reviews, analytics, blog posts, and email delivery state. KV/Blob "
+            "are optional caching and artifact layers."
+        ),
+        "content": (
+            "Public blog pages prefer PostgreSQL but fall back to bundled posts when DATABASE_URL is "
+            "not configured, allowing clean local and CI builds before infrastructure is connected."
+        ),
+    },
+    "routes": [
+        "/ — Codyn landing page",
+        "/chat and /repo/[owner]/[repo] — profile/repository intelligence",
+        "/dashboard, /dashboard/scans, /dashboard/repos, /dashboard/starred, /dashboard/settings",
+        "/report/[scan_id] and /report/shared/[token] — reports and signed sharing",
+        "/security-scanner plus solution/comparison pages",
+        "/blog, /explore, /trending, and /topics/[topic]",
+        "/admin, /admin/stats, /admin/blog, and /admin/index",
+        "/api/* — authentication, chat, dashboard, reports, badges, admin, and internal jobs",
+    ],
+    "environment": {
+        "core_ai": ["GEMINI_API_KEY", "GEMINI_FILE_SELECTOR_MODEL", "GEMINI_LITE_MODEL", "GEMINI_THINKING_MODEL"],
+        "github": ["GITHUB_TOKEN", "AUTH_GITHUB_ID", "AUTH_GITHUB_SECRET", "AUTH_SECRET"],
+        "database": ["DATABASE_URL", "DIRECT_URL"],
+        "optional_storage": ["KV_REST_API_URL", "KV_REST_API_TOKEN", "BLOB_READ_WRITE_TOKEN"],
+        "optional_email": ["RESEND_API_KEY", "RESEND_FROM_EMAIL", "RESEND_WEBHOOK_SECRET"],
+        "operations": ["NEXT_PUBLIC_APP_URL", "ADMIN_GITHUB_USERNAME", "EMAIL_RETRY_JOB_SECRET", "CRON_SECRET"],
+    },
+    "graceful_degradation": [
+        "The application and all static pages build without credentials.",
+        "Bundled blog posts are used when PostgreSQL is absent or unavailable.",
+        "GitHub works at restrictive anonymous API limits when GITHUB_TOKEN is absent.",
+        "AI actions require GEMINI_API_KEY and return explicit configuration errors without it.",
+        "Account history, sharing, admin, and durable state require PostgreSQL and the related services.",
+    ],
     "delivery_rules": [
-        "Work in reviewable milestone commits rather than one monolithic change.",
-        "Preserve the landing page unless a milestone explicitly integrates it.",
-        "Prefer real public GitHub data with graceful sample/empty states.",
-        "Keep core navigation responsive and keyboard accessible.",
-        "Do not expose Gemini or GitHub credentials to client components.",
-        "Run TypeScript checks and a production build before final handoff.",
+        "Preserve the Codyn landing page and cyan/blue visual identity.",
+        "Do not expose GitHub, Gemini, database, OAuth, KV, Blob, Resend, or cron secrets to clients.",
+        "Keep dynamic Next.js params async and retain src/proxy.ts for Next.js 16.",
+        "Use Prisma migrations for schema changes; never mutate production tables ad hoc.",
+        "Keep the upstream MIT notice when redistributing substantial imported code.",
+        "Run npm run typecheck, npm test, and npm run build before handoff.",
     ],
     "commit_ladder": [
-        "1. Document architecture and isolate the RepoMind reference.",
-        "2. Add the Codyn dashboard shell and shared visual system.",
-        "3. Build overview, scan history, and local activity state.",
-        "4. Build repository and starred-repository collections.",
-        "5. Build the repository intelligence workspace and server APIs.",
-        "6. Connect the landing page and complete responsive/build validation.",
+        "45a2bb9 — establish dashboard migration context",
+        "719e482 — add the Codyn dashboard shell",
+        "2ca7953 — build overview and scan history",
+        "6169da2 — connect public repository collections and local history",
+        "e23d193 — add revision-pinned repository intelligence",
+        "442f54e — connect the landing page and harden the MVP",
+        "2c3abb9 — add Next.js 16 agent guidance",
+        "e44828a — integrate the complete platform, data model, Codyn identity, and resilient local setup",
+        "Documentation milestone — capture the complete operating context and setup guide",
     ],
-    "implemented": [
-        "Responsive overview, scan history, repository, saved-repository, and settings views.",
-        "Live public GitHub metadata, revision-pinned tree/source previews, structure map, and recent commits.",
-        "Streaming Gemini chat grounded in bounded, question-ranked public source context.",
-        "Deterministic review candidates plus exact-version npm OSV advisory lookups.",
-        "Device-local bookmarks, preferences, up to 30 reports, and JSON/Markdown export.",
-        "Automated checks for parsing, exclusions, false claims, lockfiles, private data, and storage.",
+    "verified_state": [
+        "TypeScript production typecheck passes.",
+        "The imported Vitest suite contains 89 files and 536 tests.",
+        "Next.js production build generates more than 300 static/dynamic routes and topic pages.",
+        "Prisma Client generation works without local infrastructure by using a CLI-only placeholder URL.",
     ],
-    "intentional_limits": [
-        "Public repositories only; no private-repository OAuth.",
-        "Browser-local state only; no account, cloud sync, billing, team workspace, or database.",
-        "AI chat needs a server GEMINI_API_KEY and sends selected public context to Google Gemini.",
-        "Security output is bounded triage, not full static analysis, exploit verification, or certification.",
-        "Architecture view is structural; deeper dependency relationships come from source-grounded chat.",
-    ],
-    "current_state": (
-        "Milestones 1-6 form a complete public-repository intelligence MVP. The next "
-        "phase is private repositories and server-backed accounts, requiring an explicit "
-        "identity, storage, deployment, and credential decision."
-    ),
 }
 
 
 def briefing() -> str:
-    """Return a readable briefing without requiring third-party packages."""
+    """Return the high-signal project briefing without third-party packages."""
     lines = [f"{PROJECT['name']}: {PROJECT['product']}", ""]
-    lines.append(f"Direction: {PROJECT['product_direction']}")
-    lines.append(f"Current state: {PROJECT['current_state']}")
-    lines.append("\nCommit ladder:")
-    lines.extend(f"  {step}" for step in PROJECT["commit_ladder"])
-    lines.append("\nDelivery rules:")
+    lines.append(f"Source of truth: {PROJECT['source_of_truth']}")
+    lines.append(f"Provenance: {PROJECT['provenance']}")
+    lines.append("\nArchitecture:")
+    lines.extend(f"  - {name}: {detail}" for name, detail in PROJECT["architecture"].items())
+    lines.append("\nRequired delivery checks:")
     lines.extend(f"  - {rule}" for rule in PROJECT["delivery_rules"])
+    lines.append("\nVerified state:")
+    lines.extend(f"  - {item}" for item in PROJECT["verified_state"])
     return "\n".join(lines)
 
 
