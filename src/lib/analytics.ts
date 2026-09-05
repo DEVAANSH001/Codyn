@@ -385,6 +385,13 @@ export async function trackEvent(
     if (!visitorId.startsWith("anon_")) {
         return;
     }
+    if (
+        process.env.NODE_ENV !== "test" &&
+        (!process.env.KV_REST_API_URL ||
+            !(process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN))
+    ) {
+        return;
+    }
 
     try {
         const timestamp = Date.now();
@@ -450,6 +457,13 @@ export async function trackSelectionPerformance(params: {
     selectionMs: number;
 }): Promise<void> {
     try {
+        if (
+            process.env.NODE_ENV !== "test" &&
+            (!process.env.KV_REST_API_URL ||
+                !(process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN))
+        ) {
+            return;
+        }
         if (Math.random() >= SELECTION_TELEMETRY_SAMPLE_RATE) {
             return;
         }

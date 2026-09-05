@@ -46,7 +46,10 @@ PROJECT = {
         ),
         "server": (
             "src/app/actions.ts plus src/app/api contain GitHub, chat-run, dashboard, badge, admin, "
-            "email, report, and Mermaid endpoints. src/proxy.ts applies NextAuth and API CORS handling."
+            "email, report, and Mermaid endpoints. /api/repository/chat is the public, revision-grounded "
+            "workspace stream; /api/chat persists authenticated conversations; /api/chat/repo and "
+            "/api/chat/profile power the richer RepoMind-derived chat surfaces. src/proxy.ts applies "
+            "NextAuth and API CORS handling."
         ),
         "analysis": (
             "src/lib/github.ts fetches repository/profile context; generator.ts and search-engine.ts "
@@ -105,13 +108,16 @@ PROJECT = {
         "442f54e — connect the landing page and harden the MVP",
         "2c3abb9 — add Next.js 16 agent guidance",
         "e44828a — integrate the complete platform, data model, Codyn identity, and resilient local setup",
-        "Documentation milestone — capture the complete operating context and setup guide",
+        "3443189 — capture the complete operating context and setup guide",
+        "0c8b29d — harden local runtime configuration",
     ],
     "verified_state": [
         "TypeScript production typecheck passes.",
-        "The imported Vitest suite contains 89 files and 536 tests.",
+        "The imported Vitest suite plus repository-chat regression coverage contains 90 files and 539 tests.",
         "Next.js production build generates more than 300 static/dynamic routes and topic pages.",
         "Prisma Client generation works without local infrastructure by using a CLI-only placeholder URL.",
+        "Live checks confirmed GitHub metadata, pinned file reads, quick security triage, the public "
+        "repository Gemini stream, and the richer RepoMind-derived repository chat stream.",
     ],
 }
 

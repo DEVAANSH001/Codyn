@@ -153,6 +153,14 @@ function decodeIndex(value: string): RepoIndex | null {
 }
 
 async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null> {
+    const hasKvConfiguration = Boolean(
+        process.env.KV_REST_API_URL &&
+        (process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN)
+    );
+    if (process.env.NODE_ENV !== "test" && !hasKvConfiguration) {
+        return null;
+    }
+
     try {
         return await operation();
     } catch (error) {

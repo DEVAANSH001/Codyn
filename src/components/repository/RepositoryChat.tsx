@@ -27,7 +27,7 @@ export function RepositoryChat({ fullName, depth }: { fullName: string; depth: S
     const controller = new AbortController(); abort.current = controller;
     let completed = false;
     try {
-      const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo: fullName, question: value, depth, history }), signal: controller.signal });
+      const response = await fetch('/api/repository/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo: fullName, question: value, depth, history }), signal: controller.signal });
       if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'AI request failed.'); }
       if (!response.body) throw new Error('No response stream.');
       const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = '';

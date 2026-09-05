@@ -27,7 +27,7 @@ Generate the client with `npm run prisma:generate`. Apply local migrations with 
 ## Product surface
 
 - `/` — Codyn marketing landing page
-- `/chat` and `/repo/[owner]/[repo]` — profile and repository intelligence
+- `/chat` and `/repo/[owner]/[repo]` — profile and repository intelligence; the repository workspace streams grounded answers through `/api/repository/chat`
 - `/dashboard/*` — overview, scans, repositories, starred items, and settings
 - `/report/[scan_id]` and `/report/shared/[token]` — security reports and signed sharing
 - `/security-scanner` — repository scanning workflow
@@ -44,5 +44,7 @@ npm run build
 ```
 
 `npm test` runs the imported unit and integration suite. `npm run build` generates Prisma Client and then performs the Next.js 16 production build.
+
+The public repository workspace works with only `GEMINI_API_KEY`: metadata, revision-pinned files, quick/deep security triage, and cited AI chat do not require a user account or database. GitHub sign-in, private repositories, cross-device history, shared reports, and administration require the OAuth and database variables listed above.
 
 See [agent.py](./agent.py) for the complete architecture, environment map, delivery rules, commit ladder, and verified state.
