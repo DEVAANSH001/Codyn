@@ -1,6 +1,6 @@
 # Third-party notices
 
-Codyn's dashboard direction was informed by the locally supplied RepoMind project by Sameer Verma / 403errors. RepoMind is licensed under the MIT License. Its license is reproduced because this implementation adapts interface concepts and product behavior from that reference.
+Codyn incorporates substantial source code from the locally supplied RepoMind project by Sameer Verma / 403errors. RepoMind is licensed under the MIT License. The upstream copyright and license are reproduced below and in `LICENSE` as required for redistribution of the software and its derivatives.
 
 MIT License
 

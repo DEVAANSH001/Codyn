@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap');
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 @theme {
   --color-brand: #3D81E3;
@@ -18,6 +19,48 @@
   --codyn-border: rgba(255, 255, 255, 0.09);
   --codyn-muted: #8d939f;
   --codyn-accent: #00d2ff;
+  --background: #0c0c0c;
+  --foreground: #ffffff;
+  --scrollbar-track: #121417;
+  --scrollbar-thumb: #454b55;
+  --scrollbar-thumb-hover: #00d2ff;
+  --diagram-color-primary: #00d2ff;
+  --diagram-color-secondary: #1769d2;
+  --diagram-color-accent-1: #42a5ff;
+  --diagram-color-accent-2: #0e7490;
+  --diagram-color-accent-3: #14b8a6;
+  --diagram-color-accent-4: #2563eb;
+  --diagram-color-accent-5: #f59e0b;
+  --diagram-color-accent-6: #ec4899;
+  --diagram-color-line: #3D81E3;
+  --diagram-color-surface: #121417;
+  --diagram-color-border: #475569;
+  --diagram-color-text-on-color: #f8fafc;
+  --mindmap-branch-1-fill: var(--diagram-color-accent-1);
+  --mindmap-branch-1-stroke: var(--diagram-color-accent-1);
+  --mindmap-branch-2-fill: var(--diagram-color-accent-2);
+  --mindmap-branch-2-stroke: var(--diagram-color-accent-2);
+  --mindmap-branch-3-fill: var(--diagram-color-accent-3);
+  --mindmap-branch-3-stroke: var(--diagram-color-accent-3);
+  --mindmap-branch-4-fill: var(--diagram-color-accent-4);
+  --mindmap-branch-4-stroke: var(--diagram-color-accent-4);
+  --mindmap-branch-5-fill: var(--diagram-color-accent-5);
+  --mindmap-branch-5-stroke: var(--diagram-color-accent-5);
+  --mindmap-branch-6-fill: var(--diagram-color-accent-6);
+  --mindmap-branch-6-stroke: var(--diagram-color-accent-6);
+  --mindmap-branch-text: var(--diagram-color-text-on-color);
+  --mindmap-branch-text-dark: #0f172a;
+  --mindmap-branch-text-light: var(--diagram-color-text-on-color);
+  --mindmap-center-fill: var(--diagram-color-primary);
+  --mindmap-center-stroke: #1769d2;
+  --mindmap-center-text: var(--diagram-color-text-on-color);
+  --mindmap-category-fill: var(--diagram-color-secondary);
+  --mindmap-category-stroke: var(--diagram-color-border);
+  --mindmap-category-text: var(--diagram-color-text-on-color);
+  --xychart-text: var(--diagram-color-text-on-color);
+  --xychart-axis: #94a3b8;
+  --xychart-bar: var(--diagram-color-primary);
+  --xychart-line: var(--diagram-color-accent-3);
 }
 
 body {
@@ -235,7 +278,50 @@ html, body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(0, 0, 0, 0.5);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+@property --angle {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0turn;
+}
+
+@keyframes spin-gradient { to { --angle: 1turn; } }
+
+.conic-border-container {
+  position: relative;
+  border: 2px solid transparent;
+  isolation: isolate;
+}
+
+.conic-border-container::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border: inherit;
+  border-radius: inherit;
+  background-image: conic-gradient(from var(--angle), #00d2ff 0%, #1769d2 50%, #00d2ff 100%);
+  background-origin: border-box;
+  -webkit-mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
+  mask: linear-gradient(black, black), linear-gradient(black, black);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-gradient 8s linear infinite;
+}
+
+.neon-spin-ring::before {
+  background-image: conic-gradient(from var(--angle), #8deaff 0%, #3b82f6 50%, #00d2ff 100%);
+  animation: spin-gradient 6s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conic-border-container::before,
+  .neon-spin-ring::before { animation: none; }
 }
 
 

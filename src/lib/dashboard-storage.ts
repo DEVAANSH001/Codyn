@@ -16,7 +16,8 @@ function write(key: string, value: unknown) {
 }
 export function readScans(): ScanRecord[] {
   const scans = read<ScanRecord[]>(SCANS_KEY, []);
-  return Array.isArray(scans) ? scans.filter(scan => scan && typeof scan.id === 'string' && typeof scan.owner === 'string' && typeof scan.repo === 'string' && typeof scan.createdAt === 'string' && scan.issues && ['high','medium','low'].every(key => typeof scan.issues[key] === 'number')) : [];
+  const severities: Array<keyof ScanRecord['issues']> = ['high', 'medium', 'low'];
+  return Array.isArray(scans) ? scans.filter(scan => scan && typeof scan.id === 'string' && typeof scan.owner === 'string' && typeof scan.repo === 'string' && typeof scan.createdAt === 'string' && scan.issues && severities.every(key => typeof scan.issues[key] === 'number')) : [];
 }
 export function recordScan(scan: ScanRecord) {
   write(SCANS_KEY, [scan, ...readScans().filter(item => item.id !== scan.id)].slice(0, 30));

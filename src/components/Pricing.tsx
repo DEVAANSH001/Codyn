@@ -148,7 +148,7 @@ export const Pricing: React.FC = () => {
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
                 Pro Team
               </span>
             </div>
@@ -173,7 +173,7 @@ export const Pricing: React.FC = () => {
                 '5 team seats & custom integrations'
               ].map((feat) => (
                 <div key={feat} className="flex items-center gap-2.5">
-                  <div className="w-4 h-4 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 flex-shrink-0">
+                  <div className="w-4 h-4 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 flex-shrink-0">
                     <Check className="w-2.5 h-2.5" />
                   </div>
                   <span>{feat}</span>
@@ -187,7 +187,7 @@ export const Pricing: React.FC = () => {
               const el = document.getElementById('mockup');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="mt-8 w-full py-3 px-4 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-300 font-medium text-xs hover:bg-purple-500/20 transition-all cursor-pointer"
+            className="mt-8 w-full py-3 px-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-medium text-xs hover:bg-cyan-500/20 transition-all cursor-pointer"
           >
             Upgrade to Pro
           </button>

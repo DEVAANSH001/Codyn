@@ -1,0 +1,836 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-05T03:39:03.038Z",
+  "signature": "6e6646ec95935c359c655d0c78d687efaff4f0f1ba0f3bb0f2d187bc7ddedfd0",
+  "totals": {
+    "errors": 46,
+    "warnings": 50,
+    "problems": 96,
+    "filesWithIssues": 41
+  },
+  "entries": [
+    {
+      "file": "postcss.config.mjs",
+      "ruleId": "import/no-anonymous-default-export",
+      "line": 1,
+      "column": 1,
+      "severity": 1,
+      "messageHash": "bd588020738a"
+    },
+    {
+      "file": "scripts/estimate-traffic.ts",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 39,
+      "column": 21,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "scripts/estimate-traffic.ts",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 51,
+      "column": 24,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "scripts/estimate-traffic.ts",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 78,
+      "column": 45,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "scripts/estimate-traffic.ts",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 86,
+      "column": 49,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "scripts/estimate-traffic.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 136,
+      "column": 11,
+      "severity": 1,
+      "messageHash": "d4c18359d5fa"
+    },
+    {
+      "file": "src/app/admin/blog/[id]/page.tsx",
+      "ruleId": "prefer-const",
+      "line": 9,
+      "column": 7,
+      "severity": 2,
+      "messageHash": "4d911746884b"
+    },
+    {
+      "file": "src/app/admin/blog/actions.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 7,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "d1c78916eb62"
+    },
+    {
+      "file": "src/app/admin/index/IndexManagementClient.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 5,
+      "column": 3,
+      "severity": 1,
+      "messageHash": "dd774bde657d"
+    },
+    {
+      "file": "src/app/admin/index/IndexManagementClient.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 5,
+      "column": 47,
+      "severity": 1,
+      "messageHash": "d5064e23f985"
+    },
+    {
+      "file": "src/app/admin/index/IndexManagementClient.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 6,
+      "column": 15,
+      "severity": 1,
+      "messageHash": "ab09036f3588"
+    },
+    {
+      "file": "src/app/admin/index/IndexManagementClient.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 6,
+      "column": 22,
+      "severity": 1,
+      "messageHash": "a61d12577c3b"
+    },
+    {
+      "file": "src/app/admin/index/IndexManagementClient.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 6,
+      "column": 32,
+      "severity": 1,
+      "messageHash": "515fb50d5b9d"
+    },
+    {
+      "file": "src/app/admin/stats/StatsDashboardClient.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 90,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "a6ae5a12a3e8"
+    },
+    {
+      "file": "src/app/admin/stats/StatsDashboardClient.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 97,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "ac4ad14d781b"
+    },
+    {
+      "file": "src/app/admin/stats/StatsDashboardClient.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 101,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "3a5d7eaf1a4a"
+    },
+    {
+      "file": "src/app/admin/stats/StatsDashboardClient.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 105,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "92a9c564e377"
+    },
+    {
+      "file": "src/app/blog/[slug]/page.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 172,
+      "column": 13,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/app/report/[scan_id]/ReportContent.tsx",
+      "ruleId": "@next/next/no-location-assign-relative-destination",
+      "line": 450,
+      "column": 13,
+      "severity": 1,
+      "messageHash": "d05bf49c5b52"
+    },
+    {
+      "file": "src/app/report/[scan_id]/ReportContent.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 255,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "737efb985816"
+    },
+    {
+      "file": "src/app/trending/page.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 23,
+      "column": 32,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/admin/AdminSidebar.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 13,
+      "column": 3,
+      "severity": 1,
+      "messageHash": "3cd303b29581"
+    },
+    {
+      "file": "src/components/admin/AdminSidebar.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 17,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "b767efcf61b8"
+    },
+    {
+      "file": "src/components/admin/BlogEditor.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 377,
+      "column": 21,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/admin/BlogEditor.tsx",
+      "ruleId": "react/no-unescaped-entities",
+      "line": 228,
+      "column": 163,
+      "severity": 2,
+      "messageHash": "1c3839c03cb2"
+    },
+    {
+      "file": "src/components/ChatInterface.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 263,
+      "column": 14,
+      "severity": 2,
+      "messageHash": "ee81c000550b"
+    },
+    {
+      "file": "src/components/ChatInterface.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 420,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "5605f83475e6"
+    },
+    {
+      "file": "src/components/dashboard/DashboardOverview.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 16,
+      "column": 5,
+      "severity": 2,
+      "messageHash": "848094503f27"
+    },
+    {
+      "file": "src/components/dashboard/DashboardSettings.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 13,
+      "column": 21,
+      "severity": 2,
+      "messageHash": "4ce17209d030"
+    },
+    {
+      "file": "src/components/dashboard/DashboardShell.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 61,
+      "column": 19,
+      "severity": 2,
+      "messageHash": "6ecf98431282"
+    },
+    {
+      "file": "src/components/dashboard/MyRepositories.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 69,
+      "column": 11,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/dashboard/MyRepositories.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 22,
+      "column": 5,
+      "severity": 2,
+      "messageHash": "14c5b2af056d"
+    },
+    {
+      "file": "src/components/dashboard/MyRepositories.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 27,
+      "column": 5,
+      "severity": 2,
+      "messageHash": "de8f7a0cd0a0"
+    },
+    {
+      "file": "src/components/dashboard/RecentScans.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 29,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "dd291f3d75c6"
+    },
+    {
+      "file": "src/components/dashboard/RepositoryAnalyzer.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 14,
+      "column": 19,
+      "severity": 2,
+      "messageHash": "254673e0f496"
+    },
+    {
+      "file": "src/components/dashboard/StarredRepositories.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 15,
+      "column": 19,
+      "severity": 2,
+      "messageHash": "fee78e8012f4"
+    },
+    {
+      "file": "src/components/dashboard/StarredRepositories.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 17,
+      "column": 26,
+      "severity": 2,
+      "messageHash": "e0d1914b6fcf"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 120,
+      "column": 17,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 109,
+      "column": 20,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 116,
+      "column": 22,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 128,
+      "column": 21,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 243,
+      "column": 27,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 13,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "a164d968ec2e"
+    },
+    {
+      "file": "src/components/EnhancedMarkdown.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 129,
+      "column": 42,
+      "severity": 1,
+      "messageHash": "d5a8822deddc"
+    },
+    {
+      "file": "src/components/FeaturedIn.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 3,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "b767efcf61b8"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 265,
+      "column": 41,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 324,
+      "column": 64,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 326,
+      "column": 60,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 4,
+      "column": 59,
+      "severity": 1,
+      "messageHash": "a6ea191d3bba"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 4,
+      "column": 69,
+      "severity": 1,
+      "messageHash": "1afff152c086"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 4,
+      "column": 104,
+      "severity": 1,
+      "messageHash": "459d4f97d409"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "jsx-a11y/alt-text",
+      "line": 324,
+      "column": 64,
+      "severity": 1,
+      "messageHash": "ef679912f2f7"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "jsx-a11y/alt-text",
+      "line": 326,
+      "column": 60,
+      "severity": 1,
+      "messageHash": "ef679912f2f7"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 64,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "55c9419430f6"
+    },
+    {
+      "file": "src/components/FilePreview.tsx",
+      "ruleId": "react/no-unescaped-entities",
+      "line": 242,
+      "column": 50,
+      "severity": 2,
+      "messageHash": "4a5fcfbb4b1a"
+    },
+    {
+      "file": "src/components/InstallPWA.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 43,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "c4c0a9421896"
+    },
+    {
+      "file": "src/components/InstallPWA.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 75,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "4608ed022901"
+    },
+    {
+      "file": "src/components/InteractiveDemo.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 13,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "58e6d4195c89"
+    },
+    {
+      "file": "src/components/MediaShowcase.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 5,
+      "column": 8,
+      "severity": 1,
+      "messageHash": "723b4ed19009"
+    },
+    {
+      "file": "src/components/Mermaid.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 945,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "e3148e7ac23c"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 2,
+      "column": 20,
+      "severity": 1,
+      "messageHash": "70724a2acbd4"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 2,
+      "column": 55,
+      "severity": 1,
+      "messageHash": "9b8998788254"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 2,
+      "column": 76,
+      "severity": 1,
+      "messageHash": "bf00d89d2d63"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 2,
+      "column": 84,
+      "severity": 1,
+      "messageHash": "fbd93b86ebfc"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 231,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "3a10cb20e54f"
+    },
+    {
+      "file": "src/components/ProfileChatInterface.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 236,
+      "column": 14,
+      "severity": 2,
+      "messageHash": "14f68bb70ff2"
+    },
+    {
+      "file": "src/components/RepoIntelligenceMockup.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 11,
+      "column": 3,
+      "severity": 1,
+      "messageHash": "1cadbbefd215"
+    },
+    {
+      "file": "src/components/RepoIntelligenceMockup.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 14,
+      "column": 3,
+      "severity": 1,
+      "messageHash": "403b0a28a549"
+    },
+    {
+      "file": "src/components/RepoIntelligenceMockup.tsx",
+      "ruleId": "react/no-unescaped-entities",
+      "line": 269,
+      "column": 65,
+      "severity": 2,
+      "messageHash": "1c3839c03cb2"
+    },
+    {
+      "file": "src/components/RepoIntelligenceMockup.tsx",
+      "ruleId": "react/no-unescaped-entities",
+      "line": 269,
+      "column": 138,
+      "severity": 2,
+      "messageHash": "1c3839c03cb2"
+    },
+    {
+      "file": "src/components/RepoLoader.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 150,
+      "column": 14,
+      "severity": 2,
+      "messageHash": "56dcf2227df9"
+    },
+    {
+      "file": "src/components/repository/RepositoryWorkspace.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 36,
+      "column": 47,
+      "severity": 2,
+      "messageHash": "53714856dd00"
+    },
+    {
+      "file": "src/components/repository/RepositoryWorkspace.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 42,
+      "column": 47,
+      "severity": 2,
+      "messageHash": "88dd8063bda1"
+    },
+    {
+      "file": "src/components/repository/SavedReport.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 11,
+      "column": 21,
+      "severity": 2,
+      "messageHash": "86cb5132de49"
+    },
+    {
+      "file": "src/components/SearchModal.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 27,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "72ce7e0ef09b"
+    },
+    {
+      "file": "src/components/SuggestionsList.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 4,
+      "column": 18,
+      "severity": 1,
+      "messageHash": "db3c7da453a3"
+    },
+    {
+      "file": "src/components/Testimonials.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 101,
+      "column": 17,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/Testimonials.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 3,
+      "column": 24,
+      "severity": 1,
+      "messageHash": "2a6c68bdfdfc"
+    },
+    {
+      "file": "src/components/Testimonials.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 3,
+      "column": 32,
+      "severity": 1,
+      "messageHash": "b46f52b469e5"
+    },
+    {
+      "file": "src/components/TrustedByMarquee.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 23,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "3dfb805e003d"
+    },
+    {
+      "file": "src/components/UserAvatar.tsx",
+      "ruleId": "(no-rule)",
+      "line": 89,
+      "column": 5,
+      "severity": 1,
+      "messageHash": "644e0f2cb76f"
+    },
+    {
+      "file": "src/components/UserAvatar.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 91,
+      "column": 9,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/components/UserAvatar.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 28,
+      "column": 61,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/UserAvatar.tsx",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "line": 28,
+      "column": 97,
+      "severity": 2,
+      "messageHash": "8c56c082496e"
+    },
+    {
+      "file": "src/components/UserAvatar.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 33,
+      "column": 13,
+      "severity": 2,
+      "messageHash": "7a95f0d30342"
+    },
+    {
+      "file": "src/lib/__tests__/gemini-file-selection.test.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 2,
+      "column": 27,
+      "severity": 1,
+      "messageHash": "c5703be00305"
+    },
+    {
+      "file": "src/lib/gemini.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 746,
+      "column": 15,
+      "severity": 1,
+      "messageHash": "6dff46605058"
+    },
+    {
+      "file": "src/lib/gemini.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 825,
+      "column": 16,
+      "severity": 1,
+      "messageHash": "1b18a978932a"
+    },
+    {
+      "file": "src/lib/og-card.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 566,
+      "column": 25,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/lib/og-card.tsx",
+      "ruleId": "@next/next/no-img-element",
+      "line": 665,
+      "column": 21,
+      "severity": 1,
+      "messageHash": "8df1fdea6499"
+    },
+    {
+      "file": "src/lib/og-card.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 346,
+      "column": 11,
+      "severity": 1,
+      "messageHash": "ad95e275366b"
+    },
+    {
+      "file": "src/lib/og-card.tsx",
+      "ruleId": "jsx-a11y/alt-text",
+      "line": 566,
+      "column": 25,
+      "severity": 1,
+      "messageHash": "ef679912f2f7"
+    },
+    {
+      "file": "src/lib/og-card.tsx",
+      "ruleId": "jsx-a11y/alt-text",
+      "line": 665,
+      "column": 21,
+      "severity": 1,
+      "messageHash": "ef679912f2f7"
+    },
+    {
+      "file": "src/lib/prompt-builder.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 561,
+      "column": 9,
+      "severity": 1,
+      "messageHash": "d63d7557c6ba"
+    },
+    {
+      "file": "src/lib/services/repo-index-service.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 53,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "ef8246e506f2"
+    },
+    {
+      "file": "src/lib/services/repo-index-service.ts",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 75,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "cd26bb6f76c7"
+    }
+  ],
+  "ruleCounts": {
+    "@typescript-eslint/no-unused-vars": 32,
+    "react-hooks/set-state-in-effect": 30,
+    "@typescript-eslint/no-explicit-any": 11,
+    "@next/next/no-img-element": 11,
+    "react/no-unescaped-entities": 4,
+    "jsx-a11y/alt-text": 4,
+    "import/no-anonymous-default-export": 1,
+    "prefer-const": 1,
+    "@next/next/no-location-assign-relative-destination": 1,
+    "(no-rule)": 1
+  },
+  "fileCounts": {
+    "src/components/FilePreview.tsx": 10,
+    "src/components/EnhancedMarkdown.tsx": 7,
+    "src/components/ProfileChatInterface.tsx": 6,
+    "scripts/estimate-traffic.ts": 5,
+    "src/app/admin/index/IndexManagementClient.tsx": 5,
+    "src/components/UserAvatar.tsx": 5,
+    "src/lib/og-card.tsx": 5,
+    "src/app/admin/stats/StatsDashboardClient.tsx": 4,
+    "src/components/RepoIntelligenceMockup.tsx": 4,
+    "src/components/dashboard/MyRepositories.tsx": 3,
+    "src/components/Testimonials.tsx": 3,
+    "src/app/report/[scan_id]/ReportContent.tsx": 2,
+    "src/components/admin/AdminSidebar.tsx": 2,
+    "src/components/admin/BlogEditor.tsx": 2,
+    "src/components/ChatInterface.tsx": 2,
+    "src/components/dashboard/StarredRepositories.tsx": 2,
+    "src/components/InstallPWA.tsx": 2,
+    "src/components/repository/RepositoryWorkspace.tsx": 2,
+    "src/lib/gemini.ts": 2,
+    "src/lib/services/repo-index-service.ts": 2,
+    "postcss.config.mjs": 1,
+    "src/app/admin/blog/[id]/page.tsx": 1,
+    "src/app/admin/blog/actions.ts": 1,
+    "src/app/blog/[slug]/page.tsx": 1,
+    "src/app/trending/page.tsx": 1,
+    "src/components/dashboard/DashboardOverview.tsx": 1,
+    "src/components/dashboard/DashboardSettings.tsx": 1,
+    "src/components/dashboard/DashboardShell.tsx": 1,
+    "src/components/dashboard/RecentScans.tsx": 1,
+    "src/components/dashboard/RepositoryAnalyzer.tsx": 1,
+    "src/components/FeaturedIn.tsx": 1,
+    "src/components/InteractiveDemo.tsx": 1,
+    "src/components/MediaShowcase.tsx": 1,
+    "src/components/Mermaid.tsx": 1,
+    "src/components/RepoLoader.tsx": 1,
+    "src/components/repository/SavedReport.tsx": 1,
+    "src/components/SearchModal.tsx": 1,
+    "src/components/SuggestionsList.tsx": 1,
+    "src/components/TrustedByMarquee.tsx": 1,
+    "src/lib/__tests__/gemini-file-selection.test.ts": 1,
+    "src/lib/prompt-builder.ts": 1
+  }
+}
