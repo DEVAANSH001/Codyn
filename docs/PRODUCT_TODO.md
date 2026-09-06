@@ -72,7 +72,7 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 - [~] Traverse direct and transitive dependency/call-graph impact; identify APIs, services, workers, data operations, and tests. Direct and transitive local importers are traced; call graph and domain-specific impacts remain.
 - [~] Calculate change-risk scores with transparent contributing factors. A bounded low/medium/high dependency-blast-radius signal is shown with its counts; richer risk factors remain.
 - [ ] Add pull-request analysis: architecture changes, dependency/API changes, likely regressions, missing tests, and PR risk score.
-- [ ] Define architecture rules and detect layer violations, circular dependencies, boundary violations, and unexpected coupling.
+- [~] Define architecture rules and detect layer violations, circular dependencies, boundary violations, and unexpected coupling. The explorer now detects local dependency cycles and conservative default presentation/data and API/presentation boundary violations; repository-defined policies and broader coupling analysis remain.
 - [~] Add test intelligence: map code to tests, identify untested critical paths, and recommend regression scenarios. The explorer now maps a selected source file to likely co-located/named tests and explicitly signals no match; coverage, criticality, and regression recommendations remain.
 - [ ] Add debugging intelligence for pasted errors/stack traces, including likely paths, relevant symbols, and recent-change correlation.
 
