@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-05T09:59:04.878Z",
-  "signature": "cbe5fe581400cf933726457f3ed727725f65ed1af863db98829d195e7a97fab6",
+  "generatedAt": "2026-09-06T18:12:00.434Z",
+  "signature": "2caf9ecd9ad5764a6bb089705315d687dad157dbe5ea3141ea3a6b046e7201fe",
   "totals": {
-    "errors": 46,
-    "warnings": 50,
-    "problems": 96,
-    "filesWithIssues": 41
+    "errors": 47,
+    "warnings": 52,
+    "problems": 99,
+    "filesWithIssues": 43
   },
   "entries": [
     {
@@ -36,7 +36,7 @@
     {
       "file": "scripts/estimate-traffic.ts",
       "ruleId": "@typescript-eslint/no-explicit-any",
-      "line": 78,
+      "line": 79,
       "column": 45,
       "severity": 2,
       "messageHash": "8c56c082496e"
@@ -44,7 +44,7 @@
     {
       "file": "scripts/estimate-traffic.ts",
       "ruleId": "@typescript-eslint/no-explicit-any",
-      "line": 86,
+      "line": 87,
       "column": 49,
       "severity": 2,
       "messageHash": "8c56c082496e"
@@ -52,7 +52,7 @@
     {
       "file": "scripts/estimate-traffic.ts",
       "ruleId": "@typescript-eslint/no-unused-vars",
-      "line": 136,
+      "line": 137,
       "column": 11,
       "severity": 1,
       "messageHash": "d4c18359d5fa"
@@ -211,19 +211,19 @@
     },
     {
       "file": "src/components/ChatInterface.tsx",
-      "ruleId": "react-hooks/set-state-in-effect",
-      "line": 264,
-      "column": 14,
-      "severity": 2,
-      "messageHash": "0123352b2a48"
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 9,
+      "column": 10,
+      "severity": 1,
+      "messageHash": "b767efcf61b8"
     },
     {
       "file": "src/components/ChatInterface.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 421,
-      "column": 9,
+      "line": 258,
+      "column": 14,
       "severity": 2,
-      "messageHash": "8da16c917f9e"
+      "messageHash": "9c0c32236d53"
     },
     {
       "file": "src/components/dashboard/DashboardOverview.tsx",
@@ -276,10 +276,10 @@
     {
       "file": "src/components/dashboard/RecentScans.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 29,
-      "column": 13,
+      "line": 50,
+      "column": 14,
       "severity": 2,
-      "messageHash": "dd291f3d75c6"
+      "messageHash": "95cfe12247a9"
     },
     {
       "file": "src/components/dashboard/RepositoryAnalyzer.tsx",
@@ -304,6 +304,22 @@
       "column": 26,
       "severity": 2,
       "messageHash": "e0d1914b6fcf"
+    },
+    {
+      "file": "src/components/DependencyExplorer.tsx",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "line": 3,
+      "column": 28,
+      "severity": 1,
+      "messageHash": "539f9cf168e9"
+    },
+    {
+      "file": "src/components/DependencyExplorer.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 27,
+      "column": 9,
+      "severity": 2,
+      "messageHash": "9f9e3ef0669a"
     },
     {
       "file": "src/components/EnhancedMarkdown.tsx",
@@ -540,7 +556,7 @@
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",
       "ruleId": "@typescript-eslint/no-unused-vars",
-      "line": 11,
+      "line": 12,
       "column": 3,
       "severity": 1,
       "messageHash": "1cadbbefd215"
@@ -548,7 +564,7 @@
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",
       "ruleId": "@typescript-eslint/no-unused-vars",
-      "line": 14,
+      "line": 15,
       "column": 3,
       "severity": 1,
       "messageHash": "403b0a28a549"
@@ -556,7 +572,7 @@
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",
       "ruleId": "react/no-unescaped-entities",
-      "line": 269,
+      "line": 281,
       "column": 65,
       "severity": 2,
       "messageHash": "1c3839c03cb2"
@@ -564,7 +580,7 @@
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",
       "ruleId": "react/no-unescaped-entities",
-      "line": 269,
+      "line": 281,
       "column": 138,
       "severity": 2,
       "messageHash": "1c3839c03cb2"
@@ -572,10 +588,10 @@
     {
       "file": "src/components/RepoLoader.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 150,
+      "line": 154,
       "column": 14,
       "severity": 2,
-      "messageHash": "56dcf2227df9"
+      "messageHash": "8626d726dcfb"
     },
     {
       "file": "src/components/repository/RepositoryWorkspace.tsx",
@@ -600,6 +616,14 @@
       "column": 21,
       "severity": 2,
       "messageHash": "86cb5132de49"
+    },
+    {
+      "file": "src/components/RepositoryIndexStatus.tsx",
+      "ruleId": "react-hooks/set-state-in-effect",
+      "line": 36,
+      "column": 28,
+      "severity": 2,
+      "messageHash": "a79459becfa7"
     },
     {
       "file": "src/components/SearchModal.tsx",
@@ -700,7 +724,7 @@
     {
       "file": "src/lib/gemini.ts",
       "ruleId": "@typescript-eslint/no-unused-vars",
-      "line": 746,
+      "line": 758,
       "column": 15,
       "severity": 1,
       "messageHash": "6dff46605058"
@@ -708,7 +732,7 @@
     {
       "file": "src/lib/gemini.ts",
       "ruleId": "@typescript-eslint/no-unused-vars",
-      "line": 825,
+      "line": 837,
       "column": 16,
       "severity": 1,
       "messageHash": "1b18a978932a"
@@ -779,8 +803,8 @@
     }
   ],
   "ruleCounts": {
-    "@typescript-eslint/no-unused-vars": 32,
-    "react-hooks/set-state-in-effect": 30,
+    "@typescript-eslint/no-unused-vars": 34,
+    "react-hooks/set-state-in-effect": 31,
     "@typescript-eslint/no-explicit-any": 11,
     "@next/next/no-img-element": 11,
     "react/no-unescaped-entities": 4,
@@ -807,6 +831,7 @@
     "src/components/admin/BlogEditor.tsx": 2,
     "src/components/ChatInterface.tsx": 2,
     "src/components/dashboard/StarredRepositories.tsx": 2,
+    "src/components/DependencyExplorer.tsx": 2,
     "src/components/InstallPWA.tsx": 2,
     "src/components/repository/RepositoryWorkspace.tsx": 2,
     "src/lib/gemini.ts": 2,
@@ -827,6 +852,7 @@
     "src/components/Mermaid.tsx": 1,
     "src/components/RepoLoader.tsx": 1,
     "src/components/repository/SavedReport.tsx": 1,
+    "src/components/RepositoryIndexStatus.tsx": 1,
     "src/components/SearchModal.tsx": 1,
     "src/components/SuggestionsList.tsx": 1,
     "src/components/TrustedByMarquee.tsx": 1,
