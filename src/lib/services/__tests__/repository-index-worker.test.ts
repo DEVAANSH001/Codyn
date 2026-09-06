@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { selectIndexableSourceFiles } from "@/lib/services/repository-index-worker";
+import { selectIndexableSourceFiles, shouldRetryRepositoryIndexJob } from "@/lib/services/repository-index-worker";
 
 describe("repository-index-worker", () => {
     it("selects only safe JavaScript and TypeScript source files", () => {
@@ -12,5 +12,12 @@ describe("repository-index-worker", () => {
         ]);
 
         expect(files.map((file) => file.path)).toEqual(["src/app.ts", "src/page.tsx"]);
+    });
+});
+
+describe("shouldRetryRepositoryIndexJob", () => {
+    it("requeues only while attempts remain", () => {
+        expect(shouldRetryRepositoryIndexJob(1, 3)).toBe(true);
+        expect(shouldRetryRepositoryIndexJob(3, 3)).toBe(false);
     });
 });

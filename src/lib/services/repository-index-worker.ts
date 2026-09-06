@@ -13,6 +13,10 @@ export function selectIndexableSourceFiles<T extends { path: string; type: "blob
     return files.filter((file) => isReadableFile(file)).filter((file) => isIndexableSource(file.path)).slice(0, MAX_SOURCE_FILES_PER_JOB);
 }
 
+export function shouldRetryRepositoryIndexJob(attempts: number, maxAttempts: number): boolean {
+    return attempts < maxAttempts;
+}
+
 async function claimNextJob() {
     const candidate = await prisma.repositoryAnalysisJob.findFirst({
         where: { status: "QUEUED" },
@@ -55,7 +59,7 @@ async function fetchSourceFiles(owner: string, repo: string, snapshot: Awaited<R
 
 export type RepositoryIndexWorkerResult =
     | { processed: false; reason: "empty" | "contended" }
-    | { processed: true; jobId: string; status: "READY" | "FAILED" | "CANCELLED" };
+    | { processed: true; jobId: string; status: "QUEUED" | "READY" | "FAILED" | "CANCELLED" };
 
 /** Claims and processes at most one queued job. Invoke from a protected scheduler. */
 export async function processNextRepositoryIndexJob(): Promise<RepositoryIndexWorkerResult> {
@@ -97,11 +101,22 @@ export async function processNextRepositoryIndexJob(): Promise<RepositoryIndexWo
         return { processed: true, jobId: job.id, status: "READY" };
     } catch (error) {
         const message = error instanceof Error ? error.message.slice(0, 1000) : "Repository indexing failed.";
+        const retrying = shouldRetryRepositoryIndexJob(job.attempts, job.maxAttempts);
         await prisma.$transaction([
-            prisma.repositoryAnalysisJob.update({ where: { id: job.id }, data: { status: "FAILED", errorMessage: message, completedAt: new Date() } }),
-            prisma.repositoryIndex.update({ where: { id: job.repositoryIndexId }, data: { status: "FAILED", errorMessage: message, completedAt: new Date() } }),
+            prisma.repositoryAnalysisJob.update({
+                where: { id: job.id },
+                data: retrying
+                    ? { status: "QUEUED", errorMessage: message, claimedAt: null, completedAt: null }
+                    : { status: "FAILED", errorMessage: message, completedAt: new Date() },
+            }),
+            prisma.repositoryIndex.update({
+                where: { id: job.repositoryIndexId },
+                data: retrying
+                    ? { status: "QUEUED", errorMessage: message, completedAt: null }
+                    : { status: "FAILED", errorMessage: message, completedAt: new Date() },
+            }),
         ]);
         console.error("Repository indexing job failed:", error);
-        return { processed: true, jobId: job.id, status: "FAILED" };
+        return { processed: true, jobId: job.id, status: retrying ? "QUEUED" : "FAILED" };
     }
 }
