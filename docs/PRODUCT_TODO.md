@@ -30,8 +30,8 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 
 ## Milestone 2 — repository navigation and architecture intelligence
 
-- [~] Replace the current structural architecture tab with an interactive dependency graph backed by the stored model. The active workspace now has a revision-backed dependency explorer; visual graph rendering remains.
-- [~] Support graph drill-down: select a file/module and show upstream, downstream, and transitive dependencies. The API/retrieval layer now expands two hops; the panel currently displays direct imports/importers and needs transitive visualization.
+- [~] Replace the current structural architecture tab with an interactive dependency graph backed by the stored model. The active workspace now has a revision-backed module graph with selectable nodes plus a dependency explorer; graph grouping, richer layouts, and request/data flow remain.
+- [~] Support graph drill-down: select a file/module and show upstream, downstream, and transitive dependencies. The API/retrieval layer expands two hops, and selectable graph nodes show direct imports/importer counts; transitive subgraph visualization remains.
 - [ ] Add request/data-flow views when an entry point and relevant route/handler path can be inferred.
 - [~] Add callers, callees, importers, exports, related files, and related tests to the code explorer. Indexed symbols and importers are exposed; call edges, exports, and tests remain.
 - [ ] Support repository-wide symbol search beyond the current JS/TS AST search.

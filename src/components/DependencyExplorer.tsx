@@ -8,6 +8,7 @@ import { RepositoryHealthPanel } from "@/components/RepositoryHealthPanel";
 import { ChangeImpactPanel } from "@/components/ChangeImpactPanel";
 import { TestIntelligencePanel } from "@/components/TestIntelligencePanel";
 import { ArchitectureRulesPanel } from "@/components/ArchitectureRulesPanel";
+import { ArchitectureGraph } from "@/components/ArchitectureGraph";
 
 type ArtifactView = {
     revision: string;
@@ -37,7 +38,7 @@ export function DependencyExplorer({ owner, repo, revision, path }: { owner: str
         return () => controller.abort();
     }, [owner, repo, revision, path]);
 
-    if (!path) return <div className="space-y-4"><RepositoryIndexStatus owner={owner} repo={repo} /><TechStackPanel owner={owner} repo={repo} /><RepositoryHealthPanel owner={owner} repo={repo} /><ArchitectureRulesPanel owner={owner} repo={repo} revision={revision} /><p className="text-xs leading-5 text-white/40">Select a source file to inspect its indexed symbols and dependencies.</p></div>;
+    if (!path) return <div className="space-y-4"><RepositoryIndexStatus owner={owner} repo={repo} /><ArchitectureGraph owner={owner} repo={repo} revision={revision} /><TechStackPanel owner={owner} repo={repo} /><RepositoryHealthPanel owner={owner} repo={repo} /><ArchitectureRulesPanel owner={owner} repo={repo} revision={revision} /><p className="text-xs leading-5 text-white/40">Select a source file to inspect its indexed symbols and dependencies.</p></div>;
     if (loading) return <div className="flex items-center gap-2 text-xs text-white/50"><Loader2 size={14} className="animate-spin text-cyan-300" />Loading indexed facts…</div>;
     if (message) return <div className="space-y-3"><p className="text-xs leading-5 text-amber-200">{message}</p><p className="text-[11px] leading-5 text-white/35">Run the repository index worker, then refresh this panel.</p></div>;
     const file = data?.files[0];
