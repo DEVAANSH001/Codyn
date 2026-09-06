@@ -38,6 +38,7 @@ export interface RepoQueryParams {
     profileData?: GitHubProfile;
     modelPreference?: ModelPreference;
     disableToolCalls?: boolean;
+    revision?: string;
 }
 
 /**
@@ -196,7 +197,7 @@ export async function* executeRepoQueryStream(
         streamAnswer = answerWithContextStream,
     } = deps;
 
-    const { query, owner, repo, filePaths, fileShas, fileCachePolicy, history = [], profileData, modelPreference, disableToolCalls = false } = params;
+    const { query, owner, repo, filePaths, fileShas, fileCachePolicy, history = [], profileData, modelPreference, disableToolCalls = false, revision } = params;
 
     try {
         const pipelineStartMs = Date.now();
@@ -449,6 +450,7 @@ export async function* executeRepoQueryStream(
                 toolsUsed: toolsUsed.size > 0 ? Array.from(toolsUsed) : undefined,
                 processingSummary,
                 sourceScope,
+                repositoryRevision: revision,
             },
         };
     } catch (error: unknown) {
