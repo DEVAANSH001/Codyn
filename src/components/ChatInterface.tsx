@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, GitFork, Wrench, Folder } from "lucide-react";
+import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, GitFork, Wrench, Folder, Network } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { createChatRun } from "@/lib/chat-run-client";
@@ -40,16 +40,20 @@ import { SecurityScanModal } from "./chat/SecurityScanModal";
 import { buildSecurityScanMessage } from "./chat/security-scan-message";
 import { StreamStatus } from "./chat/StreamStatus";
 import { ToolQuotaModal } from "./chat/ToolQuotaModal";
-import { WhatsNewBadge } from "./WhatsNewBadge";
 
+const REPOSITORY_TOUR_PROMPT = "Give me a 10-minute codebase tour: explain what this project does, how it starts, the main entry points, the most important modules, and how they interact. Cite the files you used and clearly label any inference.";
+const MERMAID_DIAGRAM_PROMPT = "Generate a Mermaid architecture diagram";
+const DEPENDENCY_SECURITY_PROMPT = "Check dependency vulnerabilities";
 const REPO_SUGGESTIONS = [
+    REPOSITORY_TOUR_PROMPT,
+    ARCHITECTURE_PROMPT,
+    MERMAID_DIAGRAM_PROMPT,
     "Show me the user flow chart",
     "Evaluate code quality",
     "What's the tech stack?",
-    ARCHITECTURE_PROMPT,
+    QUICK_SCAN_PROMPT,
+    DEPENDENCY_SECURITY_PROMPT,
 ];
-
-const REPOSITORY_TOUR_PROMPT = "Give me a 10-minute codebase tour: explain what this project does, how it starts, the main entry points, the most important modules, and how they interact. Cite the files you used and clearly label any inference.";
 
 interface RepoFileNode {
     path: string;
@@ -451,7 +455,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
 
     const isQuickSecurityScanPrompt = (text: string) => {
         const normalized = text.toLowerCase();
-        return normalized.includes(QUICK_SCAN_PROMPT.toLowerCase()) || normalized.includes("scan for vulnerabilities");
+        return normalized.includes(QUICK_SCAN_PROMPT.toLowerCase()) || normalized.includes("scan for vulnerabilities") || normalized.includes(DEPENDENCY_SECURITY_PROMPT.toLowerCase());
     };
 
     const isDeepSecurityScanPrompt = (text: string) => {
@@ -539,6 +543,9 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
     const getRepoQueryForServer = (trimmedInput: string, combinedInput: string) => {
         if (trimmedInput.toLowerCase() === ARCHITECTURE_PROMPT.toLowerCase()) {
             return "Explain the architecture of this repository in detail. Provide a comprehensive overview of the core logic, framework setup, data flow, and key components based on the actual code, not just the README. Include a visual architecture diagram, preferring an SVG code block when possible (Mermaid is acceptable fallback).";
+        }
+        if (trimmedInput.toLowerCase() === MERMAID_DIAGRAM_PROMPT.toLowerCase()) {
+            return "Generate a concise architecture diagram for this repository using the actual code. Return one valid fenced `mermaid` code block that shows the main modules, data flow, and external services. Use readable node labels and only include relationships supported by the repository files. Add a brief explanation after the diagram.";
         }
         return combinedInput;
     };
@@ -1048,6 +1055,15 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 <span className="hidden lg:inline">Architecture</span>
                             </button>
                             <button
+                                onClick={() => handleSubmit(undefined, MERMAID_DIAGRAM_PROMPT)}
+                                disabled={loading || scanning}
+                                title="Generate a Mermaid architecture diagram"
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-cyan-200 hover:bg-cyan-500/10 rounded-lg transition-all disabled:opacity-50"
+                            >
+                                <Network className="w-3.5 h-3.5" />
+                                <span className="hidden lg:inline">Mermaid</span>
+                            </button>
+                            <button
                                 onClick={() => {
                                     setShowSecurityModal(true);
                                 }}
@@ -1057,10 +1073,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 <Shield className="w-3.5 h-3.5" />
                                 <span className="hidden lg:inline">Security</span>
                             </button>
-                        </div>
-
-                        <div className="hidden lg:block shrink-0" title="See what&apos;s new in Codyn">
-                            <WhatsNewBadge />
                         </div>
 
 

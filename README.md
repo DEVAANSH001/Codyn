@@ -49,7 +49,7 @@ npm run build
 
 The landing page and its repository examples open `/chat?q=...` directly. This mounts the original RepoMind `RepoLoader → RepoLayout → ChatInterface` workflow, adapted to Codyn's colors and shell. The former standalone `RepositoryWorkspace` prototype is not the active product UI.
 
-Public source browsing, Lite AI chat, architecture requests, and quick scans work without a database. When no database is configured, chat-run creation explicitly disables server persistence; answers and inline scan results still appear in the real application. Export the conversation to retain a copy. Authenticated history and shared reports require PostgreSQL; deep scans also use Upstash Redis for quotas. Private repository support must be validated with appropriate GitHub access: the inherited analysis backend uses the server `GITHUB_TOKEN`, so OAuth alone does not establish private analysis access.
+Public source browsing, Lite AI chat, architecture requests, and quick scans work without a database. When no database is configured, chat-run creation explicitly disables server persistence; answers and inline scan results still appear in the real application. Export the conversation to retain a copy. Authenticated history and shared reports require PostgreSQL; deep scans also use Upstash Redis for quotas. Private repository chat requires a GitHub sign-in that grants the `repo` scope. Codyn reads private source only with that signed-in user's OAuth token, keeps file and answer caches user-scoped, and does not send private repositories through the shared background index.
 
 See [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) for setup and `npm run setup:local -- --check` for a credentials-presence check that does not print secrets.
 

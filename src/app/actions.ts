@@ -400,6 +400,7 @@ async function buildCrossRepoContext(
 export async function fetchGitHubData(input: string) {
     const parts = input.split("/");
     const session = await auth();
+    const githubAccessToken = session?.accessToken;
 
     if (parts.length === 1) {
         try {
@@ -415,14 +416,17 @@ export async function fetchGitHubData(input: string) {
     if (parts.length === 2) {
         const [owner, repo] = parts;
         try {
-            const repoData = await getRepo(owner, repo);
+            const repoData = await getRepo(owner, repo, githubAccessToken);
             const { tree, hiddenFiles, treeSha } = await getRepoFileTree(
                 owner,
                 repo,
-                repoData.default_branch
+                repoData.default_branch,
+                githubAccessToken,
             );
-            const indexStatus = await getRepoIndexStatus(owner, repo, treeSha);
-            if (isRepositoryIndexingConfigured()) {
+            // Private source stays in the signed-in request path. Do not enqueue it
+            // into the shared index/cache used for public repositories.
+            const indexStatus = repoData.private ? undefined : await getRepoIndexStatus(owner, repo, treeSha);
+            if (!repoData.private && isRepositoryIndexingConfigured()) {
                 void queueRepositoryAnalysis({
                     owner,
                     repo,
@@ -605,9 +609,11 @@ export async function* generateAnswerStream(
     disableToolCalls = false,
     revision?: string,
 ): AsyncGenerator<StreamUpdate> {
+    const session = await auth();
+    const githubAccessToken = session?.accessToken;
     let visibility: "public" | "private" = "public";
     try {
-        const repo = await getRepo(repoDetails.owner, repoDetails.repo) as { private?: boolean };
+        const repo = await getRepo(repoDetails.owner, repoDetails.repo, githubAccessToken) as { private?: boolean };
         visibility = repo.private ? "private" : "public";
     } catch {
         visibility = "public";
@@ -631,6 +637,7 @@ export async function* generateAnswerStream(
         modelPreference,
         disableToolCalls,
         revision,
+        githubAccessToken,
     });
 }
 

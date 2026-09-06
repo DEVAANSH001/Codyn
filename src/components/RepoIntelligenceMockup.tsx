@@ -5,8 +5,9 @@ import {
   Network,
   Code2,
   ShieldAlert,
-  Layers,
-  UserCheck,
+  Activity,
+  FlaskConical,
+  GitPullRequest,
   Search,
   Reply,
   Share2,
@@ -21,7 +22,7 @@ import {
 
 interface MockupItem {
   id: string;
-  tab: 'chat' | 'arch' | 'review' | 'security' | 'tech' | 'intel';
+  tab: 'chat' | 'arch' | 'review' | 'security' | 'health' | 'tests' | 'impact';
   title: string;
   subtitle: string;
   time: string;
@@ -68,28 +69,37 @@ const itemsList: MockupItem[] = [
   },
   {
     id: '5',
-    tab: 'tech',
-    title: 'Tech Stack & Dependency Tree',
-    subtitle: 'TypeScript 5.8 · Rollup · Jest · Babel · Hermes Engine',
+    tab: 'health',
+    title: 'Repository Health Overview',
+    subtitle: 'Index coverage, architecture rules, and maintainability signals',
     time: '2h ago',
-    tag: 'Tech Stack',
+    tag: 'Repository Health',
     badgeColor: '#10b981'
   },
   {
     id: '6',
-    tab: 'intel',
-    title: 'Developer Intel & Ownership',
-    subtitle: 'Core maintainers: gaearon, acdlite, sebmarkbage, facebook-bot',
+    tab: 'tests',
+    title: 'Test Intelligence',
+    subtitle: 'Related tests and coverage signals identified for an affected file',
     time: 'Yesterday',
-    tag: 'Dev Intel',
+    tag: 'Test Intelligence',
     badgeColor: '#8b5cf6'
+  },
+  {
+    id: '7',
+    tab: 'impact',
+    title: 'Change Impact Analysis',
+    subtitle: 'Traced callers, imports, and downstream modules before a change',
+    time: 'Yesterday',
+    tag: 'Change Impact',
+    badgeColor: '#fb7185'
   }
 ];
 
 export const RepoIntelligenceMockup: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string>('1');
   const [activeNav, setActiveNav] = useState<string>('Ask Your Repo');
-  const [activeTab, setActiveTab] = useState<'chat' | 'arch' | 'review' | 'security' | 'tech' | 'intel'>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'arch' | 'review' | 'security' | 'health' | 'tests' | 'impact'>('chat');
 
   const handleItemSelect = (item: MockupItem) => {
     setSelectedId(item.id);
@@ -128,7 +138,7 @@ export const RepoIntelligenceMockup: React.FC = () => {
           <div className="col-span-12 md:col-span-3 bg-black/30 p-4 flex flex-col gap-4 overflow-y-auto">
             {/* Action Button */}
             <button className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white text-black text-xs font-semibold px-3 py-2.5 transition hover:bg-white/90 cursor-pointer shadow-sm">
-              <span>New CAG Analysis</span>
+              <span>New Repository Analysis</span>
               <ArrowRight className="w-3.5 h-3.5 text-black" />
             </button>
 
@@ -139,8 +149,9 @@ export const RepoIntelligenceMockup: React.FC = () => {
                 { name: 'Architecture Map', icon: Network, tabKey: 'arch' },
                 { name: 'Deep Code Review', icon: Code2, tabKey: 'review' },
                 { name: 'Security Audit', icon: ShieldAlert, tabKey: 'security' },
-                { name: 'Tech Stack Analyzer', icon: Layers, tabKey: 'tech' },
-                { name: 'Developer Intel', icon: UserCheck, tabKey: 'intel' },
+                { name: 'Repository Health', icon: Activity, tabKey: 'health' },
+                { name: 'Test Intelligence', icon: FlaskConical, tabKey: 'tests' },
+                { name: 'Change Impact', icon: GitPullRequest, tabKey: 'impact' },
               ].map((item) => {
                 const Icon = item.icon;
                 const isActive = activeNav === item.name;
@@ -176,10 +187,11 @@ export const RepoIntelligenceMockup: React.FC = () => {
                 Repo Context
               </div>
               {[
-                { name: 'Full-File Loading', color: '#00d2ff' },
-                { name: 'Control-Flow CAG', color: '#A4F4FD' },
-                { name: 'Dependency Graph', color: '#f59e0b' },
-                { name: 'Security Signals', color: '#10b981' },
+                { name: 'Source-aware answers', color: '#00d2ff' },
+                { name: 'Architecture & control flow', color: '#A4F4FD' },
+                { name: 'Dependency & change impact', color: '#f59e0b' },
+                { name: 'Test intelligence', color: '#8b5cf6' },
+                { name: 'Verified security signals', color: '#10b981' },
               ].map((label) => (
                 <div
                   key={label.name}
@@ -247,7 +259,7 @@ export const RepoIntelligenceMockup: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs text-white/60">
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#00d2ff]/10 text-[#00d2ff] border border-[#00d2ff]/20">
-                  Agentic CAG Active
+                  Repository intelligence active
                 </span>
                 <span className="text-white/40 text-[11px]">8 full files in context window</span>
               </div>
@@ -367,35 +379,39 @@ export const RepoIntelligenceMockup: React.FC = () => {
               </div>
             )}
 
-            {(activeTab === 'review' || activeTab === 'tech' || activeTab === 'intel') && (
+            {(activeTab === 'review' || activeTab === 'health' || activeTab === 'tests' || activeTab === 'impact') && (
               <div className="mt-4 flex-1 space-y-3">
                 <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#00d2ff]">
                     <CheckCircle2 className="w-4 h-4 text-[#00d2ff]" />
-                    <span>Context-Aware Repository Audit Completed</span>
+                    <span>{activeTab === 'health' ? 'Repository Health Check Completed' : activeTab === 'tests' ? 'Related Tests Identified' : activeTab === 'impact' ? 'Change Impact Mapped' : 'Context-Aware Code Review Completed'}</span>
                   </div>
                   <p className="text-xs text-white/80 leading-relaxed">
-                    Codyn evaluated structural relationships, dependencies, and code hygiene across 1,420 files in facebook/react.
+                    {activeTab === 'tests'
+                      ? 'Codyn connected the selected source file to related tests and surfaced coverage signals before you make a change.'
+                      : activeTab === 'impact'
+                        ? 'Codyn traced imports, callers, and downstream modules so you can understand the blast radius before editing.'
+                        : 'Codyn evaluated structural relationships, dependencies, and code health across 1,420 files in facebook/react.'}
                   </p>
 
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-2 text-xs text-white/70">
                   <div className="flex justify-between text-white font-medium">
-                    <span>Language & Stack</span>
-                    <span className="text-[#00d2ff]">TypeScript 5.8 / JavaScript</span>
+                    <span>{activeTab === 'tests' ? 'Related test suites' : activeTab === 'impact' ? 'Affected modules' : 'Repository index'}</span>
+                    <span className="text-[#00d2ff]">{activeTab === 'tests' ? '12 discovered' : activeTab === 'impact' ? '8 downstream paths' : 'Ready and current'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Core Engine</span>
-                    <span>React Fiber Concurrent Renderer</span>
+                    <span>{activeTab === 'tests' ? 'Coverage signal' : activeTab === 'impact' ? 'Dependency direction' : 'Architecture rules'}</span>
+                    <span>{activeTab === 'tests' ? 'Review recommended' : activeTab === 'impact' ? 'Callers → imports' : 'Validated'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Build System</span>
-                    <span>Rollup + Closure Compiler</span>
+                    <span>{activeTab === 'tests' ? 'Suggested next step' : activeTab === 'impact' ? 'Suggested next step' : 'Security scan'}</span>
+                    <span>{activeTab === 'tests' ? 'Run impacted tests' : activeTab === 'impact' ? 'Review high-impact files' : 'Verified findings'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Repository Health Score</span>
-                    <span className="text-[#10b981] font-semibold">98/100</span>
+                    <span>{activeTab === 'impact' ? 'Impact level' : 'Repository Health Score'}</span>
+                    <span className="text-[#10b981] font-semibold">{activeTab === 'impact' ? 'Medium' : '98/100'}</span>
                   </div>
                 </div>
               </div>

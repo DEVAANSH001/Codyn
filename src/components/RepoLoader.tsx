@@ -40,6 +40,7 @@ function readCachedRepoLoaderData(query: string): RepoLoaderData | null {
         if (!raw) return null;
         const parsed = JSON.parse(raw) as { timestamp?: number; data?: RepoLoaderData };
         if (!parsed?.timestamp || !parsed?.data) return null;
+        if (parsed.data.repo.private) return null;
         if (Date.now() - parsed.timestamp > REPO_LOADER_CACHE_TTL_MS) {
             window.sessionStorage.removeItem(getRepoLoaderCacheKey(query));
             return null;
@@ -52,6 +53,7 @@ function readCachedRepoLoaderData(query: string): RepoLoaderData | null {
 
 function writeCachedRepoLoaderData(query: string, data: RepoLoaderData): void {
     if (typeof window === "undefined") return;
+    if (data.repo.private) return;
     try {
         window.sessionStorage.setItem(
             getRepoLoaderCacheKey(query),

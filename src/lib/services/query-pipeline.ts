@@ -39,6 +39,8 @@ export interface RepoQueryParams {
     modelPreference?: ModelPreference;
     disableToolCalls?: boolean;
     revision?: string;
+    /** User-scoped GitHub OAuth token. Never sent to the client or persisted. */
+    githubAccessToken?: string;
 }
 
 /**
@@ -192,7 +194,7 @@ export async function* executeRepoQueryStream(
 ): AsyncGenerator<StreamUpdate> {
     const {
         analyzeFiles = analyzeFileSelection,
-        fetchFiles = (owner, repo, files, fileCachePolicy) => getFileContentBatch(owner, repo, files, fileCachePolicy),
+        fetchFiles = (owner, repo, files, fileCachePolicy) => getFileContentBatch(owner, repo, files, fileCachePolicy, params.githubAccessToken),
         fetchFilesWithStats,
         streamAnswer = answerWithContextStream,
     } = deps;
@@ -296,7 +298,7 @@ export async function* executeRepoQueryStream(
             fileResults = fetched.files;
             fetchStats = fetched.stats;
         } else if (!deps.fetchFiles) {
-            const fetched = await getFileContentBatchWithStats(owner, repo, fileTargets, effectiveFileCachePolicy);
+            const fetched = await getFileContentBatchWithStats(owner, repo, fileTargets, effectiveFileCachePolicy, params.githubAccessToken);
             fileResults = fetched.files;
             fetchStats = fetched.stats;
         } else {

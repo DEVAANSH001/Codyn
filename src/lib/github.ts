@@ -131,6 +131,20 @@ export const octokit = new Octokit({
   },
 });
 
+function getOctokit(accessToken?: string): Octokit {
+  if (!accessToken) return octokit;
+  return new Octokit({
+    auth: accessToken,
+    request: {
+      fetch: (url: string, options?: RequestInit) => fetch(url, {
+        ...options,
+        cache: "no-store",
+        next: { revalidate: 0 },
+      }),
+    },
+  });
+}
+
 // In-memory caches for the current process lifetime.
 // NOTE: In Vercel serverless functions these Maps are effectively useless as a
 // persistent cache — each cold start initializes fresh Maps. They provide a
@@ -398,30 +412,33 @@ export const getProfile = unstable_cache(
   }
 );
 
-export async function getRepo(owner: string, repo: string): Promise<GitHubRepo> {
+export async function getRepo(owner: string, repo: string, accessToken?: string): Promise<GitHubRepo> {
   const cacheKey = `${owner}/${repo}`;
+  const useSharedCache = !accessToken;
 
   // Check memory cache
-  if (repoCache.has(cacheKey)) {
+  if (useSharedCache && repoCache.has(cacheKey)) {
     return repoCache.get(cacheKey)!;
   }
 
   // Check KV cache
-  const cached = await getCachedRepoMetadata(owner, repo);
+  const cached = useSharedCache ? await getCachedRepoMetadata(owner, repo) : null;
   if (cached && isGitHubRepo(cached)) {
     repoCache.set(cacheKey, cached);
     return cached;
   }
 
   // Fetch from GitHub
-  const { data } = await octokit.rest.repos.get({
+  const { data } = await getOctokit(accessToken).rest.repos.get({
     owner,
     repo,
   });
 
   // Cache in both memory and KV
-  repoCache.set(cacheKey, data);
-  await cacheRepoMetadata(owner, repo, data);
+  if (useSharedCache) {
+    repoCache.set(cacheKey, data);
+    await cacheRepoMetadata(owner, repo, data);
+  }
 
   return data;
 }
@@ -444,12 +461,14 @@ export async function getDefaultBranchHeadSha(owner: string, repo: string): Prom
   return branchData.commit.sha;
 }
 
-export async function getRepoFileTree(owner: string, repo: string, branch: string = "main"): Promise<{ tree: FileNode[], hiddenFiles: { path: string; reason: string }[], treeSha: string }> {
+export async function getRepoFileTree(owner: string, repo: string, branch: string = "main", accessToken?: string): Promise<{ tree: FileNode[], hiddenFiles: { path: string; reason: string }[], treeSha: string }> {
+  const client = getOctokit(accessToken);
+  const useSharedCache = !accessToken;
   // Get the tree recursively
   // First, get the branch SHA
   let sha = branch;
   try {
-    const { data: branchData } = await octokit.rest.repos.getBranch({
+    const { data: branchData } = await client.rest.repos.getBranch({
       owner,
       repo,
       branch,
@@ -461,12 +480,12 @@ export async function getRepoFileTree(owner: string, repo: string, branch: strin
   }
 
   // Check KV cache for tree
-  const cachedTree = await getCachedFileTree(owner, repo, sha);
+  const cachedTree = useSharedCache ? await getCachedFileTree(owner, repo, sha) : null;
   if (cachedTree) {
     return { tree: cachedTree as FileNode[], hiddenFiles: [], treeSha: sha }; // Hidden files not cached separately but that's ok
   }
 
-  const { data } = await octokit.rest.git.getTree({
+  const { data } = await client.rest.git.getTree({
     owner,
     repo,
     tree_sha: sha,
@@ -517,8 +536,10 @@ export async function getRepoFileTree(owner: string, repo: string, branch: strin
   }));
 
   // Cache the minimal tree
-  await cacheFileTree(owner, repo, sha, minimalTree);
-  void ensureRepoIndexForTree(owner, repo, sha, minimalTree);
+  if (useSharedCache) {
+    await cacheFileTree(owner, repo, sha, minimalTree);
+    void ensureRepoIndexForTree(owner, repo, sha, minimalTree);
+  }
 
   return { tree: minimalTree, hiddenFiles, treeSha: sha };
 }
@@ -635,8 +656,10 @@ export async function getFileContent(
   repo: string,
   path: string,
   sha?: string,
-  fileCachePolicy?: FileCachePolicy
+  fileCachePolicy?: FileCachePolicy,
+  accessToken?: string,
 ) {
+  const client = getOctokit(accessToken);
   try {
     // If SHA is provided, check cache directly
     if (sha) {
@@ -660,7 +683,7 @@ export async function getFileContent(
 
     if (sha) {
       try {
-        const { data } = await octokit.rest.git.getBlob({
+        const { data } = await client.rest.git.getBlob({
           owner,
           repo,
           file_sha: sha,
@@ -678,7 +701,7 @@ export async function getFileContent(
     }
 
     // Fallback or original flow: get the file metadata to obtain SHA
-    const { data } = await octokit.rest.repos.getContent({
+    const { data } = await client.rest.repos.getContent({
       owner,
       repo,
       path,
@@ -719,9 +742,10 @@ export async function getFileContentBatch(
   owner: string,
   repo: string,
   files: Array<{ path: string; sha?: string }>,
-  fileCachePolicy?: FileCachePolicy
+  fileCachePolicy?: FileCachePolicy,
+  accessToken?: string,
 ): Promise<Array<{ path: string; content: string | null }>> {
-  const result = await getFileContentBatchWithStats(owner, repo, files, fileCachePolicy);
+  const result = await getFileContentBatchWithStats(owner, repo, files, fileCachePolicy, accessToken);
   return result.files;
 }
 
@@ -736,7 +760,8 @@ export async function getFileContentBatchWithStats(
   owner: string,
   repo: string,
   files: Array<{ path: string; sha?: string }>,
-  fileCachePolicy?: FileCachePolicy
+  fileCachePolicy?: FileCachePolicy,
+  accessToken?: string,
 ): Promise<{ files: Array<{ path: string; content: string | null }>; stats: FileBatchFetchStats }> {
   // Step 1: Separate files that already have SHAs (eligible for batch cache hit)
   const filesWithSha = files.filter(f => !!f.sha) as Array<{ path: string; sha: string }>;
@@ -762,7 +787,7 @@ export async function getFileContentBatchWithStats(
   const remainingFiles = [...filesWithoutSha, ...missingFromCache];
   const remainingPromises = remainingFiles.map(async ({ path, sha }) => {
     try {
-      const content = await getFileContent(owner, repo, path, sha, fileCachePolicy);
+      const content = await getFileContent(owner, repo, path, sha, fileCachePolicy, accessToken);
       return { path, content };
     } catch (error: unknown) {
       if (!isErrorWithMessage(error) || error.message !== "Not a file") {
