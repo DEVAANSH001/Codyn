@@ -126,7 +126,7 @@ export function ChatInput({
             }
         }
 
-        if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
+        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
             if (!value.trim() && !allowEmptySubmit && taggedFiles.length === 0) return;
             onSubmit(e);
