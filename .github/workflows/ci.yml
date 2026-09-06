@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  DATABASE_URL: postgresql://ci:ci@localhost:5432/codyn
+  DIRECT_URL: postgresql://ci:ci@localhost:5432/codyn
+  AUTH_SECRET: ci-only-placeholder-secret-not-for-production
+  AUTH_TRUST_HOST: "true"
+  GITHUB_TOKEN: ci-placeholder-token
+  GEMINI_API_KEY: ci-placeholder-key
+
+jobs:
+  validate:
+    name: Validate, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Check lint baseline
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run unit and integration tests
+        run: npm test
+
+      - name: Build production application
+        run: npm run build
