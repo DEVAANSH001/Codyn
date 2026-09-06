@@ -298,7 +298,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                     skipNextAutoScrollRef.current = true;
                     return saved;
                 });
-                setShowSuggestions(false);
             }
             setInitialized(true);
 
@@ -327,7 +326,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 }
                                 return [...prev, { id: resumeMsgId, role: "model", content: text }];
                             });
-                            setShowSuggestions(false);
                         }
 
                         if (run.status === "RUNNING") {
@@ -783,8 +781,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
             return;
         }
 
-        setShowSuggestions(false);
-
         const combinedInput = buildCombinedInput(trimmedInput, referenceText);
 
         const userMsg: RepoChatMessage = {
@@ -925,7 +921,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                 content: `Hello! I've analyzed **${repoContext.owner}/${repoContext.repo}**. Ask me anything about the code structure, dependencies, or specific features.`,
             },
         ]);
-        setShowSuggestions(true);
         toast.success("Chat history cleared");
     };
 
