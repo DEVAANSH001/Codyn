@@ -65,7 +65,7 @@ vi.mock("@/lib/cache", () => ({
     getCachedFilesBatch: vi.fn(),
 }));
 
-import { getRepoDetailsGraphQL, getRepoFileTree, getRepoFullContext } from "@/lib/github";
+import { getRepo, getRepoDetailsGraphQL, getRepoFileTree, getRepoFullContext } from "@/lib/github";
 
 describe("getRepoFileTree", () => {
     beforeEach(() => {
@@ -151,6 +151,46 @@ describe("getRepoFileTree", () => {
         expect(cacheFileTreeMock).toHaveBeenCalledWith("acme", "fallback-repo", "develop", [
             { path: "src/main.ts", type: "blob", sha: "m1", size: 12 },
         ]);
+    });
+
+    it("retries a public tree without an expired OAuth token", async () => {
+        getBranchMock
+            .mockRejectedValueOnce({ status: 401, message: "Bad credentials" })
+            .mockResolvedValueOnce({ data: { commit: { sha: "publicsha" } } });
+        getCachedFileTreeMock.mockResolvedValue(null);
+        getTreeMock.mockResolvedValue({
+            data: { tree: [{ path: "src/public.ts", type: "blob", sha: "p1", size: 12 }] },
+        });
+
+        const result = await getRepoFileTree("acme", "public-repo", "main", "expired-token");
+
+        expect(result.treeSha).toBe("publicsha");
+        expect(getBranchMock).toHaveBeenCalledTimes(2);
+        expect(getTreeMock).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("getRepo", () => {
+    beforeEach(() => {
+        getRepoMock.mockReset();
+    });
+
+    it("retries a public repository without an expired OAuth token", async () => {
+        getRepoMock
+            .mockRejectedValueOnce({ status: 401, message: "Bad credentials" })
+            .mockResolvedValueOnce({
+                data: {
+                    name: "public-repo",
+                    full_name: "acme/public-repo",
+                    default_branch: "main",
+                    owner: { login: "acme" },
+                },
+            });
+
+        const repo = await getRepo("acme", "public-repo", "expired-token");
+
+        expect(repo.full_name).toBe("acme/public-repo");
+        expect(getRepoMock).toHaveBeenCalledTimes(2);
     });
 });
 

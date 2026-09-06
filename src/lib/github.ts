@@ -131,6 +131,19 @@ export const octokit = new Octokit({
   },
 });
 
+// Public repositories must remain usable if an optional server token or a
+// signed-in user's OAuth token has expired. Keep this client unauthenticated
+// so it can be used only as a fallback after GitHub returns a 401.
+const publicOctokit = new Octokit({
+  request: {
+    fetch: (url: string, options?: RequestInit) => fetch(url, {
+      ...options,
+      cache: "no-store",
+      next: { revalidate: 0 },
+    }),
+  },
+});
+
 function getOctokit(accessToken?: string): Octokit {
   if (!accessToken) return octokit;
   return new Octokit({
@@ -143,6 +156,10 @@ function getOctokit(accessToken?: string): Octokit {
       }),
     },
   });
+}
+
+function shouldRetryWithoutAuthentication(error: unknown, accessToken?: string) {
+  return getErrorStatus(error) === 401 && Boolean(accessToken || githubToken);
 }
 
 // In-memory caches for the current process lifetime.
@@ -428,11 +445,15 @@ export async function getRepo(owner: string, repo: string, accessToken?: string)
     return cached;
   }
 
-  // Fetch from GitHub
-  const { data } = await getOctokit(accessToken).rest.repos.get({
-    owner,
-    repo,
-  });
+  // Fetch from GitHub. A stale optional credential should not prevent public
+  // repositories from loading, so retry anonymously only after a 401.
+  let data: GitHubRepo;
+  try {
+    ({ data } = await getOctokit(accessToken).rest.repos.get({ owner, repo }));
+  } catch (error) {
+    if (!shouldRetryWithoutAuthentication(error, accessToken)) throw error;
+    ({ data } = await publicOctokit.rest.repos.get({ owner, repo }));
+  }
 
   // Cache in both memory and KV
   if (useSharedCache) {
@@ -462,35 +483,40 @@ export async function getDefaultBranchHeadSha(owner: string, repo: string): Prom
 }
 
 export async function getRepoFileTree(owner: string, repo: string, branch: string = "main", accessToken?: string): Promise<{ tree: FileNode[], hiddenFiles: { path: string; reason: string }[], treeSha: string }> {
-  const client = getOctokit(accessToken);
   const useSharedCache = !accessToken;
-  // Get the tree recursively
-  // First, get the branch SHA
-  let sha = branch;
+  const loadTree = async (client: Octokit) => {
+    let sha = branch;
+    try {
+      const { data: branchData } = await client.rest.repos.getBranch({ owner, repo, branch });
+      sha = branchData.commit.sha;
+    } catch (error) {
+      if (getErrorStatus(error) === 401) throw error;
+      // If branch fetch fails, try the provided branch/SHA with the tree API.
+      console.warn("Could not fetch branch details, trying with provided name/sha");
+    }
+
+    const cachedTree = useSharedCache ? await getCachedFileTree(owner, repo, sha) : null;
+    if (cachedTree) return { sha, cachedTree, data: null };
+
+    const { data } = await client.rest.git.getTree({ owner, repo, tree_sha: sha, recursive: "true" });
+    return { sha, cachedTree: null, data };
+  };
+
+  let treeResult;
   try {
-    const { data: branchData } = await client.rest.repos.getBranch({
-      owner,
-      repo,
-      branch,
-    });
-    sha = branchData.commit.sha;
-  } catch {
-    // If branch fetch fails, try to use the default branch from repo details or just let it fail later
-    console.warn("Could not fetch branch details, trying with provided name/sha");
+    treeResult = await loadTree(getOctokit(accessToken));
+  } catch (error) {
+    if (!shouldRetryWithoutAuthentication(error, accessToken)) throw error;
+    treeResult = await loadTree(publicOctokit);
   }
 
-  // Check KV cache for tree
-  const cachedTree = useSharedCache ? await getCachedFileTree(owner, repo, sha) : null;
-  if (cachedTree) {
-    return { tree: cachedTree as FileNode[], hiddenFiles: [], treeSha: sha }; // Hidden files not cached separately but that's ok
+  if (treeResult.cachedTree) {
+    return { tree: treeResult.cachedTree as FileNode[], hiddenFiles: [], treeSha: treeResult.sha };
   }
 
-  const { data } = await client.rest.git.getTree({
-    owner,
-    repo,
-    tree_sha: sha,
-    recursive: "true",
-  });
+  const data = treeResult.data;
+  if (!data) throw new Error("GitHub did not return a repository tree");
+  const sha = treeResult.sha;
 
   const hiddenFiles: { path: string; reason: string }[] = [];
 
