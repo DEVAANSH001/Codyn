@@ -719,7 +719,7 @@ function annotateFinding(
     };
 }
 
-async function trackVerificationStats(stats: VerifierStats): Promise<void> {
+function trackVerificationStats(stats: VerifierStats): void {
     try {
         const pipeline = kv.pipeline();
         pipeline.incr("stats:security_verification:detected");
@@ -727,7 +727,7 @@ async function trackVerificationStats(stats: VerifierStats): Promise<void> {
         pipeline.incrby("stats:security_verification:verified_true_total", stats.verifiedTrue);
         pipeline.incrby("stats:security_verification:rejected_false_total", stats.rejectedFalse);
         pipeline.incrby("stats:security_verification:inconclusive_hidden_total", stats.inconclusiveHidden);
-        await pipeline.exec();
+        void pipeline.exec().catch(() => undefined);
     } catch {
         // Telemetry must never interrupt scan flow.
     }

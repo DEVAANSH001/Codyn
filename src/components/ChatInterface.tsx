@@ -499,6 +499,10 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
             // Update latest scan ID after successful scan
             if (scanId) {
                 setLatestScanId(scanId);
+                if (typeof window !== "undefined") {
+                    window.localStorage.setItem("codyn:scan-history-updated", Date.now().toString());
+                    window.dispatchEvent(new Event("codyn:scan-history-updated"));
+                }
             }
         } catch (error) {
             console.error("Scan failed:", error);

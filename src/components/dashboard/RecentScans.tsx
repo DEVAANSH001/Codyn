@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Scan {
@@ -24,30 +24,54 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
     const [scans, setScans] = useState<Scan[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchScans = useCallback(async () => {
         if (!userId) {
             setLoading(false);
             return;
         }
 
-        const fetchScans = async () => {
-            try {
-                const query = typeof limit === "number" && limit > 0 ? `?limit=${limit}` : "";
-                const res = await fetch(`/api/dashboard/scans${query}`);
-                const data = await res.json();
-                if (data.scans) {
-                    setScans(data.scans);
-                }
-            } catch (err) {
-                console.error("Failed to fetch scans:", err);
-                toast.error("Failed to load recent scans");
-            } finally {
-                setLoading(false);
+        try {
+            const query = typeof limit === "number" && limit > 0 ? `?limit=${limit}` : "";
+            const res = await fetch(`/api/dashboard/scans${query}`, { cache: "no-store" });
+            const data = await res.json() as { scans?: Scan[]; error?: string };
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to load recent scans");
+            }
+            setScans(Array.isArray(data.scans) ? data.scans : []);
+        } catch (err) {
+            console.error("Failed to fetch scans:", err);
+            toast.error("Failed to load recent scans");
+        } finally {
+            setLoading(false);
+        }
+    }, [limit, userId]);
+
+    useEffect(() => {
+        void fetchScans();
+
+        const refreshWhenVisible = () => {
+            if (document.visibilityState === "visible") {
+                void fetchScans();
+            }
+        };
+        const refreshFromAnotherTab = (event: StorageEvent) => {
+            if (event.key === "codyn:scan-history-updated") {
+                void fetchScans();
             }
         };
 
-        fetchScans();
-    }, [userId, limit]);
+        window.addEventListener("focus", refreshWhenVisible);
+        document.addEventListener("visibilitychange", refreshWhenVisible);
+        window.addEventListener("codyn:scan-history-updated", refreshWhenVisible);
+        window.addEventListener("storage", refreshFromAnotherTab);
+
+        return () => {
+            window.removeEventListener("focus", refreshWhenVisible);
+            document.removeEventListener("visibilitychange", refreshWhenVisible);
+            window.removeEventListener("codyn:scan-history-updated", refreshWhenVisible);
+            window.removeEventListener("storage", refreshFromAnotherTab);
+        };
+    }, [fetchScans]);
 
     if (loading) {
         return (
