@@ -152,6 +152,8 @@ export async function getRepositoryArtifactView(input: {
     };
 }
 
+export type RepositoryArtifactView = NonNullable<Awaited<ReturnType<typeof getRepositoryArtifactView>>>;
+
 /** Returns one-hop graph context for query retrieval, preserving the requested file-tree boundary. */
 export async function getRepositoryRelatedPaths(input: {
     owner: string;
