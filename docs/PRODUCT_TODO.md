@@ -19,7 +19,7 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 
 - [~] Define a versioned repository knowledge-model schema: repository revision, files, symbols, imports/exports, references, tests, and findings. Repository revisions, jobs, indexed files, symbols, and dependency edges are now persisted; references, tests, and findings follow in later slices.
 - [~] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability. A protected scheduler endpoint now claims and processes one persistent job at a time with terminal failure/cancellation states; progress events, retry policy, and resume support remain.
-- [ ] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again.
+- [~] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again. A completed immutable revision is now reused rather than re-queued; file-level delta parsing between revisions remains.
 - [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser and worker now persist symbols and import facts; explicit export records remain to be stored separately.
 - [x] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports resolve deterministically, are persisted per revision, enrich AI selection, and appear in the dependency explorer.
 - [ ] Build initial symbol-reference and call-graph edges where they can be resolved with confidence.

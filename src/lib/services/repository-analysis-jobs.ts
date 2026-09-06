@@ -41,6 +41,15 @@ export type RepositoryIndexStatusView = {
     latestJob: RepositoryAnalysisJobView | null;
 };
 
+export type RepositoryQueueAction = "QUEUE" | "REUSE_ACTIVE" | "REUSE_READY";
+
+/** Keeps an immutable revision index reusable once its facts are complete. */
+export function selectRepositoryQueueAction(indexStatus: string, hasActiveJob: boolean): RepositoryQueueAction {
+    if (hasActiveJob) return "REUSE_ACTIVE";
+    if (indexStatus === "READY") return "REUSE_READY";
+    return "QUEUE";
+}
+
 export function isRepositoryIndexingConfigured(): boolean {
     const databaseUrl = process.env.DATABASE_URL?.trim();
     return Boolean(databaseUrl && !databaseUrl.startsWith("postgresql://placeholder"));
@@ -120,7 +129,7 @@ function asIndexStatusView(record: {
  */
 export async function queueRepositoryAnalysis(
     request: RepositoryAnalysisQueueRequest,
-): Promise<{ index: RepositoryIndexStatusView; queued: boolean }> {
+): Promise<{ index: RepositoryIndexStatusView; queued: boolean; reused: boolean }> {
     const owner = request.owner.toLowerCase();
     const repo = request.repo.toLowerCase();
 
@@ -145,20 +154,29 @@ export async function queueRepositoryAnalysis(
             orderBy: { createdAt: "desc" },
         });
 
-        const job = activeJob ?? await tx.repositoryAnalysisJob.create({
-            data: {
-                repositoryIndexId: index.id,
-                requestedByUserId: request.requestedByUserId ?? null,
-                payload: { owner, repo, revision: request.revision, treeSha: request.treeSha },
-            },
-        });
+        const action = selectRepositoryQueueAction(index.status, Boolean(activeJob));
+        if (action === "QUEUE") {
+            await tx.repositoryAnalysisJob.create({
+                data: {
+                    repositoryIndexId: index.id,
+                    requestedByUserId: request.requestedByUserId ?? null,
+                    payload: { owner, repo, revision: request.revision, treeSha: request.treeSha },
+                },
+            });
+            if (index.status !== "QUEUED") {
+                await tx.repositoryIndex.update({
+                    where: { id: index.id },
+                    data: { status: "QUEUED", errorMessage: null, startedAt: null, completedAt: null, processedFiles: 0, skippedFiles: 0, failedFiles: 0 },
+                });
+            }
+        }
 
         const result = await tx.repositoryIndex.findUniqueOrThrow({
             where: { id: index.id },
             include: { jobs: { orderBy: { createdAt: "desc" }, take: 1 } },
         });
 
-        return { index: asIndexStatusView(result), queued: job.id !== activeJob?.id };
+        return { index: asIndexStatusView(result), queued: action === "QUEUE", reused: action === "REUSE_READY" };
     });
 }
 

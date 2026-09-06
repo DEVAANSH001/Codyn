@@ -16,7 +16,7 @@
     "lint:baseline:update": "node scripts/eslint-baseline.mjs update",
     "lint:baseline:check": "node scripts/eslint-baseline.mjs check",
     "test": "vitest run",
-    "test:repository-intelligence": "vitest run src/lib/__tests__/repository-symbols.test.ts src/lib/__tests__/repository-dependencies.test.ts src/lib/services/__tests__/repository-analysis-artifacts.test.ts src/lib/services/__tests__/repository-index-worker.test.ts src/lib/__tests__/tech-stack.test.ts src/lib/__tests__/repository-health.test.ts src/lib/__tests__/change-impact.test.ts src/lib/__tests__/test-intelligence.test.ts src/lib/__tests__/architecture-rules.test.ts src/lib/__tests__/architecture-graph.test.ts",
+    "test:repository-intelligence": "vitest run src/lib/__tests__/repository-symbols.test.ts src/lib/__tests__/repository-dependencies.test.ts src/lib/services/__tests__/repository-analysis-artifacts.test.ts src/lib/services/__tests__/repository-analysis-jobs.test.ts src/lib/services/__tests__/repository-index-worker.test.ts src/lib/__tests__/tech-stack.test.ts src/lib/__tests__/repository-health.test.ts src/lib/__tests__/change-impact.test.ts src/lib/__tests__/test-intelligence.test.ts src/lib/__tests__/architecture-rules.test.ts src/lib/__tests__/architecture-graph.test.ts",
     "verify:repository-intelligence": "npm run typecheck && npm run test:repository-intelligence",
     "test:security": "vitest run src/lib/__tests__/security-scanner.test.ts src/lib/__tests__/security-benchmark.test.ts src/lib/services/__tests__/security-service.test.ts src/lib/services/__tests__/security-verification.test.ts src/lib/services/__tests__/fix-verification.test.ts src/lib/__tests__/cache-scan.test.ts src/lib/__tests__/gemini-security.test.ts",
     "test:watch": "vitest",
