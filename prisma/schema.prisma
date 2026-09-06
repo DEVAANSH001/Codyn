@@ -25,6 +25,7 @@ model User {
   requestedFixVerificationRuns FixVerificationRun[]         @relation("UserRequestedFixVerificationRuns")
   recentSearches               RecentSearch[]
   repoScans                    RepoScan[]
+  repositoryAnalysisJobs       RepositoryAnalysisJob[]
   createdShareLinks            RepoScanShareLink[]          @relation("UserCreatedScanShareLinks")
   reviewedFalsePositives       ReportFalsePositive[]        @relation("UserReviewedFalsePositives")
   submittedFalsePositives      ReportFalsePositive[]        @relation("UserSubmittedFalsePositives")
@@ -248,7 +249,68 @@ model ChatRun {
   @@index([conversationKey, updatedAt(sort: Desc)])
 }
 
+model RepositoryIndex {
+  id             String                      @id @default(cuid())
+  owner          String
+  repo           String
+  revision       String
+  treeSha        String
+  schemaVersion  Int                         @default(1)
+  status         RepositoryIndexStatus       @default(QUEUED)
+  totalFiles     Int                         @default(0)
+  processedFiles Int                         @default(0)
+  skippedFiles   Int                         @default(0)
+  failedFiles    Int                         @default(0)
+  errorMessage   String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime                    @default(now())
+  updatedAt      DateTime                    @updatedAt
+  jobs           RepositoryAnalysisJob[]
+
+  @@unique([owner, repo, revision])
+  @@index([owner, repo, updatedAt(sort: Desc)])
+  @@index([status, updatedAt])
+}
+
+model RepositoryAnalysisJob {
+  id            String                      @id @default(cuid())
+  repositoryIndexId String
+  requestedByUserId String?
+  status        RepositoryAnalysisJobStatus @default(QUEUED)
+  attempts      Int                         @default(0)
+  maxAttempts   Int                         @default(3)
+  payload       Json?
+  errorMessage  String?
+  claimedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime                    @default(now())
+  updatedAt     DateTime                    @updatedAt
+  repositoryIndex RepositoryIndex           @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
+  requestedByUser User?                     @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([repositoryIndexId, createdAt(sort: Desc)])
+  @@index([requestedByUserId, createdAt(sort: Desc)])
+}
+
 enum ChatRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum RepositoryIndexStatus {
+  QUEUED
+  INDEXING
+  READY
+  FAILED
+  CANCELLED
+}
+
+enum RepositoryAnalysisJobStatus {
+  QUEUED
   RUNNING
   COMPLETED
   FAILED
