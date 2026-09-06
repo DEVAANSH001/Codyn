@@ -21,7 +21,7 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 - [ ] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability.
 - [ ] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again.
 - [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser now extracts these facts; persistence is part of the worker/artifact slice.
-- [ ] Build import/dependency edges between files and resolve local-module paths.
+- [~] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports now resolve deterministically into test-backed graph edges; storing and exposing them is next.
 - [ ] Build initial symbol-reference and call-graph edges where they can be resolved with confidence.
 - [ ] Persist index artifacts and metadata instead of depending only on short-lived cache entries.
 - [ ] Expose honest indexing progress: files discovered, parsed, skipped, failed, and completed.
