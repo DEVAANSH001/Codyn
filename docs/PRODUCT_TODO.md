@@ -18,7 +18,7 @@ This backlog is based on the V0–V3 product brief and the implementation presen
 These are the highest-priority prerequisites. They replace heuristic/context-limited analysis with a durable repository knowledge model.
 
 - [~] Define a versioned repository knowledge-model schema: repository revision, files, symbols, imports/exports, references, tests, and findings. Repository revisions, jobs, indexed files, symbols, and dependency edges are now persisted; references, tests, and findings follow in later slices.
-- [ ] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability.
+- [~] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability. A protected scheduler endpoint now claims and processes one persistent job at a time with terminal failure/cancellation states; progress events, retry policy, and resume support remain.
 - [ ] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again.
 - [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser now extracts these facts; persistence is part of the worker/artifact slice.
 - [~] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports now resolve deterministically into test-backed graph edges and can be persisted; the worker and explorer integration are next.
