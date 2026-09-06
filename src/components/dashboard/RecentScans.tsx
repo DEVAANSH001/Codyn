@@ -97,7 +97,7 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                         Start exploring repositories to see them listed here.
                     </p>
                     <Link
-                        href="/"
+                        href="/chat"
                         className="flex items-center gap-2 px-6 py-2 bg-white text-black rounded-xl font-medium hover:bg-zinc-200 transition-all text-sm"
                     >
                         Scan a Repo

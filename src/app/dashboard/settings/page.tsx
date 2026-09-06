@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Settings, User, Shield, Bell } from "lucide-react";
 import Image from "next/image";
-import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
 import { buildInvalidSessionSignOutRedirect, getSessionAuthState } from "@/lib/session-guard";
 
 export default async function SettingsPage() {
@@ -23,9 +22,7 @@ export default async function SettingsPage() {
 
     return (
         <div className="relative min-h-[calc(100vh-10rem)]">
-            <ComingSoonOverlay />
-
-            <div className="space-y-8 opacity-40 grayscale-[0.5] pointer-events-none select-none">
+            <div className="space-y-8">
                 <div className="flex items-center gap-3">
                     <Settings className="w-8 h-8 text-zinc-500" />
                     <h1 className="text-3xl font-bold">Settings</h1>
