@@ -32,6 +32,7 @@ export function ToolQuotaModal({
         return null;
     }
 
+    const isExhausted = remaining <= 0;
     const scopeLabel = scope === "repo" ? "Repo chat tools" : "Profile chat tools";
     const authNote = audience === "anonymous"
         ? "Sign in to unlock 30 tool calls per day."
@@ -54,10 +55,12 @@ export function ToolQuotaModal({
                     </div>
 
                     <h2 className="text-xl font-bold text-white mb-2 pr-8">
-                        Tool Calls Paused
+                        {isExhausted ? "Tool Calls Paused" : "Tool Call Allowance"}
                     </h2>
                     <p className="text-zinc-300 text-sm leading-relaxed">
-                        {scopeLabel} reached the current window limit.
+                        {isExhausted
+                            ? `${scopeLabel} reached the current window limit.`
+                            : `${scopeLabel} remaining for the current window.`}
                     </p>
 
                     <div className="mt-4 rounded-xl border border-white/10 bg-zinc-950/70 p-3 text-sm">
@@ -79,7 +82,10 @@ export function ToolQuotaModal({
                     </div>
 
                     <p className="text-zinc-400 text-sm mt-4 leading-relaxed">
-                        {authNote}
+                        Each billable tool execution uses its reported number of units (at least one). A single request can use more than one tool; direct answers, non-billable results, and Google Search do not reduce this allowance.
+                    </p>
+                    <p className="text-zinc-500 text-xs mt-2 leading-relaxed">
+                        {authNote} Repo and profile chats have separate daily allowances, which reset at midnight UTC.
                     </p>
                     <p className="text-zinc-500 text-xs mt-2 leading-relaxed">
                         Need extended limits? Contact {supportEmail}.

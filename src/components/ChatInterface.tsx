@@ -40,6 +40,7 @@ import { SecurityScanModal } from "./chat/SecurityScanModal";
 import { buildSecurityScanMessage } from "./chat/security-scan-message";
 import { StreamStatus } from "./chat/StreamStatus";
 import { ToolQuotaModal } from "./chat/ToolQuotaModal";
+import { WhatsNewBadge } from "./WhatsNewBadge";
 
 const REPO_SUGGESTIONS = [
     "Show me the user flow chart",
@@ -1052,6 +1053,10 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 <Shield className="w-3.5 h-3.5" />
                                 <span className="hidden lg:inline">Security</span>
                             </button>
+                        </div>
+
+                        <div className="hidden lg:block shrink-0" title="See what&apos;s new in Codyn">
+                            <WhatsNewBadge />
                         </div>
 
 
