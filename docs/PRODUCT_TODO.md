@@ -68,9 +68,9 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 
 ## Milestone 6 — change safely (V2)
 
-- [ ] Implement change-impact analysis for a file, symbol, diff, or natural-language change request.
-- [ ] Traverse direct and transitive dependency/call-graph impact; identify APIs, services, workers, data operations, and tests.
-- [ ] Calculate change-risk scores with transparent contributing factors.
+- [~] Implement change-impact analysis for a file, symbol, diff, or natural-language change request. The dependency explorer now analyzes a selected indexed file; symbols, diffs, and natural-language requests remain.
+- [~] Traverse direct and transitive dependency/call-graph impact; identify APIs, services, workers, data operations, and tests. Direct and transitive local importers are traced; call graph and domain-specific impacts remain.
+- [~] Calculate change-risk scores with transparent contributing factors. A bounded low/medium/high dependency-blast-radius signal is shown with its counts; richer risk factors remain.
 - [ ] Add pull-request analysis: architecture changes, dependency/API changes, likely regressions, missing tests, and PR risk score.
 - [ ] Define architecture rules and detect layer violations, circular dependencies, boundary violations, and unexpected coupling.
 - [ ] Add test intelligence: map code to tests, identify untested critical paths, and recommend regression scenarios.
