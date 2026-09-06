@@ -23,7 +23,6 @@ import {
 } from "@/lib/chat-constants";
 import { copyChatMessageContent, exportChatMessages } from "@/lib/chat-message-actions";
 import { parseStreamChunk } from "@/lib/streaming-parser";
-import { shouldShowRepoSuggestions } from "@/lib/chat-ui";
 
 import { SearchModal } from "./SearchModal";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -44,17 +43,6 @@ import { ToolQuotaModal } from "./chat/ToolQuotaModal";
 const REPOSITORY_TOUR_PROMPT = "Give me a 10-minute codebase tour: explain what this project does, how it starts, the main entry points, the most important modules, and how they interact. Cite the files you used and clearly label any inference.";
 const MERMAID_DIAGRAM_PROMPT = "Generate a Mermaid architecture diagram";
 const DEPENDENCY_SECURITY_PROMPT = "Check dependency vulnerabilities";
-const REPO_SUGGESTIONS = [
-    REPOSITORY_TOUR_PROMPT,
-    ARCHITECTURE_PROMPT,
-    MERMAID_DIAGRAM_PROMPT,
-    "Show me the user flow chart",
-    "Evaluate code quality",
-    "What's the tech stack?",
-    QUICK_SCAN_PROMPT,
-    DEPENDENCY_SECURITY_PROMPT,
-];
-
 interface RepoFileNode {
     path: string;
     sha?: string;
@@ -194,7 +182,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
     const [input, setInput] = useState("");
     const [taggedFiles, setTaggedFiles] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-    const [showSuggestions, setShowSuggestions] = useState(true);
     const [scanning, setScanning] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -418,16 +405,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
 
     const tokenWarningLevel = getTokenWarningLevel(totalTokens);
 
-    useEffect(() => {
-        const nextShowSuggestions = shouldShowRepoSuggestions({
-            messagesCount: messages.length,
-            input,
-            loading,
-            scanning,
-        });
-        setShowSuggestions(nextShowSuggestions);
-    }, [messages.length, input, loading, scanning]);
-
     const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
         messagesEndRef.current?.scrollIntoView({ behavior });
     };
@@ -439,11 +416,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
         }
         scrollToBottom();
     }, [messages]);
-
-    const handleSuggestionClick = (suggestion: string) => {
-        setInput(suggestion);
-        setShowSuggestions(false);
-    };
 
     const buildCombinedInput = (trimmedInput: string, selectedReferenceText: string) => {
         let base = trimmedInput || "Please continue.";
@@ -1413,31 +1385,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                         </div>
                     </div>
                 )}
-                {/* Suggestions */}
-                {showSuggestions && messages.length === 1 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="max-w-4xl mx-auto"
-                    >
-                        <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="w-4 h-4 text-cyan-400" />
-                            <span className="text-sm text-zinc-400">Try asking:</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {REPO_SUGGESTIONS.map((suggestion, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => handleSuggestionClick(suggestion)}
-                                    className="text-sm px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-cyan-600/50 rounded-full text-zinc-300 hover:text-white transition-all"
-                                >
-                                    {suggestion}
-                                </button>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-
                 <form id="chat-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto relative">
                     <ChatInput
                         quotaNode={toolQuota && (
