@@ -65,3 +65,23 @@ export function dependencyNeighbors(
     }
     return { imports: Array.from(imports).sort(), importedBy: Array.from(importedBy).sort() };
 }
+
+/** Expands both upstream and downstream dependency neighbors to a bounded depth. */
+export function expandDependencyPaths(
+    seeds: Iterable<string>,
+    edges: RepositoryDependencyEdge[],
+    maxDepth = 2,
+): string[] {
+    const visited = new Set(seeds);
+    let frontier = new Set(seeds);
+    for (let depth = 0; depth < maxDepth && frontier.size > 0; depth += 1) {
+        const next = new Set<string>();
+        for (const edge of edges) {
+            if (frontier.has(edge.sourcePath) && edge.targetPath && !visited.has(edge.targetPath)) next.add(edge.targetPath);
+            if (edge.targetPath && frontier.has(edge.targetPath) && !visited.has(edge.sourcePath)) next.add(edge.sourcePath);
+        }
+        for (const path of next) visited.add(path);
+        frontier = next;
+    }
+    return Array.from(visited);
+}

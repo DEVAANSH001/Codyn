@@ -13,6 +13,7 @@ import type { GitHubProfile } from "./github";
 import { stripEmojiCharacters } from "./no-emoji";
 import { trackSelectionPerformance } from "./analytics";
 import { loadRepoIndex, searchRepoIndex } from "./services/repo-index-service";
+import { getRepositoryRelatedPaths } from "./services/repository-analysis-artifacts";
 import {
   getRecentRepoCommitsSnapshot,
   getUserRepos,
@@ -658,6 +659,17 @@ export async function analyzeFileSelection(
   const maxSelectedFiles = modelPreference === "thinking" ? 50 : 25;
   const selectionStartMs = Date.now();
 
+  const addGraphContext = async (files: string[]): Promise<string[]> => {
+    if (!owner || !repo) return files.slice(0, maxSelectedFiles);
+    try {
+      const related = await getRepositoryRelatedPaths({ owner, repo, question, fileTree, limit: maxSelectedFiles });
+      return Array.from(new Set([...files, ...related])).filter((path) => fileTree.includes(path)).slice(0, maxSelectedFiles);
+    } catch (error) {
+      console.warn("Repository graph context lookup failed:", error);
+      return files.slice(0, maxSelectedFiles);
+    }
+  };
+
   const recordSelection = async (
     type: "index_hit" | "llm_fallback",
     files: string[]
@@ -694,7 +706,7 @@ export async function analyzeFileSelection(
     const additionalContext = fileTree.filter(
       (f) => commonFiles.includes(f) && !mentionedFiles.includes(f)
     );
-    const result = [...mentionedFiles, ...additionalContext].slice(0, maxSelectedFiles);
+    const result = await addGraphContext([...mentionedFiles, ...additionalContext]);
     console.log(`⚡ Smart Bypass: Found ${mentionedFiles.length} mentioned files (+ ${result.length - mentionedFiles.length} contextual).`);
     return recordSelection("index_hit", result);
   }
@@ -707,7 +719,7 @@ export async function analyzeFileSelection(
       const filtered = cachedSelection
         .filter((path) => fileTree.includes(path))
         .slice(0, maxSelectedFiles);
-      return recordSelection("index_hit", filtered);
+      return recordSelection("index_hit", await addGraphContext(filtered));
     }
   }
 
@@ -724,7 +736,7 @@ export async function analyzeFileSelection(
         indexFiles.length > 150;
 
       if (!lowConfidence && indexFiles.length > 0) {
-        const selection = indexFiles.slice(0, maxSelectedFiles);
+        const selection = await addGraphContext(indexFiles.slice(0, maxSelectedFiles));
         if (owner && repo && selection.length > 0) {
           await cacheQuerySelection(owner, repo, question, selection, cachePolicy, queryIntent);
         }
@@ -732,7 +744,7 @@ export async function analyzeFileSelection(
       }
 
       if (indexFiles.length > 0) {
-        candidates = indexFiles.slice(0, 50);
+        candidates = await addGraphContext(indexFiles.slice(0, 50));
       }
     }
   }

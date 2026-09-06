@@ -32,10 +32,11 @@ async function claimNextJob() {
     });
 }
 
-async function fetchSourceFiles(owner: string, repo: string, snapshot: Awaited<ReturnType<typeof getSnapshot>>): Promise<{ files: RepositorySourceFile[]; skipped: number }> {
+async function fetchSourceFiles(owner: string, repo: string, snapshot: Awaited<ReturnType<typeof getSnapshot>>): Promise<{ files: RepositorySourceFile[]; skipped: number; eligible: number }> {
     const candidates = selectIndexableSourceFiles(snapshot.files);
     const files: RepositorySourceFile[] = [];
-    let skipped = snapshot.files.filter(isReadableFile).filter((file) => isIndexableSource(file.path)).length - candidates.length;
+    const eligible = snapshot.files.filter(isReadableFile).filter((file) => isIndexableSource(file.path)).length;
+    let skipped = eligible - candidates.length;
 
     for (let start = 0; start < candidates.length; start += FETCH_CONCURRENCY) {
         const batch = await Promise.allSettled(candidates.slice(start, start + FETCH_CONCURRENCY).map(async (file) => ({
@@ -49,7 +50,7 @@ async function fetchSourceFiles(owner: string, repo: string, snapshot: Awaited<R
             else skipped += 1;
         }
     }
-    return { files, skipped };
+    return { files, skipped, eligible };
 }
 
 export type RepositoryIndexWorkerResult =
@@ -86,7 +87,7 @@ export async function processNextRepositoryIndexJob(): Promise<RepositoryIndexWo
                 where: { id: index.id },
                 data: {
                     status: "READY",
-                    totalFiles: snapshot.files.length,
+                    totalFiles: source.eligible,
                     skippedFiles: source.skipped,
                     errorMessage: null,
                     completedAt: new Date(),

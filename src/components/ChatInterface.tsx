@@ -48,6 +48,8 @@ const REPO_SUGGESTIONS = [
     ARCHITECTURE_PROMPT,
 ];
 
+const REPOSITORY_TOUR_PROMPT = "Give me a 10-minute codebase tour: explain what this project does, how it starts, the main entry points, the most important modules, and how they interact. Cite the files you used and clearly label any inference.";
+
 interface RepoFileNode {
     path: string;
     sha?: string;
@@ -57,7 +59,7 @@ interface RepoFileNode {
 type OwnerProfile = Awaited<ReturnType<typeof fetchProfile>>;
 
 interface ChatInterfaceProps {
-    repoContext: { owner: string; repo: string; fileTree: RepoFileNode[] };
+    repoContext: { owner: string; repo: string; revision?: string; fileTree: RepoFileNode[] };
     onToggleSidebar?: () => void;
     initialPrompt?: string;
 }
@@ -616,6 +618,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                 repoDetails: { owner: repoContext.owner, repo: repoContext.repo },
                 filePaths,
                 fileShas,
+                revision: repoContext.revision,
                 history: historyForServer,
                 profileData: ownerProfile,
                 modelPreference: selectedModelPreference,
@@ -725,6 +728,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 toolsUsed: chunk.metadata?.toolsUsed,
                                 processingSummary: chunk.metadata?.processingSummary,
                                 sourceScope: chunk.metadata?.sourceScope,
+                                repositoryRevision: chunk.metadata?.repositoryRevision,
                                 streamStatus: "Completed",
                                 streamProgress: 100,
                             }
@@ -1022,6 +1026,14 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                     {/* Right Section: Actions & Metrics */}
                     <div className="flex items-center gap-3 shrink-0 overflow-x-auto no-scrollbar pr-2">
                         <div className="hidden md:flex items-center p-1 bg-zinc-900/50 border border-white/5 rounded-xl shadow-inner gap-1">
+                            <button
+                                onClick={() => handleSubmit(undefined, REPOSITORY_TOUR_PROMPT)}
+                                disabled={loading || scanning}
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all disabled:opacity-50"
+                            >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span className="hidden lg:inline">Tour</span>
+                            </button>
                             <button
                                 onClick={() => handleSubmit(undefined, ARCHITECTURE_PROMPT)}
                                 disabled={loading || scanning}
@@ -1323,9 +1335,10 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                             )}
                                         </div>
                                     )}
-                                    {msg.role === "model" && (msg.commitFreshnessLabel || (msg.toolsUsed && msg.toolsUsed.length > 0) || msg.sourceScope || (msg.processingSummary && msg.processingSummary.length > 0)) && (
+                                    {msg.role === "model" && (msg.commitFreshnessLabel || (msg.toolsUsed && msg.toolsUsed.length > 0) || msg.sourceScope || msg.repositoryRevision || (msg.processingSummary && msg.processingSummary.length > 0)) && (
                                         <div className="hidden md:block text-[11px] text-zinc-500 pl-1">
                                             {msg.sourceScope && <span>Scope: {msg.sourceScope}</span>}
+                                            {msg.repositoryRevision && <span className={cn(msg.sourceScope && "ml-2")}>Revision: {msg.repositoryRevision.slice(0, 12)}</span>}
                                             {msg.commitFreshnessLabel && <span>{msg.commitFreshnessLabel}</span>}
                                             {msg.toolsUsed && msg.toolsUsed.length > 0 && (
                                                 <span className={cn((msg.commitFreshnessLabel || msg.sourceScope) && "ml-2")}>

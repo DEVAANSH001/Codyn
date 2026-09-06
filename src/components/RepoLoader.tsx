@@ -24,6 +24,7 @@ interface RepoLoaderData {
     fileTree: FileNode[];
     hiddenFiles: { path: string; reason: string }[];
     indexStatus?: "ready" | "building";
+    revision: string;
 }
 
 const REPO_LOADER_CACHE_TTL_MS = 15 * 60 * 1000;
@@ -109,6 +110,7 @@ export function RepoLoader({ query, initialPrompt }: RepoLoaderProps) {
             const fileTree = data.fileTree as FileNode[];
             const hiddenFiles = data.hiddenFiles || [];
             const indexStatus = (data as { indexStatus?: "ready" | "building" }).indexStatus;
+            const revision = (data as { revision?: string }).revision || "";
 
             updateStep("fetch", "complete", "Repository data fetched");
 
@@ -128,7 +130,7 @@ export function RepoLoader({ query, initialPrompt }: RepoLoaderProps) {
             updateStep("env", "loading", "Preparing chat environment...");
             updateStep("env", "complete", "Ready to chat");
 
-            const nextData = { repo, fileTree, hiddenFiles, indexStatus };
+            const nextData = { repo, fileTree, hiddenFiles, indexStatus, revision };
             setRepoData(nextData);
             writeCachedRepoLoaderData(query, nextData);
 
@@ -214,6 +216,7 @@ export function RepoLoader({ query, initialPrompt }: RepoLoaderProps) {
             repo={repoData.repo.name}
             hiddenFiles={repoData.hiddenFiles}
             repoData={repoData.repo}
+            revision={repoData.revision}
             initialPrompt={initialPrompt}
         />
     );

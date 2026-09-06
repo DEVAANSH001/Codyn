@@ -20,23 +20,23 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 - [~] Define a versioned repository knowledge-model schema: repository revision, files, symbols, imports/exports, references, tests, and findings. Repository revisions, jobs, indexed files, symbols, and dependency edges are now persisted; references, tests, and findings follow in later slices.
 - [~] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability. A protected scheduler endpoint now claims and processes one persistent job at a time with terminal failure/cancellation states; progress events, retry policy, and resume support remain.
 - [ ] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again.
-- [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser now extracts these facts; persistence is part of the worker/artifact slice.
-- [~] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports now resolve deterministically into test-backed graph edges and can be persisted; the worker and explorer integration are next.
+- [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser and worker now persist symbols and import facts; explicit export records remain to be stored separately.
+- [x] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports resolve deterministically, are persisted per revision, enrich AI selection, and appear in the dependency explorer.
 - [ ] Build initial symbol-reference and call-graph edges where they can be resolved with confidence.
-- [~] Persist index artifacts and metadata instead of depending only on short-lived cache entries. The artifact writer durably replaces indexed files, symbols, and dependency facts per revision; it will be invoked by the queued worker next.
-- [ ] Expose honest indexing progress: files discovered, parsed, skipped, failed, and completed.
-- [ ] Add indexed-repository query retrieval that selects source evidence, dependency neighbors, and symbols—not only path/token matches.
-- [ ] Add provenance to all AI answers: revision analyzed, files/symbols used, and any coverage limits.
+- [x] Persist index artifacts and metadata instead of depending only on short-lived cache entries. The worker durably replaces indexed files, symbols, and dependency facts per revision.
+- [~] Expose honest indexing progress: files discovered, parsed, skipped, failed, and completed. The workspace polls and displays eligible JS/TS files, parsed/skipped/failed counts, and terminal errors; per-file live events remain.
+- [~] Add indexed-repository query retrieval that selects source evidence, dependency neighbors, and symbols—not only path/token matches. A revision/path artifact API, active-workspace dependency panel, bounded transitive graph expansion, and AI file-selection enrichment are now present; richer evidence/provenance remains.
+- [~] Add provenance to all AI answers: revision analyzed, files/symbols used, and any coverage limits. Chat responses now show the repository revision and selected files; indexed-symbol and coverage-limit citations remain.
 
 ## Milestone 2 — repository navigation and architecture intelligence
 
-- [ ] Replace the current structural architecture tab with an interactive dependency graph backed by the stored model.
-- [ ] Support graph drill-down: select a file/module and show upstream, downstream, and transitive dependencies.
+- [~] Replace the current structural architecture tab with an interactive dependency graph backed by the stored model. The active workspace now has a revision-backed dependency explorer; visual graph rendering remains.
+- [~] Support graph drill-down: select a file/module and show upstream, downstream, and transitive dependencies. The API/retrieval layer now expands two hops; the panel currently displays direct imports/importers and needs transitive visualization.
 - [ ] Add request/data-flow views when an entry point and relevant route/handler path can be inferred.
-- [ ] Add callers, callees, importers, exports, related files, and related tests to the code explorer.
+- [~] Add callers, callees, importers, exports, related files, and related tests to the code explorer. Indexed symbols and importers are exposed; call edges, exports, and tests remain.
 - [ ] Support repository-wide symbol search beyond the current JS/TS AST search.
 - [ ] Detect the technology stack from manifests, source usage, infrastructure files, databases, and dependency versions.
-- [ ] Produce a code-grounded 10-minute repository tour: purpose, start commands, entry points, important modules, and interactions.
+- [~] Produce a code-grounded 10-minute repository tour: purpose, start commands, entry points, important modules, and interactions. The active workspace now offers a structured Tour prompt that requests cited source evidence; a dedicated deterministic tour report remains.
 - [ ] Produce a repository health report covering architecture, dependency health, tests, documentation, complexity, and maintainability—with methodology and confidence levels.
 
 ## Milestone 3 — secure, scalable repository access

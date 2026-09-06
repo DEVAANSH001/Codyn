@@ -18,6 +18,7 @@ export type StreamUpdate =
             toolsUsed?: string[];
             processingSummary?: string[];
             sourceScope?: string;
+            repositoryRevision?: string;
         };
     }
     | { type: "error"; message: string; code?: string };

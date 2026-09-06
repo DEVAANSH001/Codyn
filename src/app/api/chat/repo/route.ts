@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         const anonCookieIdToSet = shouldSetAnonCookie ? getAnonymousCookieIdFromActorId(actorId) : null;
 
         const body = await req.json();
-        const { query, repoDetails, filePaths, fileShas, history, profileData, modelPreference, runId } = body;
+        const { query, repoDetails, filePaths, fileShas, history, profileData, modelPreference, runId, revision } = body;
         const normalizedQuery = typeof query === "string" ? query : "";
         const requestedModelPreference = normalizeModelPreference(modelPreference) as ModelPreference;
         const visualRouting = resolveVisualModelPreference(requestedModelPreference, normalizedQuery, Boolean(userId));
@@ -130,18 +130,16 @@ export async function POST(req: NextRequest) {
                         safeEnqueue(JSON.stringify(status) + "\n");
                     }
 
-                    const generator = generateAnswerStream(
-                        normalizedQuery,
-                        repoDetails,
-                        filePaths,
-                        normalizedFileShas,
-                        audience,
-                        actorId,
-                        history,
-                        profileData,
-                        effectiveModelPreference,
-                        disableToolCalls
-                    );
+                    const hasRevision = typeof revision === "string" && revision.length > 0;
+                    const generator = hasRevision
+                        ? generateAnswerStream(
+                            normalizedQuery, repoDetails, filePaths, normalizedFileShas, audience, actorId,
+                            history, profileData, effectiveModelPreference, disableToolCalls, revision,
+                        )
+                        : generateAnswerStream(
+                            normalizedQuery, repoDetails, filePaths, normalizedFileShas, audience, actorId,
+                            history, profileData, effectiveModelPreference, disableToolCalls,
+                        );
 
                     for await (const chunk of generator) {
                         if (chunk.type === "tool" && chunk.billable !== false && chunk.name !== "googleSearch") {

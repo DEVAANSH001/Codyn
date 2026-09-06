@@ -39,6 +39,7 @@ import {
 } from "@/lib/analytics";
 import { ANON_COOKIE_NAME, isValidAnonymousCookieId } from "@/lib/actor-id";
 import { getRepoIndexStatus } from "@/lib/services/repo-index-service";
+import { isRepositoryIndexingConfigured, queueRepositoryAnalysis } from "@/lib/services/repository-analysis-jobs";
 import type { StreamUpdate } from "@/lib/streaming-types";
 import type { GitHubProfile } from "@/lib/github";
 import type { SearchResult } from "@/lib/search-engine";
@@ -421,10 +422,20 @@ export async function fetchGitHubData(input: string) {
                 repoData.default_branch
             );
             const indexStatus = await getRepoIndexStatus(owner, repo, treeSha);
+            if (isRepositoryIndexingConfigured()) {
+                void queueRepositoryAnalysis({
+                    owner,
+                    repo,
+                    revision: treeSha,
+                    treeSha,
+                    totalFiles: tree.length,
+                    requestedByUserId: session?.user?.id,
+                }).catch((error) => console.warn("Repository analysis could not be queued:", error));
+            }
             if (session?.user?.id) {
                 await recordSearch(session.user.id, input, "repo");
             }
-            return { type: "repo", data: repoData, fileTree: tree, hiddenFiles, indexStatus };
+            return { type: "repo", data: repoData, fileTree: tree, hiddenFiles, indexStatus, revision: treeSha };
         } catch (e: unknown) {
             return { error: `Repository not found: ${getErrorMessage(e)}` };
         }
@@ -591,7 +602,8 @@ export async function* generateAnswerStream(
     history: { role: "user" | "model"; content: string }[] = [],
     profileData?: GitHubProfile,
     modelPreference: ModelPreference = "flash",
-    disableToolCalls = false
+    disableToolCalls = false,
+    revision?: string,
 ): AsyncGenerator<StreamUpdate> {
     let visibility: "public" | "private" = "public";
     try {
@@ -618,6 +630,7 @@ export async function* generateAnswerStream(
         profileData,
         modelPreference,
         disableToolCalls,
+        revision,
     });
 }
 

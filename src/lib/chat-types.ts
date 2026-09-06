@@ -16,6 +16,7 @@ export interface ChatMessageBase {
     toolsUsed?: string[];
     processingSummary?: string[];
     sourceScope?: string;
+    repositoryRevision?: string;
 }
 
 export interface ThinkingChatMessage extends ChatMessageBase {
