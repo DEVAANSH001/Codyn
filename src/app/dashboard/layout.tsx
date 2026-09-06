@@ -2,13 +2,14 @@
 
 import { signOut, useSession } from "next-auth/react";
 import {
-    LayoutDashboard, History, Star, Settings, ChevronLeft, Menu, LogOut, BookOpen, Plus, X,
+    LayoutDashboard, History, Star, Settings, ChevronLeft, Menu, LogOut, BookOpen, Plus, X, BarChart3,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/LogoMark";
+import { DEFAULT_ADMIN_GITHUB_USERNAME } from "@/lib/admin-auth";
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
@@ -29,12 +30,15 @@ function Brand({ compact = false }: { compact?: boolean }) {
     );
 }
 
-function DashboardNav({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: () => void }) {
+function DashboardNav({ compact = false, onNavigate, isAdmin = false }: { compact?: boolean; onNavigate?: () => void; isAdmin?: boolean }) {
     const pathname = usePathname();
+    const visibleItems = isAdmin
+        ? [...menuItems, { icon: BarChart3, label: "Admin Analytics", href: "/admin/stats" }]
+        : menuItems;
 
     return (
         <nav aria-label="Dashboard" className="flex-1 space-y-1.5">
-            {menuItems.map((item) => {
+            {visibleItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                     <Link
@@ -62,6 +66,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const mobilePanel = useRef<HTMLElement>(null);
     const mobileTrigger = useRef<HTMLButtonElement>(null);
     const sessionUserId = (session?.user as { id?: string } | undefined)?.id;
+    const sessionUsername = (session?.user as { username?: string } | undefined)?.username;
+    const isAdmin = sessionUsername?.trim().toLowerCase() === DEFAULT_ADMIN_GITHUB_USERNAME.toLowerCase();
     const hasInvalidSession = status !== "loading" && Boolean(session?.user) && !sessionUserId;
 
     useEffect(() => {
@@ -137,7 +143,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 <div className={`flex flex-1 flex-col ${isCollapsed ? "px-3" : "px-4"}`}>
                     {!isCollapsed && <p className="mb-3 px-3 text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">Workspace</p>}
-                    <DashboardNav compact={isCollapsed} />
+                    <DashboardNav compact={isCollapsed} isAdmin={isAdmin} />
                 </div>
 
                 <div className="m-3 border-t border-white/10 pt-3">
@@ -203,7 +209,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <Link href="/chat" onClick={() => setIsMobileOpen(false)} className="codyn-primary-action mb-6 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold">
                                 <Plus aria-hidden="true" className="h-4 w-4" /> New analysis
                             </Link>
-                            <DashboardNav onNavigate={() => setIsMobileOpen(false)} />
+                            <DashboardNav onNavigate={() => setIsMobileOpen(false)} isAdmin={isAdmin} />
                             <button onClick={() => signOut({ callbackUrl: "/" })} className="mt-6 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 py-4 text-sm text-zinc-400 hover:text-red-400">
                                 <LogOut aria-hidden="true" className="h-5 w-5" /> Sign out
                             </button>

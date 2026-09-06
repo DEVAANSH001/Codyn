@@ -1,103 +1,92 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Settings, User, Shield, Bell } from "lucide-react";
+import { ExternalLink, Github, Mail, Settings, ShieldCheck, User } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { DEFAULT_ADMIN_GITHUB_USERNAME } from "@/lib/admin-auth";
 import { buildInvalidSessionSignOutRedirect, getSessionAuthState } from "@/lib/session-guard";
 
 export default async function SettingsPage() {
     const session = await auth();
     const authState = getSessionAuthState(session);
 
-    if (authState === "unauthenticated") {
-        redirect("/");
-    }
-    if (authState === "invalid") {
-        redirect(buildInvalidSessionSignOutRedirect());
-    }
+    if (authState === "unauthenticated") redirect("/signin?callbackUrl=%2Fdashboard%2Fsettings");
+    if (authState === "invalid") redirect(buildInvalidSessionSignOutRedirect());
 
     const user = session?.user;
-    if (!user) {
-        redirect("/");
-    }
+    if (!user) redirect("/signin?callbackUrl=%2Fdashboard%2Fsettings");
+
+    const username = user.username || "GitHub user";
+    const isAdmin = username.toLowerCase() === DEFAULT_ADMIN_GITHUB_USERNAME.toLowerCase();
 
     return (
-        <div className="relative min-h-[calc(100vh-10rem)]">
-            <div className="space-y-8">
-                <div className="flex items-center gap-3">
-                    <Settings className="w-8 h-8 text-zinc-500" />
-                    <h1 className="text-3xl font-bold">Settings</h1>
+        <div className="space-y-8 pb-10">
+            <header className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-cyan-500/20 bg-cyan-500/10">
+                    <Settings className="h-5 w-5 text-cyan-300" />
+                </span>
+                <div>
+                    <h1 className="text-3xl font-bold">Account settings</h1>
+                    <p className="mt-1 text-sm text-zinc-500">Review your connected account and Codyn access.</p>
                 </div>
+            </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2 space-y-6">
-                        {/* Profile Section */}
-                        <div className="rounded-3xl bg-zinc-900 border border-white/5 p-8 flex flex-col md:flex-row items-center gap-6">
-                            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-500/20 shadow-xl">
-                                {user.image ? (
-                                    <Image
-                                        src={user.image}
-                                        alt={user.name || "User"}
-                                        width={96}
-                                        height={96}
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
-                                        <User className="w-10 h-10 text-zinc-500" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="text-center md:text-left flex-1">
-                                <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
-                                <p className="text-zinc-500 mb-4">{user.email}</p>
-                                <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                                    <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-medium">
-                                        GitHub Connected
-                                    </span>
-                                    <span className="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-medium">
-                                        Pro Plan
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Placeholder Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800/50 hover:border-zinc-700 transition-colors cursor-pointer group">
-                                <Shield className="w-6 h-6 text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
-                                <h3 className="font-semibold mb-2">Security</h3>
-                                <p className="text-sm text-zinc-500">Manage your password and security settings.</p>
-                            </div>
-                            <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800/50 hover:border-zinc-700 transition-colors cursor-pointer group">
-                                <Bell className="w-6 h-6 text-orange-400 mb-4 group-hover:scale-110 transition-transform" />
-                                <h3 className="font-semibold mb-2">Notifications</h3>
-                                <p className="text-sm text-zinc-500">Choose when and how you want to be alerted.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="rounded-2xl bg-gradient-to-br from-cyan-600/10 to-blue-600/10 border border-cyan-600/20 p-6">
-                            <h3 className="font-bold text-lg mb-2">Preferences</h3>
-                            <p className="text-sm text-zinc-400 mb-6">Customize your Codyn experience.</p>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-zinc-300">Dark Mode</span>
-                                    <div className="w-10 h-5 bg-cyan-600 rounded-full flex items-center px-1">
-                                        <div className="w-3 h-3 bg-white rounded-full ml-auto" />
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between opacity-50">
-                                    <span className="text-sm text-zinc-300">Email Updates</span>
-                                    <div className="w-10 h-5 bg-zinc-700 rounded-full flex items-center px-1">
-                                        <div className="w-3 h-3 bg-white rounded-full" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <section className="codyn-panel flex flex-col gap-6 rounded-3xl border border-white/10 p-6 sm:flex-row sm:items-center sm:p-8">
+                <div className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-2xl border-2 border-cyan-500/25 bg-zinc-900">
+                    {user.image ? (
+                        <Image src={user.image} alt={user.name || username} width={96} height={96} className="h-full w-full object-cover" />
+                    ) : (
+                        <User className="h-10 w-10 text-zinc-500" />
+                    )}
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-cyan-300">GitHub account</p>
+                    <h2 className="mt-2 truncate text-2xl font-semibold">{user.name || username}</h2>
+                    <div className="mt-3 flex flex-col gap-2 text-sm text-zinc-400 sm:flex-row sm:flex-wrap sm:gap-5">
+                        <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> @{username}</span>
+                        {user.email && <span className="inline-flex items-center gap-2"><Mail className="h-4 w-4" /> {user.email}</span>}
                     </div>
                 </div>
+                {user.username && (
+                    <a href={`https://github.com/${encodeURIComponent(user.username)}`} target="_blank" rel="noreferrer" className="repo-button shrink-0">
+                        View GitHub <ExternalLink className="h-4 w-4" />
+                    </a>
+                )}
+            </section>
+
+            <div className="grid gap-5 md:grid-cols-2">
+                <section className="codyn-panel rounded-2xl border border-white/10 p-6">
+                    <ShieldCheck className="h-6 w-6 text-blue-300" />
+                    <h2 className="mt-4 text-lg font-semibold">Security and access</h2>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">Authentication is managed by GitHub. Codyn does not store a separate password for your account.</p>
+                    <a href="https://github.com/settings/security" target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-200">
+                        Manage GitHub security <ExternalLink className="h-4 w-4" />
+                    </a>
+                </section>
+
+                <section className="codyn-panel rounded-2xl border border-white/10 p-6">
+                    <Mail className="h-6 w-6 text-cyan-300" />
+                    <h2 className="mt-4 text-lg font-semibold">Support and privacy</h2>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">For account or data requests, contact devaanshdubey@gmail.com.</p>
+                    <div className="mt-5 flex gap-4 text-sm">
+                        <Link href="/privacy" className="text-cyan-300 hover:text-cyan-200">Privacy</Link>
+                        <Link href="/terms" className="text-cyan-300 hover:text-cyan-200">Terms</Link>
+                    </div>
+                </section>
             </div>
+
+            {isAdmin && (
+                <section className="rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-6">
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-cyan-300">Administrator</p>
+                    <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 className="text-lg font-semibold">Admin analytics access is enabled</h2>
+                            <p className="mt-1 text-sm text-zinc-400">View visitors, queries, scans, reports, and storage metrics.</p>
+                        </div>
+                        <Link href="/admin/stats" className="codyn-primary-action inline-flex shrink-0 items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold">Open analytics</Link>
+                    </div>
+                </section>
+            )}
         </div>
     );
 }

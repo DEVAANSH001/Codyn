@@ -44,4 +44,9 @@ describe("isAdminUser", () => {
         delete process.env.ADMIN_GITHUB_USERNAME;
         expect(isAdminUser(withUsername("403errors"))).toBe(false);
     });
+
+    it("recognizes the default Codyn administrator without case sensitivity", () => {
+        delete process.env.ADMIN_GITHUB_USERNAME;
+        expect(isAdminUser(withUsername("devaansh001"))).toBe(true);
+    });
 });

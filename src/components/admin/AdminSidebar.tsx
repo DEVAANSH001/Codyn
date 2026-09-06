@@ -23,7 +23,7 @@ const menuItems = [
   { icon: BarChart2, label: "Analytics", href: "/admin/stats" },
   { icon: FileText, label: "Blog Posts", href: "/admin/blog" },
   { icon: Search, label: "Index Manager", href: "/admin/index" },
-  { icon: Settings, label: "Settings", href: "/admin/settings" },
+  { icon: Settings, label: "Account Settings", href: "/dashboard/settings" },
 ];
 
 export default function AdminSidebar() {
