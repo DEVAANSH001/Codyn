@@ -17,13 +17,13 @@ This backlog is based on the V0–V3 product brief and the implementation presen
 
 These are the highest-priority prerequisites. They replace heuristic/context-limited analysis with a durable repository knowledge model.
 
-- [~] Define a versioned repository knowledge-model schema: repository revision, files, symbols, imports/exports, references, tests, and findings. Repository revision/index and job records are now persisted; symbol, reference, test, and finding artifacts follow in later slices.
+- [~] Define a versioned repository knowledge-model schema: repository revision, files, symbols, imports/exports, references, tests, and findings. Repository revisions, jobs, indexed files, symbols, and dependency edges are now persisted; references, tests, and findings follow in later slices.
 - [ ] Build a background repository-analysis job pipeline with durable job state, progress events, cancellation, retry, and resumability.
 - [ ] Add incremental indexing keyed to repository commit/tree SHA, so unchanged files are not processed again.
 - [~] Parse and store JavaScript/TypeScript symbols: functions, classes, interfaces, variables, imports, exports, and source ranges. A test-backed parser now extracts these facts; persistence is part of the worker/artifact slice.
-- [~] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports now resolve deterministically into test-backed graph edges; storing and exposing them is next.
+- [~] Build import/dependency edges between files and resolve local-module paths. JS/TS relative imports now resolve deterministically into test-backed graph edges and can be persisted; the worker and explorer integration are next.
 - [ ] Build initial symbol-reference and call-graph edges where they can be resolved with confidence.
-- [ ] Persist index artifacts and metadata instead of depending only on short-lived cache entries.
+- [~] Persist index artifacts and metadata instead of depending only on short-lived cache entries. The artifact writer durably replaces indexed files, symbols, and dependency facts per revision; it will be invoked by the queued worker next.
 - [ ] Expose honest indexing progress: files discovered, parsed, skipped, failed, and completed.
 - [ ] Add indexed-repository query retrieval that selects source evidence, dependency neighbors, and symbols—not only path/token matches.
 - [ ] Add provenance to all AI answers: revision analyzed, files/symbols used, and any coverage limits.

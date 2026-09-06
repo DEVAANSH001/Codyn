@@ -267,10 +267,63 @@ model RepositoryIndex {
   createdAt      DateTime                    @default(now())
   updatedAt      DateTime                    @updatedAt
   jobs           RepositoryAnalysisJob[]
+  files          RepositoryIndexedFile[]
+  dependencies   RepositoryDependency[]
 
   @@unique([owner, repo, revision])
   @@index([owner, repo, updatedAt(sort: Desc)])
   @@index([status, updatedAt])
+}
+
+model RepositoryIndexedFile {
+  id                String            @id @default(cuid())
+  repositoryIndexId String
+  path              String
+  sha               String?
+  size              Int?
+  language          String?
+  parseStatus       String            @default("PENDING")
+  parseError        String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  repositoryIndex   RepositoryIndex   @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
+  symbols           RepositorySymbol[]
+
+  @@unique([repositoryIndexId, path])
+  @@index([repositoryIndexId, parseStatus])
+}
+
+model RepositorySymbol {
+  id          String                @id @default(cuid())
+  fileId      String
+  name        String
+  kind        String
+  exported    Boolean               @default(false)
+  startLine   Int
+  startColumn Int
+  endLine     Int
+  endColumn   Int
+  createdAt   DateTime              @default(now())
+  file        RepositoryIndexedFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([fileId, name])
+  @@index([name, kind])
+}
+
+model RepositoryDependency {
+  id                String          @id @default(cuid())
+  repositoryIndexId String
+  sourcePath        String
+  targetPath        String?
+  importSource      String
+  importedNames     Json
+  isTypeOnly        Boolean         @default(false)
+  line              Int
+  createdAt         DateTime        @default(now())
+  repositoryIndex   RepositoryIndex @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
+
+  @@index([repositoryIndexId, sourcePath])
+  @@index([repositoryIndexId, targetPath])
 }
 
 model RepositoryAnalysisJob {
