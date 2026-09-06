@@ -6,7 +6,7 @@ const { setexMock, getMock } = vi.hoisted(() => ({
     getMock: vi.fn(),
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         setex: setexMock,
         get: getMock,

@@ -48,7 +48,7 @@ type StreamChunkShape = {
 
 const MAX_REPO_COMMITS = 10;
 const MAX_PROFILE_COMMITS = 20;
-const SUPPORT_EMAIL = "pieisnot22by7@gmail.com";
+const SUPPORT_EMAIL = "devaanshdubey@gmail.com";
 const MAX_GITHUB_CALLS_PER_FUNCTION = 2;
 const PROFILE_REPO_SAMPLE_SIZE = 1;
 let _modernGenAI: GoogleGenAI | null = null;

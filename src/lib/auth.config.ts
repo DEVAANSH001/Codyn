@@ -60,7 +60,7 @@ const authConfig: NextAuthConfig = {
         },
     },
     pages: {
-        signIn: "/",
+        signIn: "/signin",
     },
 };
 

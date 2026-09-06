@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

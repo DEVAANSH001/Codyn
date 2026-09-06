@@ -1,7 +1,7 @@
 "use client";
 
 import { X, Github, ShieldAlert } from "lucide-react";
-import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -27,6 +27,7 @@ export function LoginModal({
             <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden flex flex-col relative shadow-2xl">
                 <button
                     onClick={onClose}
+                    aria-label="Close sign-in prompt"
                     className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors z-10"
                 >
                     <X className="w-5 h-5" />
@@ -43,19 +44,13 @@ export function LoginModal({
                         {description}
                     </p>
 
-                    <button
-                        onClick={() =>
-                            signIn(
-                                "github",
-                                callbackUrl ? { callbackUrl } : undefined,
-                                scope ? { scope } : undefined
-                            )
-                        }
+                    <Link
+                        href={`/signin?${new URLSearchParams({ callbackUrl: callbackUrl || (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/dashboard'), ...(scope ? { scope } : {}) })}`}
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-all shadow-lg"
                     >
                         <Github className="w-5 h-5" />
                         <span>Sign in with GitHub</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>

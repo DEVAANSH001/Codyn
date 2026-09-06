@@ -69,7 +69,7 @@ export function WhatsNewModal({ isOpen, onClose }: WhatsNewModalProps) {
                 "Added hidden files section to optimise the repo tree.",
                 "Implemented the devtools",
                 "Added realtime next js server response",
-                "Introduced the Vercel KV caching for GitHub API calls",
+                "Introduced Upstash Redis caching for GitHub API calls",
                 "Robust mermaid diagram fix pipeline using JSON by LLM to mermaid by typescript."
             ]
         },

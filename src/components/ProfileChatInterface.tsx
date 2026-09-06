@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Folder, Github, Users, BookMarked, Trash2, Download, X, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { createChatRun } from "@/lib/chat-run-client";
 
 import { BotIcon } from "@/components/icons/BotIcon";
 import { UserAvatar } from "./UserAvatar";
@@ -58,7 +59,7 @@ interface ToolQuotaState {
     exhausted: boolean;
 }
 
-const SUPPORT_EMAIL = "pieisnot22by7@gmail.com";
+const SUPPORT_EMAIL = "devaanshdubey@gmail.com";
 
 function formatDuration(seconds: number): string {
     const normalized = Math.max(0, Math.floor(seconds));
@@ -425,21 +426,10 @@ export function ProfileChatInterface({
         });
         setConnectionLost(false);
 
-        const clientRequestId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-        const runCreateRes = await fetch("/api/chat/run", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                scope: "profile",
-                username: profile.login,
-                clientRequestId,
-            }),
+        const runId = await createChatRun({
+            scope: "profile",
+            username: profile.login,
         });
-        let runId: string | null = null;
-        if (runCreateRes.ok) {
-            const run = await runCreateRes.json() as { runId?: string };
-            runId = typeof run.runId === "string" ? run.runId : null;
-        }
         if (runId) {
             window.sessionStorage.setItem(activeRunKey, runId);
         }
@@ -667,7 +657,7 @@ export function ProfileChatInterface({
                 replaceOrAppendModelMessage(modelMsgId, (id) => ({
                     id,
                     role: "model",
-                    content: "Usage limit reached for profile chat tools.\n\nPlease contact **pieisnot22by7@gmail.com** for extended limits.",
+                    content: "Usage limit reached for profile chat tools.\n\nPlease contact **devaanshdubey@gmail.com** for extended limits.",
                 }));
                 setShowToolQuotaModal(true);
             } else if (isAuthError) {
@@ -772,14 +762,14 @@ export function ProfileChatInterface({
     };
 
     return (
-        <div className="flex flex-col h-[100dvh] bg-black text-white">
+        <div className="codyn-workspace-grid flex flex-col h-[100dvh] text-white">
             {/* Profile Header */}
-            <div className="relative z-40 border-b border-white/10 p-4 md:p-6 bg-zinc-950/95">
+            <div className="codyn-toolbar relative z-40 border-b border-white/10 p-4 md:p-6">
                 <div className="flex items-start gap-3 md:gap-6 max-w-3xl mx-auto">
                     <Link
-                        href="/"
+                        href="/chat"
                         className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                        title="Back to home"
+                        title="New analysis"
                     >
                         <ArrowLeft className="w-5 h-5 text-zinc-400 hover:text-white" />
                     </Link>

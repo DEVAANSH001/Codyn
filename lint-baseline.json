@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-05T03:39:03.038Z",
-  "signature": "6e6646ec95935c359c655d0c78d687efaff4f0f1ba0f3bb0f2d187bc7ddedfd0",
+  "generatedAt": "2026-09-05T09:59:04.878Z",
+  "signature": "cbe5fe581400cf933726457f3ed727725f65ed1af863db98829d195e7a97fab6",
   "totals": {
     "errors": 46,
     "warnings": 50,
@@ -212,18 +212,18 @@
     {
       "file": "src/components/ChatInterface.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 263,
+      "line": 264,
       "column": 14,
       "severity": 2,
-      "messageHash": "ee81c000550b"
+      "messageHash": "0123352b2a48"
     },
     {
       "file": "src/components/ChatInterface.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 420,
+      "line": 421,
       "column": 9,
       "severity": 2,
-      "messageHash": "5605f83475e6"
+      "messageHash": "8da16c917f9e"
     },
     {
       "file": "src/components/dashboard/DashboardOverview.tsx",
@@ -372,7 +372,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "@next/next/no-img-element",
-      "line": 265,
+      "line": 266,
       "column": 41,
       "severity": 1,
       "messageHash": "8df1fdea6499"
@@ -380,7 +380,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "@next/next/no-img-element",
-      "line": 324,
+      "line": 325,
       "column": 64,
       "severity": 1,
       "messageHash": "8df1fdea6499"
@@ -388,7 +388,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "@next/next/no-img-element",
-      "line": 326,
+      "line": 327,
       "column": 60,
       "severity": 1,
       "messageHash": "8df1fdea6499"
@@ -420,7 +420,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "jsx-a11y/alt-text",
-      "line": 324,
+      "line": 325,
       "column": 64,
       "severity": 1,
       "messageHash": "ef679912f2f7"
@@ -428,7 +428,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "jsx-a11y/alt-text",
-      "line": 326,
+      "line": 327,
       "column": 60,
       "severity": 1,
       "messageHash": "ef679912f2f7"
@@ -444,7 +444,7 @@
     {
       "file": "src/components/FilePreview.tsx",
       "ruleId": "react/no-unescaped-entities",
-      "line": 242,
+      "line": 243,
       "column": 50,
       "severity": 2,
       "messageHash": "4a5fcfbb4b1a"
@@ -524,18 +524,18 @@
     {
       "file": "src/components/ProfileChatInterface.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 231,
+      "line": 232,
       "column": 13,
       "severity": 2,
-      "messageHash": "3a10cb20e54f"
+      "messageHash": "f040527a5323"
     },
     {
       "file": "src/components/ProfileChatInterface.tsx",
       "ruleId": "react-hooks/set-state-in-effect",
-      "line": 236,
+      "line": 237,
       "column": 14,
       "severity": 2,
-      "messageHash": "14f68bb70ff2"
+      "messageHash": "3d7eaeddc0ac"
     },
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",

@@ -12,7 +12,7 @@ const {
     kvSetExMock: vi.fn(),
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         incrby: kvIncrByMock,
         expire: kvExpireMock,

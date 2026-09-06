@@ -49,7 +49,7 @@ export function RepoLayout({ fileTree, repoName, owner, repo, hiddenFiles = [], 
 
     return (
         <>
-            <div className="flex h-[100dvh] w-full bg-black overflow-hidden">
+            <div className="codyn-workspace-grid flex h-[100dvh] w-full overflow-hidden">
                 <RepoSidebar
                     fileTree={fileTree}
                     repoName={repoName}

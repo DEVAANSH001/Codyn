@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Github, Code, Zap, ShieldCheck } from 'lucide-react';
-import { parseRepositoryInput } from '@/lib/codyn-dashboard';
+import { parseWorkspaceInput } from '@/lib/workspace-navigation';
 
 const gradientStyle: React.CSSProperties = {
   backgroundImage: 'linear-gradient(to right, #07152f 0%, #1769d2 22%, #42a5ff 42%, #8deaff 50%, #42a5ff 58%, #1769d2 78%, #07152f 100%)',
@@ -23,7 +23,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!parseRepositoryInput(repoInput)) { setError('Enter a public GitHub repository such as facebook/react.'); return; }
+    if (!parseWorkspaceInput(repoInput)) { setError('Enter a GitHub repository such as facebook/react, or a username.'); return; }
     setError('');
     if (onAnalyze) {
       onAnalyze(repoInput);
@@ -92,6 +92,7 @@ export const Hero: React.FC<HeroProps> = ({ onAnalyze }) => {
             <Github className="w-5 h-5 text-[#00d2ff] flex-shrink-0" />
             <input
               type="text"
+              aria-label="GitHub repository or profile"
               value={repoInput}
               onChange={(e) => setRepoInput(e.target.value)}
               placeholder="GitHub URL, username, or repo (e.g. facebook/react)"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Github, LogOut, LayoutDashboard, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -85,13 +85,13 @@ export default function AuthButton() {
     }
 
     return (
-        <button
-            onClick={() => signIn("github")}
+        <Link
+            href="/signin"
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-zinc-700/50 hover:border-zinc-500/50 backdrop-blur-md transition-all font-medium text-sm text-white shadow-lg group"
         >
             <Github className="w-4 h-4 text-white hidden md:block" />
             <span className="hidden md:inline">Sign in with GitHub</span>
             <span className="md:hidden">Sign In</span>
-        </button>
+        </Link>
     );
 }

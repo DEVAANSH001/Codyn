@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import JsonLd from './components/json-ld';
 import { Providers } from '@/components/Providers';
 import './globals.css';
+import './product-theme.css';
 
 export const viewport: Viewport = {
   themeColor: '#0c0c0c',

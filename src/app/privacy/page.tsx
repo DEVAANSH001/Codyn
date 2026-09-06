@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           Usage analytics, authentication details, and account-related metadata may be processed to provide features and support.
         </p>
         <p className="text-zinc-400 leading-relaxed">
-          For data-related requests, contact us at <a href="mailto:pieisnot22by7@gmail.com" className="text-blue-300 hover:text-blue-200">pieisnot22by7@gmail.com</a>.
+          For data-related requests, contact us at <a href="mailto:devaanshdubey@gmail.com" className="text-blue-300 hover:text-blue-200">devaanshdubey@gmail.com</a>.
         </p>
       </div>
     </main>

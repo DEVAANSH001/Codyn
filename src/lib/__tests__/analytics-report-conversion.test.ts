@@ -38,7 +38,7 @@ const {
     reportFalsePositiveGroupByMock: vi.fn(),
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         scard: scardMock,
         get: getMock,

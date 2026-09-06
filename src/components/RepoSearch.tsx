@@ -116,6 +116,7 @@ export default function RepoSearch({
                 <div className="conic-border-container neon-spin-ring flex items-center bg-zinc-900 p-1 rounded-lg">
                     <input
                         type="text"
+                        aria-label="GitHub repository or profile"
                         value={input}
                         onChange={(e) => handleInputChange(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -132,6 +133,7 @@ export default function RepoSearch({
                                 exit={{ opacity: 0, x: 10, scale: 0.9 }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
                                 type="submit"
+                                aria-label="Open repository or profile"
                                 disabled={loading}
                                 className="p-2 md:p-3 rounded-md transition-all disabled:opacity-60 shrink-0 text-zinc-400 hover:text-white hover:bg-white/5 active:scale-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/10"
                             >

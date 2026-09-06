@@ -22,7 +22,7 @@ export default function TermsPage() {
           We may update features, limits, and policies over time to improve quality and security.
         </p>
         <p className="text-zinc-400 leading-relaxed">
-          If you have questions regarding these terms, contact <a href="mailto:pieisnot22by7@gmail.com" className="text-blue-300 hover:text-blue-200">pieisnot22by7@gmail.com</a>.
+          If you have questions regarding these terms, contact <a href="mailto:devaanshdubey@gmail.com" className="text-blue-300 hover:text-blue-200">devaanshdubey@gmail.com</a>.
         </p>
       </div>
     </main>

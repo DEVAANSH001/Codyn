@@ -1,18 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ChevronRight, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export const FinalCTA: React.FC = () => {
-  const handleAnalyzeClick = () => {
-    const inputEl = document.querySelector('input[type="text"]') as HTMLInputElement;
-    if (inputEl) {
-      inputEl.focus();
-      inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   return (
     <section className="max-w-6xl mx-auto px-6 py-20 md:py-32 relative z-10">
       <motion.div
@@ -41,13 +32,13 @@ export const FinalCTA: React.FC = () => {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <button
-              onClick={handleAnalyzeClick}
+            <Link
+              href="/chat"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#00d2ff] text-black font-semibold text-sm px-7 py-3.5 hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(0,210,255,0.4)] active:scale-95 cursor-pointer"
             >
               <span>Analyze Your Repo Free</span>
               <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
 
             <button 
               onClick={() => {

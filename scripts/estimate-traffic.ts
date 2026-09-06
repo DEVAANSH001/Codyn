@@ -61,7 +61,8 @@ async function main() {
     const authScans  = Number(recentScans[0]?.auth ?? 0);
 
     // ── 4. KV (Upstash) — anonymous visitor & query data ──
-    const { kv } = await import("@vercel/kv");
+    const { Redis } = await import("@upstash/redis");
+    const kv = new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN });
     const [anonQueryTotal, allVisitorIds, countryKeys, deviceKeys] = await Promise.all([
         kv.get<number>("queries:total"),
         kv.smembers("visitors"),

@@ -15,7 +15,7 @@ import { revalidateTag } from "next/cache";
 import type { ReportFalsePositiveReason } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { isAdminUser } from "@/lib/admin-auth";
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import {
     getProfile,
     getRepo,
@@ -948,6 +948,9 @@ export async function scanRepositoryVulnerabilities(
     }
 
     let scanId: string | undefined;
+    if (process.env.NODE_ENV !== "test" && !process.env.DATABASE_URL) {
+        return { ...result, scanId };
+    }
     try {
         const session = await auth();
         const userId = session?.user?.id;
@@ -973,7 +976,7 @@ export async function scanRepositoryVulnerabilities(
             });
         }
     } catch (e) {
-        console.error("Failed to save scan to KV:", e);
+        console.error("Failed to save scan to database:", e);
     }
 
     return {
@@ -1007,6 +1010,7 @@ export async function getRemainingDeepScans(): Promise<{ used: number; total: nu
 }
 
 export async function getLatestRepoScanId(owner: string, repo: string): Promise<string | null> {
+    if (process.env.NODE_ENV !== "test" && !process.env.DATABASE_URL) return null;
     return getLatestScanId(owner, repo);
 }
 

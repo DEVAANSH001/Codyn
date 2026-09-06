@@ -7,7 +7,7 @@ const { pipelineCalls, pipelineExecMock } = vi.hoisted(() => ({
     pipelineExecMock: vi.fn(),
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         pipeline: () => {
             const localCalls: PipelineCall[] = [];

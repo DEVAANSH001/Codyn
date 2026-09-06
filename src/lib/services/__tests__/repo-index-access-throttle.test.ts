@@ -6,7 +6,7 @@ const { kvGetMock, pipelineExecMock, pipelineCalls } = vi.hoisted(() => ({
     pipelineCalls: [] as string[],
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         get: kvGetMock,
         pipeline: () => {

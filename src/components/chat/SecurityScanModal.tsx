@@ -38,6 +38,7 @@ export function SecurityScanModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden flex flex-col relative shadow-2xl">
                 <button
+                    aria-label="Close security scan options"
                     onClick={() => {
                         onClose();
                     }}

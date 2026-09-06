@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, GitFork, Wrench, Folder } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { createChatRun } from "@/lib/chat-run-client";
 import { BotIcon } from "@/components/icons/BotIcon";
 import { UserAvatar } from "./UserAvatar";
 import { CopySquaresIcon } from "@/components/icons/CopySquaresIcon";
@@ -78,7 +79,7 @@ interface ToolQuotaState {
     exhausted: boolean;
 }
 
-const SUPPORT_EMAIL = "pieisnot22by7@gmail.com";
+const SUPPORT_EMAIL = "devaanshdubey@gmail.com";
 
 function formatDuration(seconds: number): string {
     const normalized = Math.max(0, Math.floor(seconds));
@@ -484,7 +485,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
             const modelMsg: RepoChatMessage = {
                 id: placeholderMessageId,
                 role: "model",
-                content,
+                content: scanId ? content : `${content}\n\nThis scan is available in this conversation. Use Export Chat to keep a copy; no shared report was saved.`,
                 vulnerabilities: findings,
                 isQuickSecurityScan: isQuickScan && !isDeepScan,
                 scanId,
@@ -503,7 +504,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
 
             toast.error(isDeepScanLimitReached ? "Deep scan limit exhausted" : "Security scan failed", {
                 description: isDeepScanLimitReached
-                    ? "Your monthly deep scan limit is exhausted. Contact admin pieisnot22by7@gmail.com for more reasonable limits."
+                    ? "Your monthly deep scan limit is exhausted. Contact your Codyn administrator to review the limit."
                     : errorMessage,
             });
 
@@ -511,7 +512,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                 ? {
                     id: placeholderMessageId,
                     role: "model",
-                    content: "Your deep scan limit is exhausted for this month.\n\nPlease contact admin at **pieisnot22by7@gmail.com** for more reasonable limits.",
+                    content: "Your deep scan limit is exhausted for this month.\n\nPlease contact your Codyn administrator to review the limit.",
                 }
                 : {
                     id: placeholderMessageId,
@@ -598,22 +599,11 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
         });
         setConnectionLost(false);
 
-        const clientRequestId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-        const runCreateRes = await fetch("/api/chat/run", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                scope: "repo",
-                owner: repoContext.owner,
-                repo: repoContext.repo,
-                clientRequestId,
-            }),
+        const runId = await createChatRun({
+            scope: "repo",
+            owner: repoContext.owner,
+            repo: repoContext.repo,
         });
-        let runId: string | null = null;
-        if (runCreateRes.ok) {
-            const run = await runCreateRes.json() as { runId?: string };
-            runId = typeof run.runId === "string" ? run.runId : null;
-        }
         if (runId) {
             window.sessionStorage.setItem(activeRunKey, runId);
         }
@@ -866,7 +856,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                 replaceOrAppendModelMessage(modelMsgId, (id) => ({
                     id,
                     role: "model",
-                    content: "Usage limit reached for repo chat tools.\n\nPlease contact **pieisnot22by7@gmail.com** for extended limits.",
+                    content: "Usage limit reached for repo chat tools.\n\nPlease contact **devaanshdubey@gmail.com** for extended limits.",
                 }));
                 setShowToolQuotaModal(true);
             } else if (isAuthError) {
@@ -989,31 +979,32 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
     };
 
     return (
-        <div className="flex flex-col h-full bg-black text-white relative">
+        <div className="codyn-workspace-grid flex flex-col h-full text-white relative">
             {/* Repo Header */}
-            <div className="sticky top-0 z-40 border-b border-white/5 bg-zinc-950/95 shrink-0 shadow-lg">
+            <div className="codyn-toolbar sticky top-0 z-40 border-b border-white/5 shrink-0">
                 <div className="flex items-center justify-between px-4 h-16 w-full gap-4">
                     {/* Left Section: Breadcrumbs & Context */}
                     <div className="flex items-center gap-3 min-w-0 shrink">
                         {onToggleSidebar && (
                             <button
                                 onClick={onToggleSidebar}
+                                aria-label="Open file explorer"
                                 className="md:hidden p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
                             >
                                 <Menu className="w-5 h-5" />
                             </button>
                         )}
                         <Link
-                            href="/"
+                            href="/chat"
                             className="hidden md:flex p-2 -ml-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                            title="Back to home"
+                            title="New analysis"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Link>
 
                         <div className="flex items-center gap-2 min-w-0 ml-2">
                             <h1 className="text-sm font-medium text-zinc-400 truncate flex items-center gap-1.5">
-                                <Link href="/" className="hidden md:inline hover:text-white transition-colors">codyn</Link>
+                                <Link href="/chat" className="hidden md:inline hover:text-white transition-colors">Codyn</Link>
                                 <span className="hidden md:inline text-zinc-700">/</span>
                                 <span className="text-zinc-100 font-semibold tracking-tight">{repoContext.owner}</span>
                                 <span className="text-zinc-700">/</span>
@@ -1041,10 +1032,6 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                             </button>
                             <button
                                 onClick={() => {
-                                    if (!session) {
-                                        setShowLoginModal(true);
-                                        return;
-                                    }
                                     setShowSecurityModal(true);
                                 }}
                                 disabled={loading || scanning}
@@ -1167,7 +1154,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                             <div
                                 key={msg.id}
                                 className={cn(
-                                    "flex gap-4 max-w-4xl mx-auto",
+                                    "flex items-start gap-4 max-w-4xl mx-auto min-w-0",
                                     msg.role === "user" ? "flex-row-reverse" : "flex-row"
                                 )}
                             >

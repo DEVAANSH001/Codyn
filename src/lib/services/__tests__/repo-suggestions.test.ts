@@ -21,7 +21,7 @@ vi.mock("@/lib/github", () => ({
     },
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         get: kvGetMock,
         set: vi.fn(),

@@ -30,9 +30,9 @@ export function buildSecurityScanMessage(input: {
     if (summary.total === 0) {
         return stripEmojiCharacters(`${cachePrefix}Security scan complete!
 
-I've comprehensively scanned the **core repository files** and found **no verified security vulnerabilities**.
+The scan returned **no verified security vulnerabilities** in the files it covered.
 
-Your code looks secure! The scan checked for:
+The scan checked selected source files for:
 - SQL injection vulnerabilities
 - Cross-site scripting (XSS)
 - Unsafe child_process usage
@@ -40,12 +40,12 @@ Your code looks secure! The scan checked for:
 - Weak cryptographic algorithms
 - Command injection
 
-Keep up the good security practices!`);
+This is a bounded review, not a guarantee that the repository is secure. Unread files, runtime behavior, and unverified findings still need review.`);
     }
 
     let content = `${cachePrefix}Security scan complete!
 
-I've comprehensively scanned the **core repository files** and found **${summary.total} verified vulnerabilit${summary.total !== 1 ? "ies" : "y"}**.
+The scan returned **${summary.total} verified vulnerabilit${summary.total !== 1 ? "ies" : "y"}** in the files it covered. Review the source evidence before applying a fix.
 
 `;
 

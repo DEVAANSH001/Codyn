@@ -1,7 +1,7 @@
 import { getCatalogData } from "@/lib/repo-catalog";
 import { getUserRepos } from "@/lib/github";
 import { octokit } from "@/lib/github"; // I need to make sure octokit is exported or use a wrapper
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 
 export interface RepoSuggestion {
     owner: string;

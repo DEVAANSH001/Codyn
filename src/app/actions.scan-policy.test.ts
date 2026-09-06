@@ -36,7 +36,7 @@ vi.mock("@/lib/admin-auth", () => ({
     isAdminUser: isAdminUserMock,
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         get: kvGetMock,
         incr: kvIncrMock,

@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { unstable_cache } from "next/cache";
@@ -387,8 +387,7 @@ export async function trackEvent(
     }
     if (
         process.env.NODE_ENV !== "test" &&
-        (!process.env.KV_REST_API_URL ||
-            !(process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN))
+        (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN)
     ) {
         return;
     }
@@ -459,8 +458,7 @@ export async function trackSelectionPerformance(params: {
     try {
         if (
             process.env.NODE_ENV !== "test" &&
-            (!process.env.KV_REST_API_URL ||
-                !(process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN))
+            (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN)
         ) {
             return;
         }

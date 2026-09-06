@@ -10,10 +10,10 @@ export const Footer: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-6">
-        <a href="#" className="hover:text-white/80 transition-colors">Privacy Policy</a>
-        <a href="#" className="hover:text-white/80 transition-colors">Terms of Service</a>
-        <a href="#" className="hover:text-white/80 transition-colors">Security Audit</a>
-        <a href="#" className="hover:text-white/80 transition-colors">Documentation</a>
+        <a href="/privacy" className="hover:text-white/80 transition-colors">Privacy Policy</a>
+        <a href="/terms" className="hover:text-white/80 transition-colors">Terms of Service</a>
+        <a href="/security-scanner" className="hover:text-white/80 transition-colors">Security Audit</a>
+        <a href="/faq" className="hover:text-white/80 transition-colors">Documentation</a>
       </div>
     </footer>
   );

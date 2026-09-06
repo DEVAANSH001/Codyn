@@ -217,6 +217,7 @@ export function FilePreview({ isOpen, filePath, repoOwner, repoName, onClose }: 
                             )}
                             <button
                                 onClick={onClose}
+                                aria-label="Close file preview"
                                 className="p-2 hover:bg-white/10 rounded-lg transition-colors ms-2"
                             >
                                 <X className="w-5 h-5 text-zinc-400 hover:text-white" />

@@ -1,31 +1,24 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ProfileLoader } from "@/components/ProfileLoader";
 import { RepoLoader } from "@/components/RepoLoader";
-import { normalizeGitHubInput } from "@/lib/utils";
+import { parseWorkspaceInput } from "@/lib/workspace-navigation";
+import { WorkspaceStart } from "@/components/WorkspaceStart";
 
 export default function ChatPageClient() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const rawQuery = searchParams.get("q") ?? "";
     const prompt = searchParams.get("prompt") ?? undefined;
-    const query = useMemo(() => normalizeGitHubInput(rawQuery), [rawQuery]);
-
-    useEffect(() => {
-        if (!query) {
-            router.replace("/");
-        }
-    }, [query, router]);
+    const query = parseWorkspaceInput(rawQuery);
 
     if (!query) {
-        return null;
+        return <WorkspaceStart invalidQuery={Boolean(rawQuery)} />;
     }
 
     if (!query.includes("/")) {
-        return <ProfileLoader username={query} />;
+        return <div className="codyn-product"><ProfileLoader key={query} username={query} /></div>;
     }
 
-    return <RepoLoader query={query} initialPrompt={prompt} />;
+    return <div className="codyn-product"><RepoLoader key={query} query={query} initialPrompt={prompt} /></div>;
 }

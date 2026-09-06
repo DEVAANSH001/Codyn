@@ -22,7 +22,7 @@ vi.mock("next/cache", () => ({
     unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
-vi.mock("@vercel/kv", () => ({
+vi.mock("@/lib/kv", () => ({
     kv: {
         scard: scardMock,
         get: getMock,

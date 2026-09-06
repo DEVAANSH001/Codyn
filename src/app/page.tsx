@@ -15,13 +15,13 @@ import { FaqSection } from '../components/FaqSection';
 import { FinalCTA } from '../components/FinalCTA';
 import { Footer } from '../components/Footer';
 import { useRouter } from 'next/navigation';
-import { parseRepositoryInput } from '@/lib/codyn-dashboard';
+import { workspaceHref } from '@/lib/workspace-navigation';
 
 export default function Page() {
   const router = useRouter();
   const handleAnalyzeRepo = (url: string) => {
-    const repository = parseRepositoryInput(url);
-    if (repository) router.push(`/repo/${repository.owner}/${repository.repo}?scan=deep`);
+    const destination = workspaceHref(url);
+    if (destination) router.push(destination);
   };
 
   return (

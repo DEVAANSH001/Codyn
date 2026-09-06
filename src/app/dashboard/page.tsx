@@ -10,7 +10,7 @@ export default async function DashboardPage() {
     const authState = getSessionAuthState(session);
 
     if (authState === "unauthenticated") {
-        redirect("/");
+        redirect("/signin?callbackUrl=%2Fdashboard");
     }
     if (authState === "invalid") {
         redirect(buildInvalidSessionSignOutRedirect());

@@ -4,7 +4,7 @@ import {
     FixVerificationRunStatus,
     type Prisma,
 } from "@prisma/client";
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 
 import { prisma } from "@/lib/db";
 import type { FindingVerificationRecord } from "@/lib/services/security-verification";

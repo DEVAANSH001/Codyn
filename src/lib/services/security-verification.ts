@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 
 import {
     adjudicateSecurityFindingWithGemini,

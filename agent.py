@@ -46,9 +46,11 @@ PROJECT = {
         ),
         "server": (
             "src/app/actions.ts plus src/app/api contain GitHub, chat-run, dashboard, badge, admin, "
-            "email, report, and Mermaid endpoints. /api/repository/chat is the public, revision-grounded "
-            "workspace stream; /api/chat persists authenticated conversations; /api/chat/repo and "
-            "/api/chat/profile power the richer RepoMind-derived chat surfaces. src/proxy.ts applies "
+            "email, report, and Mermaid endpoints. /chat?q=owner/repo mounts the real RepoMind "
+            "RepoLoader -> RepoLayout -> ChatInterface workflow. /chat without q is the app start screen. "
+            "/api/chat persists authenticated conversations; /api/chat/repo and /api/chat/profile "
+            "power the active product streams. /api/chat/run explicitly returns persistence:disabled "
+            "when PostgreSQL is absent. /api/repository/chat belongs to the unused earlier prototype. src/proxy.ts applies "
             "NextAuth and API CORS handling."
         ),
         "analysis": (
@@ -90,6 +92,10 @@ PROJECT = {
         "GitHub works at restrictive anonymous API limits when GITHUB_TOKEN is absent.",
         "AI actions require GEMINI_API_KEY and return explicit configuration errors without it.",
         "Account history, sharing, admin, and durable state require PostgreSQL and the related services.",
+        "Authenticated deep-scan quotas require writable KV. Private analysis uses the inherited server "
+        "GITHUB_TOKEN; OAuth alone does not establish private source access or multi-user cache isolation.",
+        "npm run setup:local preserves existing environment values and generates the missing AUTH_SECRET "
+        "in ignored .env.local. /signin explains unavailable accounts without redirecting back to marketing.",
     ],
     "delivery_rules": [
         "Preserve the Codyn landing page and cyan/blue visual identity.",
@@ -110,14 +116,19 @@ PROJECT = {
         "e44828a — integrate the complete platform, data model, Codyn identity, and resilient local setup",
         "3443189 — capture the complete operating context and setup guide",
         "0c8b29d — harden local runtime configuration",
+        "6afe346 — repair the earlier public prototype endpoint; it is not the active RepoMind UI",
+        "Workspace integration milestone — direct landing-to-RepoMind navigation, Codyn product theme, "
+        "explicit optional chat persistence, local setup, and browser workflow verification",
     ],
     "verified_state": [
         "TypeScript production typecheck passes.",
-        "The imported Vitest suite plus repository-chat regression coverage contains 90 files and 539 tests.",
+        "The full Vitest suite passes 92 files and 552 tests; six local-setup tests also pass.",
         "Next.js production build generates more than 300 static/dynamic routes and topic pages.",
         "Prisma Client generation works without local infrastructure by using a CLI-only placeholder URL.",
         "Live checks confirmed GitHub metadata, pinned file reads, quick security triage, the public "
         "repository Gemini stream, and the richer RepoMind-derived repository chat stream.",
+        "Browser validation followed the landing form into the real RepoMind application, submitted a "
+        "question, received a cited answer, previewed package.json, and completed the actual quick scan.",
     ],
 }
 

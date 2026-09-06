@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import { gzipSync, gunzipSync } from "node:zlib";
 
 export type RepoIndexEntry = {
@@ -154,8 +154,8 @@ function decodeIndex(value: string): RepoIndex | null {
 
 async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null> {
     const hasKvConfiguration = Boolean(
-        process.env.KV_REST_API_URL &&
-        (process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN)
+        process.env.UPSTASH_REDIS_REST_URL &&
+        process.env.UPSTASH_REDIS_REST_TOKEN
     );
     if (process.env.NODE_ENV !== "test" && !hasKvConfiguration) {
         return null;

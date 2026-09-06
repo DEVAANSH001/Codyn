@@ -1,0 +1,112 @@
+/* Product surfaces share the landing page palette without changing status colors. */
+.codyn-product {
+  --product-background: #0c0c0c;
+  --product-surface: rgba(18, 20, 23, 0.86);
+  --product-surface-raised: #171a1f;
+  --product-border: rgba(255, 255, 255, 0.09);
+  --product-accent: #00d2ff;
+  --product-blue: #1769d2;
+  --product-muted: #a1a1aa;
+  background-color: var(--product-background);
+  color: #fff;
+  color-scheme: dark;
+}
+
+.codyn-product ::selection {
+  background: rgba(0, 210, 255, 0.24);
+  color: #fff;
+}
+
+.codyn-product :where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--product-accent);
+  outline-offset: 3px;
+}
+
+.codyn-product .codyn-composer textarea:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.codyn-product.codyn-workspace-grid,
+.codyn-product .codyn-workspace-grid {
+  background-color: var(--product-background);
+  background-image:
+    radial-gradient(ellipse at 95% 0%, rgba(0, 210, 255, 0.06), transparent 42rem),
+    radial-gradient(ellipse at 5% 100%, rgba(23, 105, 210, 0.075), transparent 38rem),
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+}
+
+.codyn-product .codyn-sidebar,
+.codyn-product .codyn-toolbar {
+  background-color: rgba(12, 12, 12, 0.96);
+  border-color: var(--product-border);
+}
+
+.codyn-product .codyn-brand-mark {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.12);
+}
+
+.codyn-product .codyn-panel,
+.codyn-product :where(.bg-zinc-900.rounded-2xl, .bg-zinc-900.rounded-3xl) {
+  background: linear-gradient(145deg, rgba(23, 26, 31, 0.91), rgba(14, 16, 19, 0.94));
+  border-color: var(--product-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.codyn-product .codyn-primary-action {
+  background: #fff;
+  color: #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: background-color 180ms, border-color 180ms, box-shadow 180ms;
+}
+
+.codyn-product .codyn-primary-action:hover {
+  background: var(--product-accent);
+  border-color: var(--product-accent);
+  box-shadow: 0 4px 24px rgba(0, 210, 255, 0.15);
+}
+
+.codyn-product .codyn-primary-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.codyn-product .codyn-nav-link {
+  color: var(--product-muted);
+  border: 1px solid transparent;
+}
+
+.codyn-product .codyn-nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.codyn-product .codyn-nav-link[aria-current="page"] {
+  color: var(--product-accent);
+  border-color: rgba(0, 210, 255, 0.18);
+  background: linear-gradient(100deg, rgba(0, 210, 255, 0.095), rgba(23, 105, 210, 0.045));
+}
+
+.codyn-product .codyn-composer {
+  background: rgba(12, 12, 12, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+}
+
+.codyn-product .codyn-composer:focus-within {
+  border-color: rgba(0, 210, 255, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codyn-product .codyn-primary-action,
+  .codyn-product .codyn-nav-link,
+  .codyn-product .codyn-sidebar {
+    transition: none;
+  }
+}

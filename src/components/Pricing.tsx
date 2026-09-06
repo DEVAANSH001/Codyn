@@ -2,8 +2,10 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Check, ArrowRight } from 'lucide-react';
 import { SectionEyebrow } from './SectionEyebrow';
+import { useRouter } from 'next/navigation';
 
 export const Pricing: React.FC = () => {
+  const router = useRouter();
   return (
     <section className="max-w-6xl mx-auto px-6 py-20 md:py-32 relative z-10 border-t border-white/10" id="pricing">
       {/* Section Header */}
@@ -65,8 +67,7 @@ export const Pricing: React.FC = () => {
 
           <button 
             onClick={() => {
-              const el = document.getElementById('mockup');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              router.push('/chat');
             }}
             className="mt-8 w-full py-3 px-4 rounded-xl border border-white/20 bg-white/5 text-white font-medium text-xs hover:bg-white/15 transition-all cursor-pointer"
           >

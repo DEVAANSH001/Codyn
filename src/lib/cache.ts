@@ -1,9 +1,9 @@
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import { createHash } from "node:crypto";
 import { gzipSync, gunzipSync } from "node:zlib";
 
 /**
- * Vercel KV caching utilities for GitHub API responses
+ * Upstash Redis caching utilities for GitHub API responses
  * Gracefully degrades when KV is unavailable
  */
 
@@ -65,8 +65,8 @@ export interface ToolBudgetWindowUsage extends ToolBudgetUsage {
 // Helper to handle KV errors gracefully
 async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null> {
     const hasKvConfiguration = Boolean(
-        process.env.KV_REST_API_URL &&
-        (process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN)
+        process.env.UPSTASH_REDIS_REST_URL &&
+        process.env.UPSTASH_REDIS_REST_TOKEN
     );
     if (process.env.NODE_ENV !== "test" && !hasKvConfiguration) {
         return null;
@@ -75,7 +75,7 @@ async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null
     try {
         return await operation();
     } catch (error) {
-        console.warn("KV operation failed (gracefully degrading):", error);
+        console.warn("Upstash Redis operation failed (gracefully degrading):", error);
         return null;
     }
 }
@@ -868,10 +868,10 @@ export async function getCachedSecurityScanResult(
 export async function clearRepoCache(owner: string, repo: string): Promise<void> {
     // This is intentionally unimplemented.
     // Pattern-based deletion (SCAN `*:owner/repo:*`) requires a Redis connection
-    // that supports SCAN, which @vercel/kv does not expose directly.
+    // that supports SCAN, which the REST client does not expose directly.
     throw new Error(
         `clearRepoCache is not implemented. Cache for ${owner}/${repo} was NOT cleared. ` +
-        "Use the Vercel KV dashboard or implement a key-tracking strategy."
+        "Use the Upstash Redis console or implement a key-tracking strategy."
     );
 }
 

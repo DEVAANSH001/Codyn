@@ -1,4 +1,8 @@
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const prismaCli = require.resolve('prisma/build/index.js');
 
 const MAX_ATTEMPTS = Number.parseInt(process.env.PRISMA_DEPLOY_MAX_ATTEMPTS ?? "3", 10);
 const RETRY_DELAY_MS = Number.parseInt(process.env.PRISMA_DEPLOY_RETRY_DELAY_MS ?? "15000", 10);
@@ -11,7 +15,7 @@ const transientConnectionPattern =
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-  const result = spawnSync("prisma", ["migrate", "deploy"], {
+  const result = spawnSync(process.execPath, [prismaCli, "migrate", "deploy"], {
     stdio: "pipe",
     encoding: "utf8",
   });

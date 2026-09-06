@@ -5,6 +5,8 @@ import { FileIcon, FolderIcon } from "./FileIcon";
 import { GitBranch, ChevronRight, ChevronDown, X, AlertCircle, Star, GitFork, CircleDot, Calendar } from "lucide-react";
 import { FileNode, GitHubRepo } from "@/lib/github";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { LogoMark } from "./LogoMark";
 
 interface RepoSidebarProps {
     fileTree: FileNode[];
@@ -97,14 +99,17 @@ function FileTreeNode({
 
     return (
         <div id={`sidebar-item-${node.path.replace(/\//g, '-')}`}>
-            <div
+            <button
+                type="button"
+                aria-expanded={isFolder ? isExpanded : undefined}
+                aria-label={isFolder ? `Toggle ${node.path}` : `Preview ${node.path}`}
                 draggable
                 onDragStart={(e) => {
                     e.dataTransfer.setData("text/plain", node.path);
                     e.dataTransfer.effectAllowed = "copy";
                 }}
                 className={cn(
-                    "flex items-center gap-1.5 py-1 px-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded cursor-pointer select-none transition-colors",
+                    "flex w-full items-center gap-1.5 py-1 px-2 text-left text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded cursor-pointer select-none transition-colors",
                     depth > 0 && "ml-3",
                     isExpanded && isFolder && "text-white"
                 )}
@@ -123,7 +128,7 @@ function FileTreeNode({
                 )}
 
                 <span className="truncate">{node.name}</span>
-            </div>
+            </button>
 
             {isExpanded && node.children && (
                 <div className="border-l border-white/5 ml-2.5">
@@ -209,13 +214,20 @@ export function RepoSidebar({ fileTree, repoName, isOpen, onClose, onFileDoubleC
 
             {/* Sidebar */}
             <div className={cn(
-                "w-64 max-w-[80vw] md:max-w-none border-r border-white/10 bg-zinc-900 flex flex-col h-full overflow-hidden transition-transform duration-300 ease-in-out",
+                "codyn-sidebar w-64 max-w-[80vw] md:max-w-none border-r border-white/10 flex flex-col h-full overflow-hidden transition-transform duration-300 ease-in-out",
                 // Mobile: fixed and slide in/out
                 "md:relative md:translate-x-0",
                 "fixed z-50",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="p-4 border-b border-white/10 bg-zinc-900 flex flex-col gap-3">
+                <div className="codyn-toolbar flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4">
+                    <Link href="/chat" className="flex items-center gap-2.5" aria-label="Codyn workspace">
+                        <span className="codyn-brand-mark grid h-8 w-8 place-items-center rounded-lg"><LogoMark className="h-5 w-5 text-cyan-200" /></span>
+                        <span className="font-semibold tracking-tight">Codyn</span>
+                    </Link>
+                    <Link href="/chat" className="text-xs text-white/45 hover:text-cyan-200">New analysis</Link>
+                </div>
+                <div className="p-4 border-b border-white/10 flex flex-col gap-3">
                     <div className="flex items-center justify-between w-full">
                         <h2 className="font-semibold text-white flex items-center gap-2 text-sm overflow-hidden">
                             <GitBranch className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -224,6 +236,7 @@ export function RepoSidebar({ fileTree, repoName, isOpen, onClose, onFileDoubleC
                         {/* Close button for mobile */}
                         <button
                             onClick={onClose}
+                            aria-label="Close file explorer"
                             className="md:hidden p-1 hover:bg-white/10 rounded transition-colors shrink-0"
                         >
                             <X className="w-4 h-4 text-zinc-400" />

@@ -241,7 +241,7 @@ export function ChatInput({
 
             <div 
                 className={cn(
-                    "relative flex flex-col md:flex-row md:items-center bg-zinc-900/50 backdrop-blur-xl border rounded-2xl p-2 transition-all shadow-2xl",
+                    "codyn-composer relative flex flex-col md:flex-row md:items-center bg-zinc-900/50 backdrop-blur-xl border rounded-2xl p-2 transition-all shadow-2xl",
                     isDragging ? "border-cyan-500 bg-cyan-900/10 ring-2 ring-cyan-500/30" : "border-white/10 focus-within:ring-2 focus-within:ring-cyan-600/30",
                     isMobile ? "flex-col" : ""
                 )}
@@ -290,6 +290,7 @@ export function ChatInput({
                     
                     <textarea
                         ref={textareaRef}
+                        aria-label="Ask Codyn about this codebase"
                         value={value}
                         onChange={(e) => handleChange(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -421,6 +422,7 @@ export function ChatInput({
 
                     <button
                         type="submit"
+                        aria-label={loading ? "Generating response" : "Send message"}
                         disabled={loading || disabled || (!value.trim() && !allowEmptySubmit && (taggedFiles?.length || 0) === 0)}
                         className="p-1 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/60"
                     >

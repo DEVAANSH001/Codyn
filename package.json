@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup:local": "node scripts/setup-local.mjs",
     "dev": "next dev --port 3000",
     "build": "prisma generate && next build",
     "start": "next start",
@@ -36,8 +37,8 @@
     "@prisma/client": "^6.19.2",
     "@react-email/components": "^1.0.8",
     "@react-email/render": "^2.0.4",
+    "@upstash/redis": "^1.38.4",
     "@vercel/blob": "^2.3.1",
-    "@vercel/kv": "^3.0.0",
     "axios": "^1.13.6",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",

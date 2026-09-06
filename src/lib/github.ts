@@ -135,7 +135,7 @@ export const octokit = new Octokit({
 // NOTE: In Vercel serverless functions these Maps are effectively useless as a
 // persistent cache — each cold start initializes fresh Maps. They provide a
 // minor speedup within a single warm invocation (e.g., sequential calls in one
-// request). The real caching layer is Vercel KV (see cache.ts).
+// request). The real caching layer is Upstash Redis (see cache.ts).
 const profileCache = new Map<string, GitHubProfile>();
 const repoCache = new Map<string, GitHubRepo>();
 
