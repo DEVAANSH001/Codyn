@@ -12,8 +12,9 @@ if (!process.env.VERCEL) {
 }
 
 const prismaCliDatabaseUrl = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
+const isMigrationCommand = process.argv.includes("migrate");
 
-if (process.env.VERCEL && !process.env.DIRECT_URL) {
+if (process.env.VERCEL && isMigrationCommand && !process.env.DIRECT_URL) {
   throw new Error(
     "DIRECT_URL is required on Vercel for Prisma migrations. Use the non-pooled Neon connection URL.",
   );
@@ -28,6 +29,8 @@ export default defineConfig({
   engine: "classic",
   datasource: {
     // Avoid running migrations through pooled URLs; advisory locks require a direct connection.
-    url: prismaCliDatabaseUrl!,
+    // `prisma generate` only needs a datasource shape; migrations must use
+    // DIRECT_URL so pooled connections never hold advisory locks.
+    url: prismaCliDatabaseUrl ?? "postgresql://postgres:postgres@localhost:5432/codyn",
   },
 });
