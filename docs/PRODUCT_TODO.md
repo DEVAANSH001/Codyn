@@ -37,7 +37,7 @@ These are the highest-priority prerequisites. They replace heuristic/context-lim
 - [ ] Support repository-wide symbol search beyond the current JS/TS AST search.
 - [~] Detect the technology stack from manifests, source usage, infrastructure files, databases, and dependency versions. The workspace now detects supported languages, package technologies/versions, Prisma, Docker, and Terraform with manifest evidence; broader ecosystems and code-usage explanation remain.
 - [~] Produce a code-grounded 10-minute repository tour: purpose, start commands, entry points, important modules, and interactions. The active workspace now offers a structured Tour prompt that requests cited source evidence; a dedicated deterministic tour report remains.
-- [ ] Produce a repository health report covering architecture, dependency health, tests, documentation, complexity, and maintainability—with methodology and confidence levels.
+- [~] Produce a repository health report covering architecture, dependency health, tests, documentation, complexity, and maintainability—with methodology and confidence levels. The workspace now provides transparent structural signals for source/tests/docs and indexed dependency cycles; complexity, maintainability, and broader architectural analysis remain.
 
 ## Milestone 3 — secure, scalable repository access
 
