@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-06T18:12:00.434Z",
-  "signature": "2caf9ecd9ad5764a6bb089705315d687dad157dbe5ea3141ea3a6b046e7201fe",
+  "generatedAt": "2026-09-12T09:29:51.738Z",
+  "signature": "3cdf16d27efe8abf3c5332f85bb8b7c6ace9483e094890b75d161b1a15d90f3d",
   "totals": {
     "errors": 47,
     "warnings": 52,
@@ -119,7 +119,7 @@
       "line": 90,
       "column": 9,
       "severity": 2,
-      "messageHash": "a6ae5a12a3e8"
+      "messageHash": "a1f5103c212e"
     },
     {
       "file": "src/app/admin/stats/StatsDashboardClient.tsx",
@@ -127,7 +127,7 @@
       "line": 97,
       "column": 9,
       "severity": 2,
-      "messageHash": "ac4ad14d781b"
+      "messageHash": "575e768f1f74"
     },
     {
       "file": "src/app/admin/stats/StatsDashboardClient.tsx",
@@ -135,7 +135,7 @@
       "line": 101,
       "column": 9,
       "severity": 2,
-      "messageHash": "3a5d7eaf1a4a"
+      "messageHash": "f3a16e90bfa6"
     },
     {
       "file": "src/app/admin/stats/StatsDashboardClient.tsx",
@@ -143,7 +143,7 @@
       "line": 105,
       "column": 9,
       "severity": 2,
-      "messageHash": "92a9c564e377"
+      "messageHash": "c8500ff963be"
     },
     {
       "file": "src/app/blog/[slug]/page.tsx",
@@ -167,7 +167,7 @@
       "line": 255,
       "column": 13,
       "severity": 2,
-      "messageHash": "737efb985816"
+      "messageHash": "08d79ae63107"
     },
     {
       "file": "src/app/trending/page.tsx",
@@ -223,7 +223,7 @@
       "line": 258,
       "column": 14,
       "severity": 2,
-      "messageHash": "9c0c32236d53"
+      "messageHash": "dcad57c5249e"
     },
     {
       "file": "src/components/dashboard/DashboardOverview.tsx",
@@ -231,7 +231,7 @@
       "line": 16,
       "column": 5,
       "severity": 2,
-      "messageHash": "848094503f27"
+      "messageHash": "4360463a4a01"
     },
     {
       "file": "src/components/dashboard/DashboardSettings.tsx",
@@ -239,7 +239,7 @@
       "line": 13,
       "column": 21,
       "severity": 2,
-      "messageHash": "4ce17209d030"
+      "messageHash": "e315f5687a63"
     },
     {
       "file": "src/components/dashboard/DashboardShell.tsx",
@@ -247,7 +247,7 @@
       "line": 61,
       "column": 19,
       "severity": 2,
-      "messageHash": "6ecf98431282"
+      "messageHash": "b05061d85c2f"
     },
     {
       "file": "src/components/dashboard/MyRepositories.tsx",
@@ -263,7 +263,7 @@
       "line": 22,
       "column": 5,
       "severity": 2,
-      "messageHash": "14c5b2af056d"
+      "messageHash": "f180d7ab8606"
     },
     {
       "file": "src/components/dashboard/MyRepositories.tsx",
@@ -271,7 +271,7 @@
       "line": 27,
       "column": 5,
       "severity": 2,
-      "messageHash": "de8f7a0cd0a0"
+      "messageHash": "0965b3e8fca8"
     },
     {
       "file": "src/components/dashboard/RecentScans.tsx",
@@ -279,7 +279,7 @@
       "line": 50,
       "column": 14,
       "severity": 2,
-      "messageHash": "95cfe12247a9"
+      "messageHash": "f25f55809930"
     },
     {
       "file": "src/components/dashboard/RepositoryAnalyzer.tsx",
@@ -287,7 +287,7 @@
       "line": 14,
       "column": 19,
       "severity": 2,
-      "messageHash": "254673e0f496"
+      "messageHash": "ce24dec6bc40"
     },
     {
       "file": "src/components/dashboard/StarredRepositories.tsx",
@@ -295,7 +295,7 @@
       "line": 15,
       "column": 19,
       "severity": 2,
-      "messageHash": "fee78e8012f4"
+      "messageHash": "274ee44b862f"
     },
     {
       "file": "src/components/dashboard/StarredRepositories.tsx",
@@ -303,7 +303,7 @@
       "line": 17,
       "column": 26,
       "severity": 2,
-      "messageHash": "e0d1914b6fcf"
+      "messageHash": "76fc56e56230"
     },
     {
       "file": "src/components/DependencyExplorer.tsx",
@@ -319,7 +319,7 @@
       "line": 27,
       "column": 9,
       "severity": 2,
-      "messageHash": "9f9e3ef0669a"
+      "messageHash": "5c624ca212a3"
     },
     {
       "file": "src/components/EnhancedMarkdown.tsx",
@@ -455,7 +455,7 @@
       "line": 64,
       "column": 13,
       "severity": 2,
-      "messageHash": "55c9419430f6"
+      "messageHash": "3ca6f6c9bc96"
     },
     {
       "file": "src/components/FilePreview.tsx",
@@ -471,7 +471,7 @@
       "line": 43,
       "column": 9,
       "severity": 2,
-      "messageHash": "c4c0a9421896"
+      "messageHash": "65b3bd58c6d8"
     },
     {
       "file": "src/components/InstallPWA.tsx",
@@ -479,7 +479,7 @@
       "line": 75,
       "column": 13,
       "severity": 2,
-      "messageHash": "4608ed022901"
+      "messageHash": "cf4b1e2719ca"
     },
     {
       "file": "src/components/InteractiveDemo.tsx",
@@ -487,7 +487,7 @@
       "line": 13,
       "column": 13,
       "severity": 2,
-      "messageHash": "58e6d4195c89"
+      "messageHash": "0a1bc1ddbdea"
     },
     {
       "file": "src/components/MediaShowcase.tsx",
@@ -503,7 +503,7 @@
       "line": 945,
       "column": 9,
       "severity": 2,
-      "messageHash": "e3148e7ac23c"
+      "messageHash": "95e39b65186f"
     },
     {
       "file": "src/components/ProfileChatInterface.tsx",
@@ -543,7 +543,7 @@
       "line": 232,
       "column": 13,
       "severity": 2,
-      "messageHash": "f040527a5323"
+      "messageHash": "8b029393ade9"
     },
     {
       "file": "src/components/ProfileChatInterface.tsx",
@@ -551,7 +551,7 @@
       "line": 237,
       "column": 14,
       "severity": 2,
-      "messageHash": "3d7eaeddc0ac"
+      "messageHash": "23fa27c1cb53"
     },
     {
       "file": "src/components/RepoIntelligenceMockup.tsx",
@@ -591,7 +591,7 @@
       "line": 154,
       "column": 14,
       "severity": 2,
-      "messageHash": "8626d726dcfb"
+      "messageHash": "5ee4c98980ca"
     },
     {
       "file": "src/components/repository/RepositoryWorkspace.tsx",
@@ -599,7 +599,7 @@
       "line": 36,
       "column": 47,
       "severity": 2,
-      "messageHash": "53714856dd00"
+      "messageHash": "dca3c87c909e"
     },
     {
       "file": "src/components/repository/RepositoryWorkspace.tsx",
@@ -607,7 +607,7 @@
       "line": 42,
       "column": 47,
       "severity": 2,
-      "messageHash": "88dd8063bda1"
+      "messageHash": "1251bae38e99"
     },
     {
       "file": "src/components/repository/SavedReport.tsx",
@@ -615,7 +615,7 @@
       "line": 11,
       "column": 21,
       "severity": 2,
-      "messageHash": "86cb5132de49"
+      "messageHash": "d6cf9f7d625c"
     },
     {
       "file": "src/components/RepositoryIndexStatus.tsx",
@@ -623,7 +623,7 @@
       "line": 36,
       "column": 28,
       "severity": 2,
-      "messageHash": "a79459becfa7"
+      "messageHash": "b6aab6b0cf9f"
     },
     {
       "file": "src/components/SearchModal.tsx",
@@ -631,7 +631,7 @@
       "line": 27,
       "column": 9,
       "severity": 2,
-      "messageHash": "72ce7e0ef09b"
+      "messageHash": "1aad1f8109ee"
     },
     {
       "file": "src/components/SuggestionsList.tsx",
@@ -671,7 +671,7 @@
       "line": 23,
       "column": 13,
       "severity": 2,
-      "messageHash": "3dfb805e003d"
+      "messageHash": "de753c5f8f5c"
     },
     {
       "file": "src/components/UserAvatar.tsx",
@@ -711,7 +711,7 @@
       "line": 33,
       "column": 13,
       "severity": 2,
-      "messageHash": "7a95f0d30342"
+      "messageHash": "41414454a051"
     },
     {
       "file": "src/lib/__tests__/gemini-file-selection.test.ts",

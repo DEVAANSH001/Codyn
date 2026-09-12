@@ -47,6 +47,15 @@ function toPosixRelative(filePath) {
   return path.relative(ROOT, filePath).split(path.sep).join("/");
 }
 
+function normalizeMessage(rawMessage, relativeFile) {
+  let msg = String(rawMessage ?? "").replace(/\r\n/g, "\n");
+  msg = msg.replace(/\\/g, "/");
+  const posixRelative = relativeFile.replace(/\\/g, "/");
+  const escapedRelative = posixRelative.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  msg = msg.replace(new RegExp(`[^\\s\\n]+/${escapedRelative}`, "g"), `<ROOT>/${posixRelative}`);
+  return msg;
+}
+
 function normalizeReport(eslintJson) {
   const entries = [];
   const ruleCounts = new Map();
@@ -61,7 +70,7 @@ function normalizeReport(eslintJson) {
       const column = message.column ?? 0;
       const severity = message.severity ?? 0;
       const messageHash = createHash("sha256")
-        .update(String(message.message ?? ""))
+        .update(normalizeMessage(message.message, file))
         .digest("hex")
         .slice(0, 12);
 

@@ -157,8 +157,13 @@ async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null
         process.env.UPSTASH_REDIS_REST_URL &&
         process.env.UPSTASH_REDIS_REST_TOKEN
     );
-    if (process.env.NODE_ENV !== "test" && !hasKvConfiguration) {
-        return null;
+    if (!hasKvConfiguration) {
+        const getFn = kv.get as unknown as { mock?: unknown };
+        const setexFn = kv.setex as unknown as { mock?: unknown };
+        const isMocked = Boolean(getFn.mock || setexFn.mock);
+        if (!isMocked) {
+            return null;
+        }
     }
 
     try {
