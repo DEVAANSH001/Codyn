@@ -153,17 +153,9 @@ function decodeIndex(value: string): RepoIndex | null {
 }
 
 async function safeKvOperation<T>(operation: () => Promise<T>): Promise<T | null> {
-    const hasKvConfiguration = Boolean(
-        process.env.UPSTASH_REDIS_REST_URL &&
-        process.env.UPSTASH_REDIS_REST_TOKEN
-    );
-    if (!hasKvConfiguration) {
-        const getFn = kv.get as unknown as { mock?: unknown };
-        const setexFn = kv.setex as unknown as { mock?: unknown };
-        const isMocked = Boolean(getFn.mock || setexFn.mock);
-        if (!isMocked) {
-            return null;
-        }
+    const baseUrl = (kv as unknown as { client?: { baseUrl?: string } })?.client?.baseUrl;
+    if (baseUrl === "https://invalid.upstash.io") {
+        return null;
     }
 
     try {
