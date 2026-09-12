@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from 'sonner';
 import JsonLd from './components/json-ld';
 import { Providers } from '@/components/Providers';
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         <JsonLd />
         <Providers>{children}</Providers>
+        <Analytics />
         <Toaster
           position="top-right"
           theme="dark"
