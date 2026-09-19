@@ -10,9 +10,10 @@ import { RepoCard } from "./RepoCard";
 import { DeveloperCard } from "./DeveloperCard";
 import { SmartLink } from "./SmartLink";
 import { Mermaid } from "./Mermaid";
-import { FileIcon, FolderIcon } from "./FileIcon";
+import { FolderIcon } from "./FileIcon";
 import { ArrowUpRight } from "lucide-react";
 import { generateMermaidFromJSON } from "@/lib/diagram-utils";
+import { PlantUml } from "./PlantUml";
 
 interface ParsedContent {
     type: "markdown" | "repo-card" | "developer-card";
@@ -106,17 +107,19 @@ export function EnhancedMarkdown({ content, components, currentOwner, currentRep
     }, [fileTree]);
 
     const mergedComponents = useMemo(() => ({
-        a: (props: any) => (
+        a: (props: React.ComponentPropsWithoutRef<"a">) => (
             <SmartLink
                 {...props}
                 currentOwner={currentOwner}
                 currentRepo={currentRepo}
             />
         ),
-        img: (props: any) => {
+        img: (props: React.ComponentPropsWithoutRef<"img">) => {
             const { src, alt, ...rest } = props;
             if (!src) return null;
             return (
+                // Markdown images may be arbitrary remote URLs and cannot use Next's image optimizer.
+                // eslint-disable-next-line @next/next/no-img-element
                 <img 
                     src={src} 
                     alt={alt || ""} 
@@ -125,11 +128,13 @@ export function EnhancedMarkdown({ content, components, currentOwner, currentRep
                 />
             );
         },
-        code(props: any) {
+        code(props: React.ComponentPropsWithoutRef<"code"> & { node?: unknown }) {
             const { children, className, node, ...rest } = props;
+            void node;
             const match = /language-([\w-]+)/.exec(className || "");
             const isMermaid = match && match[1] === "mermaid";
             const isMermaidJson = match && match[1] === "mermaid-json";
+            const isPlantUml = match && (match[1] === "plantuml" || match[1] === "puml");
             const childrenStr = String(children).replace(/\n$/, "");
             
             if (isMermaid) {
@@ -139,6 +144,10 @@ export function EnhancedMarkdown({ content, components, currentOwner, currentRep
                         isStreaming={isStreaming} 
                     />
                 );
+            }
+
+            if (isPlantUml) {
+                return <PlantUml source={childrenStr} isStreaming={isStreaming} />;
             }
 
             if (match && match[1] === "svg") {
@@ -240,7 +249,7 @@ export function EnhancedMarkdown({ content, components, currentOwner, currentRep
                 </code>
             );
         },
-        p: ({ children }: any) => <div className="mb-6 last:mb-0 leading-relaxed">{children}</div>,
+        p: ({ children }: React.ComponentPropsWithoutRef<"p">) => <div className="mb-6 last:mb-0 leading-relaxed">{children}</div>,
         ...components
     }), [currentOwner, currentRepo, components, fileTree, isStreaming, resolvePath]);
 

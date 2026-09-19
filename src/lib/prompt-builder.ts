@@ -37,7 +37,13 @@ function buildTopicalScopeRules(repoDetails: { owner: string; repo: string }): s
 }
 
 function shouldIncludeVisualContract(question: string): boolean {
-  return routeMermaidDiagram(question).visualIntent;
+  return isPlantUmlRequest(question) || routeMermaidDiagram(question).visualIntent;
+}
+
+const PLANTUML_EXPLICIT_PATTERN = /\b(?:plantuml|plant uml|system design)\b/i;
+
+function isPlantUmlRequest(question: string): boolean {
+  return PLANTUML_EXPLICIT_PATTERN.test(question || "");
 }
 
 type VisualOutputFormat = "mermaid" | "mermaid-json";
@@ -482,6 +488,19 @@ function getMermaidJsonSchema(diagramType: MermaidDiagramType): string {
 }
 
 function buildVisualContract(question: string): string {
+  if (isPlantUmlRequest(question)) {
+    return `
+            - **PLANTUML SYSTEM DESIGN CONTRACT (MANDATORY)**:
+              - Return exactly one fenced \`\`\`plantuml block containing a complete \`@startuml\` ... \`@enduml\` document.
+              - Model only components and relationships supported by repository evidence. Explicitly label inferences outside the diagram.
+              - Include relevant actors, trust boundaries, deployable services, data stores, queues, caches, and external systems.
+              - Label important protocols and data/request flows; keep labels concise.
+              - Use packages, rectangles, databases, queues, and clouds to communicate boundaries clearly.
+              - Do not use \`!include\`, \`!includeurl\`, \`!import\`, macros, functions, procedures, or remote sprites.
+              - Keep the diagram self-contained and renderer-safe. Prefer readable top-to-bottom or left-to-right layout.
+              - Cite the repository files used as evidence in the explanation after the diagram.`;
+  }
+
   const route = routeMermaidDiagram(question);
   const target = getSvgComplexityTarget(question);
   const profile = getVisualDiagramProfile(question);
@@ -556,9 +575,33 @@ ${diagramSchema}
 
 export function buildCodynVisualPrompt(params: CodynPromptParams): string {
   const { question, context, repoDetails, historyText } = params;
+  if (isPlantUmlRequest(question)) {
+    return `
+You are Codyn System Design Composer.
+
+Create one repository-grounded system design diagram as a fenced \`\`\`plantuml block.
+The block must start with @startuml and end with @enduml. Do not use !include, !includeurl, !import, macros, functions, procedures, or remote sprites.
+Show actors, trust boundaries, deployable services, data stores, queues, caches, external systems, protocols, and important data flows only when supported by the code. Keep the layout readable and labels concise.
+After the diagram, add a concise explanation with source-file citations and clearly label any inference.
+
+Repository: ${repoDetails.owner}/${repoDetails.repo}
+
+Context:
+${truncateVisualContext(context)}
+
+Conversation history:
+${historyText?.trim() || "None"}
+
+User request:
+${question}
+`;
+  }
   const route = routeMermaidDiagram(question);
   const output = resolveVisualOutputDecision(question);
   const unsupportedFallback = detectUnsupportedMermaidFallback(question, route.diagramType);
+  const unsupportedFallbackRule = unsupportedFallback
+    ? `- If user requested unsupported Mermaid \`${unsupportedFallback.requestedTypeLabel}\`, begin with a single line note that Codyn maps it to ${unsupportedFallback.fallbackType}, then emit the mapped diagram.`
+    : "";
   const pack = getMermaidTypePromptPack(route.diagramType);
   const jsonSchema = getMermaidJsonSchema(route.diagramType);
   const compactContext = truncateVisualContext(context);
@@ -596,7 +639,7 @@ OUTPUT CONTRACT:
 - You MUST start your response with a brief, helpful text introduction or explanation before outputting the code block. Do NOT start the response directly with the visual code block.
 - Do not include unnecessary status messages (e.g., "Here is the diagram").
 - Do not include theme/style directives (\`style\`, \`classDef\`, \`class\`, \`linkStyle\`, \`%%{init...}%%\`).
-\${unsupportedFallback ? \`- If user requested unsupported Mermaid \\\`\${unsupportedFallback.requestedTypeLabel}\\\`, begin with a single line note that Codyn maps it to \${unsupportedFallback.fallbackType}, then emit the mapped diagram.\` : ""}
+${unsupportedFallbackRule}
 
 REPO GROUNDING:
 - Owner: ${repoDetails.owner}
@@ -614,6 +657,13 @@ ${question}
 }
 
 function buildResponseStructureRules(question: string): string {
+  if (isPlantUmlRequest(question)) {
+    return `
+            - **RESPONSE FORMAT**:
+              Start with one brief sentence, then output exactly one complete fenced \`\`\`plantuml block.
+              Follow it with a concise repository-grounded explanation and source-file citations.
+              Do not output Mermaid, Mermaid JSON, SVG, or more than one diagram.`;
+  }
   const route = routeMermaidDiagram(question);
   const output = resolveVisualOutputDecision(question);
   const allowTwoVisuals = route.multipleVisualsRequested && Boolean(route.secondaryDiagramType);

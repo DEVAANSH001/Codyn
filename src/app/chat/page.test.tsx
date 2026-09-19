@@ -4,6 +4,18 @@ vi.mock("./ChatPageClient", () => ({
     default: () => null,
 }));
 
+vi.mock("@/lib/auth", () => ({
+    auth: vi.fn().mockResolvedValue(null),
+}));
+
+vi.mock("@/lib/services/history-service", () => ({
+    getRecentSearches: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock("@/lib/session-guard", () => ({
+    getSessionUserId: vi.fn().mockReturnValue(undefined),
+}));
+
 import { metadata } from "./page";
 
 describe("chat metadata", () => {

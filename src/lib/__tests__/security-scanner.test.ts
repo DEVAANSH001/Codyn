@@ -205,4 +205,28 @@ describe("runScanEngineV2", () => {
         expect(typeof finding?.fingerprint).toBe("string");
         expect((finding?.confidenceScore ?? 0) > 0.8).toBe(true);
     });
+
+    it("detects destructured request data reaching an outbound URL", async () => {
+        const files = [{
+            path: "src/proxy.ts",
+            content: `
+                export async function handler(req: any) {
+                    const { url } = req.query;
+                    return fetch(url);
+                }
+            `,
+        }];
+        const result = await runScanEngineV2(files, { profile: "deep", confidenceThreshold: 0.5 });
+        expect(result.findings.some((item) => item.ruleId === "ssrf-tainted-request-url")).toBe(true);
+    });
+
+    it("detects tainted input reaching eval", async () => {
+        const findings = detectCodePatterns("src/evaluate.ts", `
+            export function handler(request: any) {
+                const input = request.body;
+                return eval(input);
+            }
+        `);
+        expect(findings.some((item) => item.ruleId === "code-injection-tainted-eval" && item.severity === "critical")).toBe(true);
+    });
 });

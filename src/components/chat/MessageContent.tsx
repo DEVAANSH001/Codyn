@@ -7,6 +7,7 @@ import { compileMermaidFromJSON } from "@/lib/diagram-utils";
 import { repairMarkdown } from "@/lib/markdown-utils";
 import { Loader2, ArrowUpRight } from "lucide-react";
 import { FolderIcon } from "@/components/FileIcon";
+import { PlantUml } from "@/components/PlantUml";
 
 interface MessageIdentity {
     id: string;
@@ -92,6 +93,7 @@ function MessageContentBase({
             const language = (match?.[1] ?? "").toLowerCase();
             const isMermaid = language === "mermaid";
             const isMermaidJson = language === "mermaid-json";
+            const isPlantUml = language === "plantuml" || language === "puml";
             const isJsonLanguage = language === "json";
             const rawContent = String(children ?? "").replace(/\n$/, "");
             const trimmedContent = rawContent.trim();
@@ -110,6 +112,10 @@ function MessageContentBase({
                         isStreaming={isStreamingMessage}
                     />
                 );
+            }
+
+            if (isPlantUml) {
+                return <PlantUml source={rawContent} isStreaming={isStreamingMessage} />;
             }
 
             if (language === "svg") {

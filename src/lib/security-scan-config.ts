@@ -1,10 +1,10 @@
 export const SECURITY_SCAN_FILE_LIMITS = {
-    quick: 20,
-    deep: 60,
+    quick: 50,
+    deep: 300,
 } as const;
 
-export const SECURITY_ENGINE_VERSION = "scan-engine-v2";
-export const SECURITY_CACHE_KEY_VERSION = "v2";
+export const SECURITY_ENGINE_VERSION = "scan-engine-v4";
+export const SECURITY_CACHE_KEY_VERSION = "v4";
 
 export const DEFAULT_CONFIDENCE_THRESHOLD = {
     quick: 0.78,

@@ -272,6 +272,19 @@ describe("buildCodynVisualPrompt", () => {
         expect(prompt).toContain("Repo: myproject");
         expect(prompt).toContain("CONTEXT:");
     });
+
+    it("uses the self-contained PlantUML contract for system design requests", () => {
+        const prompt = buildCodynVisualPrompt({
+            ...baseParams,
+            question: "Create a PlantUML system design diagram",
+        });
+
+        expect(prompt).toContain("Codyn System Design Composer");
+        expect(prompt).toContain("@startuml");
+        expect(prompt).toContain("@enduml");
+        expect(prompt).toContain("Do not use !include");
+        expect(prompt).not.toContain("Preferred output format: mermaid");
+    });
 });
 
 describe("formatHistoryText", () => {

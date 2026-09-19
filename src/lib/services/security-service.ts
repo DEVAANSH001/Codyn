@@ -88,10 +88,16 @@ export function scorePathRisk(path: string): number {
         "auth", "login", "oauth", "jwt", "token", "session", "admin",
         "middleware", "api", "route", "controller", "db", "sql",
         "payment", "billing", "webhook", "crypto", "secret", "password",
-        "user", "account", "permission", "role", "acl", "gate",
+        "user", "account", "permission", "role", "acl", "gate", "upload",
+        "download", "proxy", "redirect", "callback", "worker", "queue",
+        "storage", "file", "exec", "command", "graphql", "rpc", "cors",
     ];
     const lower = path.toLowerCase();
-    return RISK_KEYWORDS.reduce((n, kw) => (lower.includes(kw) ? n + 1 : n), 0);
+    const keywordScore = RISK_KEYWORDS.reduce((n, kw) => (lower.includes(kw) ? n + 2 : n), 0);
+    const entryPointScore = /(^|\/)(route|handler|server|index|main|app|middleware)\.[^.]+$/i.test(path) ? 3 : 0;
+    const configScore = /(^|\/)(dockerfile|compose\.ya?ml|\.env|.*\.config\.[^.]+)$/i.test(path) ? 3 : 0;
+    const testPenalty = /(^|\/)(test|tests|__tests__|fixtures?|mocks?|examples?)(\/|$)/i.test(path) ? -4 : 0;
+    return keywordScore + entryPointScore + configScore + testPenalty;
 }
 
 /** Extract surrounding lines around a finding for display */
@@ -166,7 +172,7 @@ export function buildScanConfig(options: {
         maxFiles,
         aiAssist,
         aiEnabled: aiAssist === "on",
-        aiMaxFiles: options.aiMaxFiles ?? Math.min(maxFiles, analysisProfile === "deep" ? 30 : 12),
+        aiMaxFiles: options.aiMaxFiles ?? Math.min(maxFiles, analysisProfile === "deep" ? 80 : 24),
         confidenceThreshold: options.confidenceThreshold ?? DEFAULT_CONFIDENCE_THRESHOLD[analysisProfile],
         includePatterns,
         excludePatterns,
@@ -274,7 +280,11 @@ export async function runSecurityScan(
     const fetchContent = deps.fetchFileContent ?? getFileContent;
     const runAi = deps.runAiAnalysis ?? analyzeCodeWithGemini;
 
-    const riskSorted = [...files].sort((a, b) => scorePathRisk(b.path) - scorePathRisk(a.path));
+    const riskSorted = [...files].sort((a, b) => {
+        const riskDifference = scorePathRisk(b.path) - scorePathRisk(a.path);
+        if (riskDifference !== 0) return riskDifference;
+        return a.path.localeCompare(b.path);
+    });
     const codeFiles = filterCodeFiles(riskSorted, config);
     const dependencyFiles = selectDependencyFiles(riskSorted, config, config.aiEnabled);
     const policyContextCandidates = selectSupabasePolicyFiles(

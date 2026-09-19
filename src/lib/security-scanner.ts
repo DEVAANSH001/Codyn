@@ -166,7 +166,7 @@ function hasCodeExtension(path: string): boolean {
 }
 
 function looksTaintedIdentifier(name: string): boolean {
-    return /^(req|request|params|query|body|input|payload|cmd|command|path|url|user|token|headers?)$/i.test(name);
+    return /^(req|request|params|searchParams|query|body|input|payload|data|cmd|command|path|url|uri|redirect|next|user|token|headers?|cookies?)$/i.test(name);
 }
 
 function lineOf(node: { loc?: { start?: { line?: number } } | null }): number | undefined {
@@ -666,6 +666,16 @@ export function detectCodePatternsAst(filepath: string, content: string): Securi
             if (t.isIdentifier(path.node.id) && isTaintedExpression(path.node.init, tainted)) {
                 tainted.add(path.node.id.name);
             }
+            if (t.isObjectPattern(path.node.id) && isTaintedExpression(path.node.init, tainted)) {
+                for (const property of path.node.id.properties) {
+                    if (t.isObjectProperty(property) && t.isIdentifier(property.value)) {
+                        tainted.add(property.value.name);
+                    }
+                    if (t.isRestElement(property) && t.isIdentifier(property.argument)) {
+                        tainted.add(property.argument.name);
+                    }
+                }
+            }
             if (
                 t.isIdentifier(path.node.id) &&
                 t.isCallExpression(path.node.init) &&
@@ -795,6 +805,80 @@ export function detectCodePatternsAst(filepath: string, content: string): Securi
                         ruleId: "path-traversal-taint",
                         confidenceScore: 0.88,
                         evidence: [{ type: "sink", message: "Filesystem sink receives tainted path input", line }],
+                    })
+                );
+            }
+
+            const isServerContext =
+                /(^|\/)(api|server|routes?|controllers?|workers?|proxy|backend)(\/|\.|-)|(^|\/)middleware\.[^.]+$|(^|\/)route\.[^.]+$/i.test(filepath) ||
+                /(?:next\/server|express|fastify|node:https?|node:http)/i.test(content);
+            const isKnownNetworkMember =
+                t.isMemberExpression(callee) &&
+                t.isIdentifier(callee.object) &&
+                /^(axios|got|http|https|request)$/i.test(callee.object.name) &&
+                t.isIdentifier(callee.property) &&
+                /^(get|post|put|patch|delete|request)$/i.test(callee.property.name);
+            const isNetworkSink = (t.isIdentifier(callee) && callee.name === "fetch") || isKnownNetworkMember;
+            if (isServerContext && isNetworkSink && firstArgExpr && isTaintedExpression(firstArgExpr, tainted)) {
+                addFinding(
+                    createAstFinding({
+                        filepath,
+                        title: "SSRF via tainted outbound request URL",
+                        description: "Untrusted request data appears to control a server-side outbound URL.",
+                        recommendation: "Parse the URL, enforce an allowlist of schemes and hosts, resolve DNS safely, and block private/link-local address ranges.",
+                        cwe: "CWE-918",
+                        severity: "high",
+                        line,
+                        ruleId: "ssrf-tainted-request-url",
+                        confidenceScore: 0.9,
+                        evidence: [
+                            { type: "source", message: "Request-controlled URL expression", line },
+                            { type: "sink", message: "Outbound network request", line },
+                        ],
+                    })
+                );
+            }
+
+            const isRedirectSink =
+                t.isMemberExpression(callee) &&
+                t.isIdentifier(callee.property) &&
+                /^(redirect|location|replace)$/i.test(callee.property.name);
+            if (isRedirectSink && firstArgExpr && isTaintedExpression(firstArgExpr, tainted)) {
+                addFinding(
+                    createAstFinding({
+                        filepath,
+                        title: "Open redirect via tainted destination",
+                        description: "Untrusted request data appears to control a redirect destination.",
+                        recommendation: "Allowlist local destinations or trusted origins and reject protocol-relative URLs.",
+                        cwe: "CWE-601",
+                        severity: "medium",
+                        line,
+                        ruleId: "open-redirect-tainted-destination",
+                        confidenceScore: 0.88,
+                        evidence: [
+                            { type: "source", message: "Request-controlled redirect destination", line },
+                            { type: "sink", message: "Redirect API invocation", line },
+                        ],
+                    })
+                );
+            }
+
+            if (t.isIdentifier(callee) && callee.name === "eval" && firstArgExpr && isTaintedExpression(firstArgExpr, tainted)) {
+                addFinding(
+                    createAstFinding({
+                        filepath,
+                        title: "Code injection via tainted eval input",
+                        description: "Untrusted input appears to reach eval(), enabling arbitrary code execution.",
+                        recommendation: "Remove eval() and use a constrained parser or explicit command map.",
+                        cwe: "CWE-95",
+                        severity: "critical",
+                        line,
+                        ruleId: "code-injection-tainted-eval",
+                        confidenceScore: 0.96,
+                        evidence: [
+                            { type: "source", message: "Request-controlled expression", line },
+                            { type: "sink", message: "eval execution sink", line },
+                        ],
                     })
                 );
             }

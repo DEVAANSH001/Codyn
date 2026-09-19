@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, GitFork, Wrench, Folder, Network } from "lucide-react";
+import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, Wrench, Folder, Network } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { createChatRun } from "@/lib/chat-run-client";
 import { BotIcon } from "@/components/icons/BotIcon";
 import { UserAvatar } from "./UserAvatar";
 import { CopySquaresIcon } from "@/components/icons/CopySquaresIcon";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 import { scanRepositoryVulnerabilities, fetchProfile, getRemainingDeepScans, getLatestRepoScanId, createScanShareLink } from "@/app/actions";
@@ -19,7 +18,9 @@ import {
     DEEP_SCAN_PROMPT,
     INITIAL_PROMPT_DELAY_MS,
     MAX_FINDINGS_PREVIEW,
+    MERMAID_DIAGRAM_PROMPT,
     QUICK_SCAN_PROMPT,
+    SYSTEM_DESIGN_PROMPT,
 } from "@/lib/chat-constants";
 import { copyChatMessageContent, exportChatMessages } from "@/lib/chat-message-actions";
 import { parseStreamChunk } from "@/lib/streaming-parser";
@@ -41,7 +42,6 @@ import { StreamStatus } from "./chat/StreamStatus";
 import { ToolQuotaModal } from "./chat/ToolQuotaModal";
 
 const REPOSITORY_TOUR_PROMPT = "Give me a 10-minute codebase tour: explain what this project does, how it starts, the main entry points, the most important modules, and how they interact. Cite the files you used and clearly label any inference.";
-const MERMAID_DIAGRAM_PROMPT = "Generate a Mermaid architecture diagram";
 const DEPENDENCY_SECURITY_PROMPT = "Check dependency vulnerabilities";
 interface RepoFileNode {
     path: string;
@@ -255,7 +255,8 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
     }, [session?.user, showSecurityModal, repoContext.owner, repoContext.repo]);
 
     useEffect(() => {
-        void refreshToolQuota();
+        const timer = window.setTimeout(() => void refreshToolQuota(), 0);
+        return () => window.clearTimeout(timer);
     }, [refreshToolQuota, session?.user?.id]);
 
     useEffect(() => {
@@ -369,7 +370,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
             if (initialPrompt && !initialPromptHandled.current) {
                 initialPromptHandled.current = true;
                 let promptText = "";
-                if (initialPrompt === "architecture") promptText = ARCHITECTURE_PROMPT;
+                if (initialPrompt === "architecture" || initialPrompt === "system-design") promptText = SYSTEM_DESIGN_PROMPT;
                 else if (initialPrompt === "security") promptText = QUICK_SCAN_PROMPT;
                 else if (initialPrompt === "explain") promptText = "Explain the codebase";
                 else promptText = initialPrompt;
@@ -511,11 +512,14 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
     };
 
     const getRepoQueryForServer = (trimmedInput: string, combinedInput: string) => {
-        if (trimmedInput.toLowerCase() === ARCHITECTURE_PROMPT.toLowerCase()) {
-            return "Explain the architecture of this repository in detail. Provide a comprehensive overview of the core logic, framework setup, data flow, and key components based on the actual code, not just the README. Include a visual architecture diagram, preferring an SVG code block when possible (Mermaid is acceptable fallback).";
+        if (
+            trimmedInput.toLowerCase() === ARCHITECTURE_PROMPT.toLowerCase() ||
+            trimmedInput.toLowerCase() === SYSTEM_DESIGN_PROMPT.toLowerCase()
+        ) {
+            return "Create a repository-grounded system design for this codebase. Return one valid fenced `plantuml` block using @startuml and @enduml. Show users, trust boundaries, deployable services, data stores, queues, caches, and external systems only when supported by the repository. Label protocols and the most important request/data flows, group components into clear boundaries, and cite the source files that support the design. Add a concise explanation and explicitly label any inference.";
         }
         if (trimmedInput.toLowerCase() === MERMAID_DIAGRAM_PROMPT.toLowerCase()) {
-            return "Generate a concise architecture diagram for this repository using the actual code. Return one valid fenced `mermaid` code block that shows the main modules, data flow, and external services. Use readable node labels and only include relationships supported by the repository files. Add a brief explanation after the diagram.";
+            return "Generate a repository-grounded architecture diagram. Return one valid fenced `mermaid` block showing the main modules, data flow, storage, and external services supported by the repository. Use concise labels, cite the source files used, and explicitly label any inference.";
         }
         return combinedInput;
     };
@@ -1014,21 +1018,22 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 <span className="hidden lg:inline">Tour</span>
                             </button>
                             <button
-                                onClick={() => handleSubmit(undefined, ARCHITECTURE_PROMPT)}
-                                disabled={loading || scanning}
-                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all disabled:opacity-50"
-                            >
-                                <GitFork className="w-3.5 h-3.5" />
-                                <span className="hidden lg:inline">Architecture</span>
-                            </button>
-                            <button
                                 onClick={() => handleSubmit(undefined, MERMAID_DIAGRAM_PROMPT)}
                                 disabled={loading || scanning}
                                 title="Generate a Mermaid architecture diagram"
-                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-cyan-200 hover:bg-cyan-500/10 rounded-lg transition-all disabled:opacity-50"
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-violet-200 hover:bg-violet-500/10 rounded-lg transition-all disabled:opacity-50"
                             >
                                 <Network className="w-3.5 h-3.5" />
                                 <span className="hidden lg:inline">Mermaid</span>
+                            </button>
+                            <button
+                                onClick={() => handleSubmit(undefined, SYSTEM_DESIGN_PROMPT)}
+                                disabled={loading || scanning}
+                                title="Create a PlantUML system design diagram"
+                                className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-cyan-200 hover:bg-cyan-500/10 rounded-lg transition-all disabled:opacity-50"
+                            >
+                                <Network className="w-3.5 h-3.5" />
+                                <span className="hidden lg:inline">System Design</span>
                             </button>
                             <button
                                 onClick={() => {

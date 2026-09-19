@@ -7,8 +7,17 @@ import { ArrowRight, FileCode2, GitBranch, LayoutDashboard, Network, ShieldCheck
 import { LogoMark } from './LogoMark';
 import RepoSearch from './RepoSearch';
 import { workspaceHref } from '@/lib/workspace-navigation';
+import type { SearchHistoryItem } from '@/lib/services/history-service';
 
-export function WorkspaceStart({ invalidQuery = false }: { invalidQuery?: boolean }) {
+export function WorkspaceStart({
+  invalidQuery = false,
+  recentSearches = [],
+  isSessionActive = false,
+}: {
+  invalidQuery?: boolean;
+  recentSearches?: SearchHistoryItem[];
+  isSessionActive?: boolean;
+}) {
   const router = useRouter();
   const [error, setError] = useState('');
 
@@ -41,9 +50,9 @@ export function WorkspaceStart({ invalidQuery = false }: { invalidQuery?: boolea
         </div>
         <div className="codyn-panel rounded-3xl border border-white/10 p-6 sm:p-10">
           <h2 className="mb-6 text-sm font-medium text-white/75">Which project are we working on?</h2>
-          <RepoSearch onSearchSubmit={openRepository} loading={false} trendingRepos={[]} recentSearches={[]} isSessionActive={false} />
+          <RepoSearch onSearchSubmit={openRepository} loading={false} trendingRepos={[]} recentSearches={recentSearches} isSessionActive={isSessionActive} />
           {(error || invalidQuery) && <p role="alert" className="mt-5 text-center text-sm text-amber-200">{error || 'That address is not a valid GitHub repository or profile. Try another below.'}</p>}
-          <p className="mt-6 text-center text-xs leading-6 text-white/35">Public repositories work without signing in. Connect your account to access saved conversations and scan history.</p>
+          <p className="mt-6 text-center text-xs leading-6 text-white/35">{isSessionActive ? 'Your recent repositories and saved scan history follow your connected account.' : 'Public repositories work without signing in. Connect your account to access saved conversations and scan history.'}</p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[

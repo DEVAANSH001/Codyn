@@ -177,12 +177,12 @@ describe("File Selection Quality - Comprehensive Test Suite (P1-P5)", () => {
                 largeFileList
             );
 
-            // Verify candidate pool was capped at 50
+            // Verify candidate pool was capped at the expanded 100-file budget.
             const promptCall = generateContentMock.mock.calls[0][0];
             const candidateSection = promptCall.match(/Candidate Files[\s\S]*?\n\n/)?.[0] || "";
             const candidateLines = candidateSection.split('\n').filter(line => line.startsWith('src/'));
             
-            expect(candidateLines.length).toBeLessThanOrEqual(50);
+            expect(candidateLines.length).toBeLessThanOrEqual(100);
         });
     });
 

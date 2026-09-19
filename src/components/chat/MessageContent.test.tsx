@@ -29,6 +29,10 @@ vi.mock("@/components/CodeBlock", () => ({
     ),
 }));
 
+vi.mock("@/components/PlantUml", () => ({
+    PlantUml: ({ source }: { source: string }) => <div data-testid="plantuml">{source}</div>,
+}));
+
 import { MessageContent } from "@/components/chat/MessageContent";
 
 describe("MessageContent", () => {
@@ -120,5 +124,22 @@ describe("MessageContent", () => {
         expect(html).toContain("Direct SVG rendering is deprecated");
         expect(html).toContain('data-testid="codeblock"');
         expect(html).toContain('data-language="svg"');
+    });
+
+    it("renders PlantUML blocks as system diagrams", () => {
+        const html = renderToStaticMarkup(
+            <MessageContent
+                content={`\`\`\`plantuml
+@startuml
+actor User
+User --> API
+@enduml
+\`\`\``}
+                messageId="msg-4"
+            />
+        );
+
+        expect(html).toContain('data-testid="plantuml"');
+        expect(html).toContain("@startuml");
     });
 });

@@ -514,7 +514,7 @@ describe("analyzeFileSelection", () => {
         );
     });
 
-    it("[P3] caps LLM fallback candidate pool at 50 files to reduce noise", async () => {
+    it("[P3] caps LLM fallback candidate pool at 100 files to reduce noise", async () => {
         // Create 150 "matched" files from index search to trigger fallback
         const largeFileList = Array.from({ length: 150 }, (_, i) => `src/file_${i}.ts`);
         
@@ -533,14 +533,14 @@ describe("analyzeFileSelection", () => {
             largeFileList
         );
 
-        // Verify that the prompt sent to generateContent doesn't exceed 50 candidates
+        // Verify that the expanded prompt still has a bounded candidate pool.
         const promptCall = generateContentMock.mock.calls[0][0];
         const fileSectionMatch = promptCall.match(/Files:\n([\s\S]*?)Rules:/);
         
         if (fileSectionMatch) {
             const filesSection = fileSectionMatch[1];
             const fileLinesCount = filesSection.trim().split('\n').filter((line: string) => line.trim().startsWith('src/')).length;
-            expect(fileLinesCount).toBeLessThanOrEqual(50);
+            expect(fileLinesCount).toBeLessThanOrEqual(100);
         }
     });
 

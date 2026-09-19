@@ -656,7 +656,7 @@ export async function analyzeFileSelection(
   cachePolicy?: FileCachePolicy,
   onSelectionSource?: (source: "indexed_tree" | "agentic_scan") => void
 ): Promise<string[]> {
-  const maxSelectedFiles = modelPreference === "thinking" ? 50 : 25;
+  const maxSelectedFiles = modelPreference === "thinking" ? 80 : 40;
   const selectionStartMs = Date.now();
 
   const addGraphContext = async (files: string[]): Promise<string[]> => {
@@ -744,7 +744,7 @@ export async function analyzeFileSelection(
       }
 
       if (indexFiles.length > 0) {
-        candidates = await addGraphContext(indexFiles.slice(0, 50));
+        candidates = await addGraphContext(indexFiles.slice(0, 100));
       }
     }
   }
@@ -776,12 +776,12 @@ Recent Chat History:
 ${historyText}
 
 Candidate Files to Select From:
-${candidates.slice(0, 50).join("\n")}
+${candidates.slice(0, 100).join("\n")}
 
 Selection Rules:
 - Return JSON: { "files": ["path/to/file"] }
 - IMPORTANT: If the query is a follow-up that can be answered ENTIRELY based on the Recent Chat History (e.g., "summarize", "explain more about the above"), return an empty array: { "files": [] }.
-- Max ${isDeepThinking ? "50" : "25"} files.
+- Max ${isDeepThinking ? "80" : "40"} files.
 - Select the MINIMUM number of files necessary to answer the query.
 - Use the Repository Context above to prioritize files from relevant domains:
   * AI/ML queries → prioritize files tagged with "ml"

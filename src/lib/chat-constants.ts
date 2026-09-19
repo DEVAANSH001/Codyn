@@ -9,3 +9,5 @@ export const DEEP_SCAN_FILE_LIMIT = SECURITY_SCAN_FILE_LIMITS.deep;
 export const QUICK_SCAN_PROMPT = "Find security vulnerabilities";
 export const DEEP_SCAN_PROMPT = "Run deep security scan";
 export const ARCHITECTURE_PROMPT = "Explain the architecture";
+export const MERMAID_DIAGRAM_PROMPT = "Generate a Mermaid architecture diagram";
+export const SYSTEM_DESIGN_PROMPT = "Create a PlantUML system design diagram";

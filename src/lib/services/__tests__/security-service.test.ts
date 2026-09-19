@@ -143,8 +143,8 @@ describe("buildScanConfig", () => {
         const deepConfig = buildScanConfig({ depth: "deep" });
         expect(quickConfig.depth).toBe("quick");
         expect(deepConfig.depth).toBe("deep");
-        expect(quickConfig.maxFiles).toBe(20);
-        expect(deepConfig.maxFiles).toBe(60);
+        expect(quickConfig.maxFiles).toBe(50);
+        expect(deepConfig.maxFiles).toBe(300);
     });
 
     it("respects maxFiles option", () => {
