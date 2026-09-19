@@ -32,6 +32,7 @@ const triageCategories = [
 const chips = [
   'Agentic CAG',
   'Architecture Maps',
+  'PlantUML System Design',
   'Context Code Review',
   'Security Audit',
   'Tech Stack Analyzer',

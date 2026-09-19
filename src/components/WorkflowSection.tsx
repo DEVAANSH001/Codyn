@@ -32,7 +32,7 @@ const steps = [
     number: '04',
     label: 'Act',
     title: 'Ask, export, and keep moving',
-    description: 'Turn the result into answers, Mermaid diagrams, or reports your team can use immediately.',
+    description: 'Turn the result into answers, Mermaid architecture diagrams, PlantUML system designs, or reports your team can use immediately.',
     detail: 'Ready to export',
     icon: FileOutput,
   },

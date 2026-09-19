@@ -7,6 +7,7 @@ import { MacMenuBar } from '../components/MacMenuBar';
 import { RepoIntelligenceMockup } from '../components/RepoIntelligenceMockup';
 import { FeatureTriage } from '../components/FeatureTriage';
 import { DependencyIntelligenceSection } from '../components/DependencyIntelligenceSection';
+import { SystemDesignShowcase } from '../components/SystemDesignShowcase';
 import { WorkflowSection } from '../components/WorkflowSection';
 import { TrendingRepos } from '../components/TrendingRepos';
 import { Testimonials } from '../components/Testimonials';
@@ -61,6 +62,7 @@ export default function Page() {
         <RepoIntelligenceMockup />
         <FeatureTriage />
         <DependencyIntelligenceSection />
+        <SystemDesignShowcase />
         <WorkflowSection />
         <TrendingRepos onSelectRepo={handleAnalyzeRepo} />
         <Testimonials />
