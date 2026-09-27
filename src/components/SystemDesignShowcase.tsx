@@ -123,7 +123,7 @@ export function SystemDesignShowcase() {
                 <span className="mt-1 block text-[11px] leading-4 text-white/40">{item.detail}</span>
               </button>)}
             </div>
-            <div className="rounded-[26px] border border-white/10 bg-black/30 p-3 shadow-2xl shadow-cyan-950/20">
+            <div className="w-full min-w-0 max-w-full overflow-hidden rounded-[26px] border border-white/10 bg-black/30 p-3 shadow-2xl shadow-cyan-950/20">
               <div className="flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-white/35"><span className="flex items-center gap-2"><Boxes className="h-3.5 w-3.5 text-cyan-300" />Live example</span><span className="flex items-center gap-1.5"><Braces className="h-3.5 w-3.5" />PlantUML</span></div>
               <PlantUml source={example.source} />
             </div>

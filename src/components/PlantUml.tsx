@@ -28,7 +28,7 @@ export function PlantUml({ source, isStreaming = false }: PlantUmlProps) {
     }
 
     return (
-        <figure className="my-5 overflow-hidden rounded-2xl border border-cyan-400/15 bg-zinc-950/80">
+        <figure className="my-5 w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-cyan-400/15 bg-zinc-950/80">
             <figcaption className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-xs text-zinc-400">
                 <span className="font-semibold uppercase tracking-[0.16em] text-cyan-300">PlantUML system design</span>
                 <span className="flex items-center gap-1">
@@ -53,7 +53,7 @@ const KIND_COLORS: Record<PlantUmlNodeKind, { fill: string; stroke: string }> = 
 };
 
 function LocalPlantUmlSvg({ graph, layout }: { graph: ReturnType<typeof parsePlantUmlPreview>; layout: ReturnType<typeof layoutPlantUmlGraph> }) {
-    return <div className="overflow-auto bg-[#080c14] p-3"><svg role="img" aria-label={graph.title || "PlantUML system design"} viewBox={`0 0 ${layout.width} ${layout.height}`} className="h-auto min-w-[680px] max-w-none rounded-xl bg-[#0b1220]">
+    return <div className="w-full min-w-0 max-w-full overflow-x-auto overflow-y-hidden bg-[#080c14] p-3 [scrollbar-gutter:stable]"><svg role="img" aria-label={graph.title || "PlantUML system design"} viewBox={`0 0 ${layout.width} ${layout.height}`} width={layout.width} height={layout.height} className="block h-auto max-w-none shrink-0 rounded-xl bg-[#0b1220]">
         <defs><marker id="plantuml-arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b" /></marker></defs>
         {graph.title && <text x="32" y="34" fill="#e2e8f0" fontSize="18" fontWeight="700">{graph.title}</text>}
         {graph.edges.map((edge, index) => {
