@@ -192,6 +192,21 @@ describe("getRepo", () => {
         expect(repo.full_name).toBe("acme/public-repo");
         expect(getRepoMock).toHaveBeenCalledTimes(2);
     });
+
+    it("does not expose a private repository through the shared server token", async () => {
+        getRepoMock.mockResolvedValue({
+            data: {
+                name: "private-repo",
+                full_name: "acme/private-repo",
+                default_branch: "main",
+                private: true,
+                owner: { login: "acme" },
+            },
+        });
+
+        await expect(getRepo("acme", "private-repo")).rejects.toThrow("Connect GitHub");
+        await expect(getRepo("acme", "private-repo", "user-token")).resolves.toMatchObject({ private: true });
+    });
 });
 
 describe("getRepoFullContext", () => {

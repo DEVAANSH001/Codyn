@@ -24,7 +24,9 @@ export default function MyReposPage() {
     const [repos, setRepos] = useState<Repo[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [visibilityFilter, setVisibilityFilter] = useState<"all" | "public" | "private">("all");
     const [hasPrivateAccess, setHasPrivateAccess] = useState(false);
+    const [loadError, setLoadError] = useState("");
 
     useEffect(() => {
         if (!session?.user || hasInvalidSession) return;
@@ -39,12 +41,19 @@ export default function MyReposPage() {
                     return;
                 }
 
+                if (!res.ok) {
+                    setLoadError(data?.error || "Could not load your GitHub repositories.");
+                    return;
+                }
+
                 if (data.repos) {
+                    setLoadError("");
                     setRepos(data.repos);
                     setHasPrivateAccess(data.hasPrivateAccess);
                 }
             } catch (error) {
                 console.error("Failed to fetch user repos", error);
+                setLoadError("Could not load your GitHub repositories. Please retry.");
             } finally {
                 setLoading(false);
             }
@@ -64,8 +73,9 @@ export default function MyReposPage() {
     };
 
     const filteredRepos = repos.filter(repo =>
-        repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (repo.description && repo.description.toLowerCase().includes(searchQuery.toLowerCase()))
+        (visibilityFilter === "all" || repo.private === (visibilityFilter === "private")) &&
+        (repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (repo.description && repo.description.toLowerCase().includes(searchQuery.toLowerCase())))
     );
     const username = (session?.user as { username?: string } | undefined)?.username ?? "github_user";
 
@@ -121,6 +131,24 @@ export default function MyReposPage() {
                 </p>
             </div>
 
+            <div role="group" aria-label="Repository visibility" className="flex flex-wrap gap-2">
+                {([
+                    { id: "all", label: "All repos", count: repos.length },
+                    { id: "private", label: "Private repos", count: repos.filter(repo => repo.private).length },
+                    { id: "public", label: "Public repos", count: repos.filter(repo => !repo.private).length },
+                ] as const).map(tab => (
+                    <button
+                        key={tab.id}
+                        type="button"
+                        aria-pressed={visibilityFilter === tab.id}
+                        onClick={() => setVisibilityFilter(tab.id)}
+                        className={`rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${visibilityFilter === tab.id ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-200" : "border-white/10 bg-zinc-900 text-zinc-400 hover:text-white"}`}
+                    >
+                        {tab.label} <span className="ml-1 text-xs opacity-70">{tab.count}</span>
+                    </button>
+                ))}
+            </div>
+
             <div className="relative">
                 <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
                 <input
@@ -132,17 +160,22 @@ export default function MyReposPage() {
                 />
             </div>
 
+            {loadError && <p role="alert" className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">{loadError}</p>}
+
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 bg-zinc-900 border border-white/5 rounded-3xl">
                     <Loader2 className="w-8 h-8 text-cyan-500 animate-spin mb-4" />
                     <p className="text-zinc-400">Loading your repositories...</p>
                 </div>
-            ) : filteredRepos.length === 0 ? (
+            ) : loadError ? null : filteredRepos.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 bg-zinc-900 border border-white/5 rounded-3xl text-center px-4">
                     <BookOpen className="w-12 h-12 text-zinc-600 mb-4" />
                     <h3 className="text-xl font-semibold mb-2">No repositories found</h3>
                     <p className="text-zinc-500 max-w-sm">
-                        {searchQuery ? "Try adjusting your search query." : "You don't have any public repositories yet."}
+                        {searchQuery ? "Try adjusting your search query." : visibilityFilter === "private" ?
+                            "No private repositories are available to this GitHub connection. Grant Codyn repository access in GitHub, then reconnect." :
+                            visibilityFilter === "public" ? "No public repositories found." :
+                            "No repositories are available to this GitHub connection. If a private or organization repository is missing, grant Codyn access in GitHub and reconnect."}
                     </p>
                 </div>
             ) : (

@@ -46,13 +46,13 @@ export function WorkspaceStart({
         <div className="mb-8">
           <p className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-cyan-300"><GitBranch size={14} /> Repository intelligence</p>
           <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">Open a codebase.<br /><span className="text-[#8deaff]">Understand how it works.</span></h1>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/50">Explore the source, ask questions, map the architecture, and review security in one workspace. Start with a public GitHub repository or developer profile.</p>
+          <p className="mt-5 max-w-xl text-sm leading-7 text-white/50">Explore the source, ask questions, map the architecture, and review security in one workspace. Open a public repository, or connect GitHub to chat with a private repository you can access.</p>
         </div>
         <div className="codyn-panel rounded-3xl border border-white/10 p-6 sm:p-10">
           <h2 className="mb-6 text-sm font-medium text-white/75">Which project are we working on?</h2>
           <RepoSearch onSearchSubmit={openRepository} loading={false} trendingRepos={[]} recentSearches={recentSearches} isSessionActive={isSessionActive} />
           {(error || invalidQuery) && <p role="alert" className="mt-5 text-center text-sm text-amber-200">{error || 'That address is not a valid GitHub repository or profile. Try another below.'}</p>}
-          <p className="mt-6 text-center text-xs leading-6 text-white/35">{isSessionActive ? 'Your recent repositories and saved scan history follow your connected account.' : 'Public repositories work without signing in. Connect your account to access saved conversations and scan history.'}</p>
+          <p className="mt-6 text-center text-xs leading-6 text-white/35">{isSessionActive ? 'Browse your GitHub repositories in My dashboard, including private repos when access is granted.' : 'Public repositories work without signing in. Connect GitHub to access private repos, saved conversations, and scan history.'}</p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[

@@ -433,14 +433,22 @@ export async function getRepo(owner: string, repo: string, accessToken?: string)
   const cacheKey = `${owner}/${repo}`;
   const useSharedCache = !accessToken;
 
+  const requireUserAccessForPrivateRepo = (data: GitHubRepo) => {
+    if (data.private && !accessToken) {
+      throw new Error("Connect GitHub and grant repository access to open this private repository.");
+    }
+    return data;
+  };
+
   // Check memory cache
   if (useSharedCache && repoCache.has(cacheKey)) {
-    return repoCache.get(cacheKey)!;
+    return requireUserAccessForPrivateRepo(repoCache.get(cacheKey)!);
   }
 
   // Check KV cache
   const cached = useSharedCache ? await getCachedRepoMetadata(owner, repo) : null;
   if (cached && isGitHubRepo(cached)) {
+    requireUserAccessForPrivateRepo(cached);
     repoCache.set(cacheKey, cached);
     return cached;
   }
@@ -454,6 +462,8 @@ export async function getRepo(owner: string, repo: string, accessToken?: string)
     if (!shouldRetryWithoutAuthentication(error, accessToken)) throw error;
     ({ data } = await publicOctokit.rest.repos.get({ owner, repo }));
   }
+
+  requireUserAccessForPrivateRepo(data);
 
   // Cache in both memory and KV
   if (useSharedCache) {

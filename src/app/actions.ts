@@ -492,7 +492,15 @@ export async function fetchRepoFiles(
     files: Array<{ path: string; sha?: string }>
 ): Promise<{ context: string; fetchedFiles: string[] }> {
     const { countTokens, MAX_TOKENS } = await import("@/lib/tokens");
-    const results = await getFileContentBatch(owner, repo, files);
+    const session = await auth();
+    const githubAccessToken = session?.user?.id ? session.accessToken : undefined;
+    const repository = await getRepo(owner, repo, githubAccessToken);
+    const fileCachePolicy: FileCachePolicy = {
+        audience: session?.user?.id ? "authenticated" : "anonymous",
+        actorId: session?.user?.id ?? "anonymous",
+        visibility: repository.private ? "private" : "public",
+    };
+    const results = await getFileContentBatch(owner, repo, files, fileCachePolicy, githubAccessToken);
 
     let context = "";
     let tokenTotal = 0;
@@ -611,13 +619,8 @@ export async function* generateAnswerStream(
 ): AsyncGenerator<StreamUpdate> {
     const session = await auth();
     const githubAccessToken = session?.accessToken;
-    let visibility: "public" | "private" = "public";
-    try {
-        const repo = await getRepo(repoDetails.owner, repoDetails.repo, githubAccessToken) as { private?: boolean };
-        visibility = repo.private ? "private" : "public";
-    } catch {
-        visibility = "public";
-    }
+    const repository = await getRepo(repoDetails.owner, repoDetails.repo, githubAccessToken);
+    const visibility: "public" | "private" = repository.private ? "private" : "public";
 
     const fileCachePolicy: FileCachePolicy = {
         audience: cacheAudience,

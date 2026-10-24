@@ -77,19 +77,12 @@ export function FilePreview({ isOpen, filePath, repoOwner, repoName, onClose }: 
                 const type = getFileType(filePath);
                 setFileType(type);
 
-                const encodedPath = filePath.split('/').map(segment => encodeURIComponent(segment)).join('/');
-                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${encodedPath}`;
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json',
-                    }
-                });
+                const url = `/api/github/file?repo=${encodeURIComponent(`${repoOwner}/${repoName}`)}&path=${encodeURIComponent(filePath)}`;
+                const response = await fetch(url, { cache: 'no-store' });
 
                 if (!response.ok) {
-                    if (response.status === 404) throw new Error('File not found');
-                    if (response.status === 403) throw new Error('Rate limit exceeded');
-                    throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+                    const failure = await response.json().catch(() => ({}));
+                    throw new Error(failure.error || `Failed to fetch file: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -109,11 +102,6 @@ export function FilePreview({ isOpen, filePath, repoOwner, repoName, onClose }: 
                     if (data.content) {
                         const decoded = decodeBase64Content(data.content);
                         setContent(decoded);
-                    } else if (data.download_url) {
-                        // Sometimes the content is not in the JSON for larger files or specific types
-                        const textRes = await fetch(data.download_url);
-                        const text = await textRes.text();
-                        setContent(text);
                     } else {
                         setError('No content available');
                     }
@@ -121,6 +109,8 @@ export function FilePreview({ isOpen, filePath, repoOwner, repoName, onClose }: 
                     setError('Cannot preview binary file');
                 } else if (type === 'unknown' && data.size > 500000) {
                     setError('File is large and format is unknown');
+                } else if (!data.download_url && type !== 'unknown') {
+                    setError('Open this private media file on GitHub to view it.');
                 }
                 
                 // For media, we don't need to fetch 'content', we'll use download_url in the render
