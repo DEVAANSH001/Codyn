@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ScanSummary } from "@/lib/security-scanner";
 
-const { findUniqueMock, findFirstMock } = vi.hoisted(() => ({
+const { findUniqueMock, findFirstMock, findManyMock } = vi.hoisted(() => ({
     findUniqueMock: vi.fn(),
     findFirstMock: vi.fn(),
+    findManyMock: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -11,11 +12,12 @@ vi.mock("@/lib/db", () => ({
         repoScan: {
             findUnique: findUniqueMock,
             findFirst: findFirstMock,
+            findMany: findManyMock,
         },
     },
 }));
 
-import { getPreviousScan } from "@/lib/services/scan-storage";
+import { getPreviousScan, getUserScanHistory } from "@/lib/services/scan-storage";
 
 function buildDbScan(overrides: Record<string, unknown>) {
     const summary: ScanSummary = {
@@ -62,5 +64,20 @@ describe("getPreviousScan", () => {
         expect(result?.id).toBe("older-b");
         expect(findUniqueMock).toHaveBeenCalledOnce();
         expect(findFirstMock).toHaveBeenCalledOnce();
+    });
+});
+
+describe("getUserScanHistory", () => {
+    it("keeps expired scan metadata in the account history", async () => {
+        findManyMock.mockResolvedValue([buildDbScan({ expiresAt: new Date(0) })]);
+
+        const scans = await getUserScanHistory("user-1", 20);
+
+        expect(findManyMock).toHaveBeenCalledWith(expect.objectContaining({
+            where: { userId: "user-1" },
+            take: 20,
+        }));
+        expect(scans[0]).toMatchObject({ id: "scan-id", expiresAt: 0, timestamp: 1000 });
+        expect(scans[0]).not.toHaveProperty("findings");
     });
 });

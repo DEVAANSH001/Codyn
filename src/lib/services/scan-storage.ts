@@ -162,3 +162,29 @@ export async function getUserScans(userId: string, limit?: number): Promise<Stor
     });
     return scans.map(mapStoredScan);
 }
+
+export async function getUserScanHistory(userId: string, limit: number = 50) {
+    const scans = await prisma.repoScan.findMany({
+        where: { userId },
+        orderBy: { timestamp: "desc" },
+        take: Math.min(Math.max(limit, 1), 50),
+        select: {
+            id: true,
+            owner: true,
+            repo: true,
+            timestamp: true,
+            expiresAt: true,
+            depth: true,
+            summary: true,
+        },
+    });
+    return scans.map(scan => ({
+        id: scan.id,
+        owner: scan.owner,
+        repo: scan.repo,
+        timestamp: Number(scan.timestamp),
+        expiresAt: scan.expiresAt.getTime(),
+        depth: scan.depth,
+        summary: scan.summary as unknown as ScanSummary,
+    }));
+}

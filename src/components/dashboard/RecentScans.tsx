@@ -3,26 +3,17 @@
 import { motion } from "framer-motion";
 import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-
-interface Scan {
-    id: string;
-    owner: string;
-    repo: string;
-    timestamp: number;
-    depth: string;
-    summary: {
-        high: number;
-        medium: number;
-        low: number;
-        total: number;
-    };
-}
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { readScans } from "@/lib/dashboard-storage";
+import type { ScanRecord } from "@/lib/codyn-dashboard";
+import { mergeScanHistory, type AccountScanHistory } from "@/lib/scan-history";
 
 export default function RecentScans({ userId, limit, showViewAll = false }: { userId?: string; limit?: number; showViewAll?: boolean }) {
-    const [scans, setScans] = useState<Scan[]>([]);
+    const [accountScans, setAccountScans] = useState<AccountScanHistory[]>([]);
+    const [browserScans, setBrowserScans] = useState<ScanRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+    const scans = useMemo(() => mergeScanHistory(accountScans, browserScans, limit), [accountScans, browserScans, limit]);
 
     const fetchScans = useCallback(async () => {
         if (!userId) {
@@ -33,20 +24,23 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
         try {
             const query = typeof limit === "number" && limit > 0 ? `?limit=${limit}` : "";
             const res = await fetch(`/api/dashboard/scans${query}`, { cache: "no-store" });
-            const data = await res.json() as { scans?: Scan[]; error?: string };
+            const data = await res.json() as { scans?: AccountScanHistory[]; error?: string };
             if (!res.ok) {
                 throw new Error(data.error || "Failed to load recent scans");
             }
-            setScans(Array.isArray(data.scans) ? data.scans : []);
+            setAccountScans(Array.isArray(data.scans) ? data.scans : []);
+            setLoadError("");
         } catch (err) {
             console.error("Failed to fetch scans:", err);
-            toast.error("Failed to load recent scans");
+            setLoadError("Account scans could not be loaded. You can still view scans saved on this browser.");
         } finally {
             setLoading(false);
         }
     }, [limit, userId]);
 
     useEffect(() => {
+        const syncBrowserScans = () => setBrowserScans(readScans());
+        syncBrowserScans();
         void fetchScans();
 
         const refreshWhenVisible = () => {
@@ -58,17 +52,20 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
             if (event.key === "codyn:scan-history-updated") {
                 void fetchScans();
             }
+            if (event.key === "codyn.scan-history.v2") syncBrowserScans();
         };
 
         window.addEventListener("focus", refreshWhenVisible);
         document.addEventListener("visibilitychange", refreshWhenVisible);
         window.addEventListener("codyn:scan-history-updated", refreshWhenVisible);
+        window.addEventListener("codyn:scans-updated", syncBrowserScans);
         window.addEventListener("storage", refreshFromAnotherTab);
 
         return () => {
             window.removeEventListener("focus", refreshWhenVisible);
             document.removeEventListener("visibilitychange", refreshWhenVisible);
             window.removeEventListener("codyn:scan-history-updated", refreshWhenVisible);
+            window.removeEventListener("codyn:scans-updated", syncBrowserScans);
             window.removeEventListener("storage", refreshFromAnotherTab);
         };
     }, [fetchScans]);
@@ -111,14 +108,16 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                 </div>
             </div>
 
+            {loadError && <p role="alert" className="mx-6 mt-5 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-sm text-amber-200">{loadError}</p>}
+
             {scans.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-12 text-center">
                     <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 text-zinc-500">
                         <Search className="w-8 h-8" />
                     </div>
                     <h3 className="text-white font-medium mb-1">No scans yet</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-[240px]">
-                        Start exploring repositories to see them listed here.
+                    <p className="text-zinc-500 text-sm mb-6 max-w-[280px]">
+                        Run a security scan to see it here. Account reports expire after seven days; scans saved on this browser remain available here.
                     </p>
                     <Link
                         href="/chat"
@@ -133,7 +132,7 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                     {scans.map((scan) => (
                         <Link
                             key={scan.id}
-                            href={`/report/${scan.id}`}
+                            href={scan.href}
                             className="flex items-center justify-between p-6 hover:bg-white/5 transition-colors group"
                         >
                             <div className="flex items-center gap-4">
@@ -151,6 +150,7 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                                             }`}>
                                             {scan.depth}
                                         </span>
+                                        <span className="text-[10px] text-zinc-500">{scan.source === "browser" ? "This browser" : scan.expired ? "Report expired" : "Account"}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-zinc-500">
                                         <span>{new Date(scan.timestamp).toLocaleDateString()}</span>

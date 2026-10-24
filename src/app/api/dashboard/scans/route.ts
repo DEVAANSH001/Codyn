@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { getUserScans } from "@/lib/services/scan-storage";
+import { getUserScanHistory } from "@/lib/services/scan-storage";
 import { NextRequest, NextResponse } from "next/server";
 import { getInvalidSessionApiError, getSessionAuthState, getSessionUserId } from "@/lib/session-guard";
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
         const limit = typeof parsedLimit === "number" && Number.isFinite(parsedLimit) && parsedLimit > 0
             ? Math.min(parsedLimit, 50)
             : undefined;
-        const scans = await getUserScans(userId, limit);
+        const scans = await getUserScanHistory(userId, limit);
         return NextResponse.json({ scans });
     } catch {
         return NextResponse.json({ error: "Failed to fetch scans" }, { status: 500 });
