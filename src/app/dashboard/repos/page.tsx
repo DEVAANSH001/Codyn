@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +27,8 @@ export default function MyReposPage() {
     const [visibilityFilter, setVisibilityFilter] = useState<"all" | "public" | "private">("all");
     const [hasPrivateAccess, setHasPrivateAccess] = useState(false);
     const [loadError, setLoadError] = useState("");
+    const signInStarted = useRef(false);
+    const [connectingGitHub, setConnectingGitHub] = useState(false);
 
     useEffect(() => {
         if (!session?.user || hasInvalidSession) return;
@@ -69,7 +71,15 @@ export default function MyReposPage() {
     }, [hasInvalidSession]);
 
     const handleUnlockPrivateAccess = () => {
-        signIn("github", { callbackUrl: "/dashboard/repos" }, { scope: "read:user user:email repo" });
+        if (signInStarted.current) return;
+        signInStarted.current = true;
+        setConnectingGitHub(true);
+        void signIn("github", { callbackUrl: "/dashboard/repos" }, { scope: "read:user user:email repo" })
+            .catch(() => {
+                signInStarted.current = false;
+                setConnectingGitHub(false);
+                setLoadError("GitHub sign-in could not start. Please try again.");
+            });
     };
 
     const filteredRepos = repos.filter(repo =>
@@ -116,10 +126,11 @@ export default function MyReposPage() {
                 {!loading && !hasPrivateAccess && (
                     <button
                         onClick={handleUnlockPrivateAccess}
+                        disabled={connectingGitHub}
                         className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl transition-all shadow-lg shadow-cyan-500/20 text-sm font-medium"
                     >
                         <Lock className="w-4 h-4" />
-                        Unlock Private Repos
+                        {connectingGitHub ? "Connecting to GitHub…" : "Unlock Private Repos"}
                     </button>
                 )}
             </div>

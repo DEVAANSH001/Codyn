@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Github, ArrowLeft } from 'lucide-react';
-import { signIn } from '@/lib/auth';
+import { ArrowLeft } from 'lucide-react';
 import { LogoMark } from '@/components/LogoMark';
+import { GitHubSignInButton } from './GitHubSignInButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,10 +21,7 @@ export default async function SignInPage({ searchParams }: {
       <h1 className="text-2xl font-semibold">Your code, in one workspace.</h1>
       <p className="mt-4 text-sm leading-7 text-white/50">Sign in with GitHub to access your dashboard, saved conversations, and scan history.</p>
       {params.error && <p role="alert" className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/5 p-3 text-sm text-amber-200">Sign-in could not be completed. Please retry or continue with a public repository.</p>}
-      {configured ? <form className="mt-8" action={async () => {
-        'use server';
-        await signIn('github', { redirectTo: callbackUrl }, { scope });
-      }}><button type="submit" className="codyn-primary-action flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold"><Github size={18} /> Continue with GitHub</button></form> : <div className="mt-8 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-sm leading-6 text-white/65">GitHub sign-in and saved accounts have not been connected on this installation yet. Public repository chat, file browsing, and quick security scans are available now.</div>}
+      {configured ? <GitHubSignInButton callbackUrl={callbackUrl} scope={scope} /> : <div className="mt-8 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-sm leading-6 text-white/65">GitHub sign-in and saved accounts have not been connected on this installation yet. Public repository chat, file browsing, and quick security scans are available now.</div>}
       <Link href="/chat" className="mt-6 inline-flex items-center gap-2 text-sm text-cyan-200"><ArrowLeft size={15} /> Continue to public workspace</Link>
     </section>
   </main>;
