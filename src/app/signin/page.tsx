@@ -6,14 +6,13 @@ import { GitHubSignInButton } from './GitHubSignInButton';
 export const dynamic = 'force-dynamic';
 
 export default async function SignInPage({ searchParams }: {
-  searchParams: Promise<{ callbackUrl?: string; scope?: string; error?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>;
 }) {
   const params = await searchParams;
   const requestedCallback = params.callbackUrl || '/dashboard';
   const callbackUrl = requestedCallback.startsWith('/') && !requestedCallback.startsWith('//') && !requestedCallback.includes('\\')
     ? requestedCallback : '/dashboard';
   const configured = Boolean(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET && process.env.DATABASE_URL);
-  const scope = params.scope?.split(' ').includes('repo') ? 'read:user user:email repo' : 'read:user user:email';
 
   return <main className="codyn-product codyn-workspace-grid grid min-h-dvh place-items-center px-6 py-12">
     <section className="codyn-panel w-full max-w-md rounded-3xl border border-white/10 p-8 sm:p-10">
@@ -21,7 +20,7 @@ export default async function SignInPage({ searchParams }: {
       <h1 className="text-2xl font-semibold">Your code, in one workspace.</h1>
       <p className="mt-4 text-sm leading-7 text-white/50">Sign in with GitHub to access your dashboard, saved conversations, and scan history.</p>
       {params.error && <p role="alert" className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/5 p-3 text-sm text-amber-200">Sign-in could not be completed. Please retry or continue with a public repository.</p>}
-      {configured ? <GitHubSignInButton callbackUrl={callbackUrl} scope={scope} /> : <div className="mt-8 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-sm leading-6 text-white/65">GitHub sign-in and saved accounts have not been connected on this installation yet. Public repository chat, file browsing, and quick security scans are available now.</div>}
+      {configured ? <GitHubSignInButton callbackUrl={callbackUrl} /> : <div className="mt-8 rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-4 text-sm leading-6 text-white/65">GitHub sign-in and saved accounts have not been connected on this installation yet. Public repository chat, file browsing, and quick security scans are available now.</div>}
       <Link href="/chat" className="mt-6 inline-flex items-center gap-2 text-sm text-cyan-200"><ArrowLeft size={15} /> Continue to public workspace</Link>
     </section>
   </main>;

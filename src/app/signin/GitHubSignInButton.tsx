@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { Github } from "lucide-react";
 
-export function GitHubSignInButton({ callbackUrl, scope }: { callbackUrl: string; scope: string }) {
+export function GitHubSignInButton({ callbackUrl }: { callbackUrl: string }) {
   const started = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -15,7 +15,7 @@ export function GitHubSignInButton({ callbackUrl, scope }: { callbackUrl: string
     setPending(true);
     setError("");
     try {
-      await signIn("github", { callbackUrl }, { scope });
+      await signIn("github", { callbackUrl });
     } catch {
       started.current = false;
       setPending(false);

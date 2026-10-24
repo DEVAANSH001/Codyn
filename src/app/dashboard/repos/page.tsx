@@ -130,7 +130,7 @@ export default function MyReposPage() {
                         className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl transition-all shadow-lg shadow-cyan-500/20 text-sm font-medium"
                     >
                         <Lock className="w-4 h-4" />
-                        {connectingGitHub ? "Connecting to GitHub…" : "Unlock Private Repos"}
+                        {connectingGitHub ? "Connecting to GitHub…" : "Reconnect GitHub for private repos"}
                     </button>
                 )}
             </div>

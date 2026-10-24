@@ -6,7 +6,10 @@ describe("auth.config callbacks", () => {
     it("binds the GitHub callback to both its state and PKCE verifier", () => {
         const provider = authConfig.providers[0];
         expect(typeof provider === "function" ? provider() : provider).toMatchObject({
-            options: { checks: ["pkce", "state"] },
+            options: {
+                checks: ["pkce", "state"],
+                authorization: { params: { scope: "read:user user:email repo" } },
+            },
         });
     });
 
