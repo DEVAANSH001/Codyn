@@ -62,22 +62,6 @@ describe("resolveOgCardSpec", () => {
         expect(spec.stats[0]).toEqual({ label: "Critical", value: "2" });
     });
 
-    it("builds blog cards with article context", () => {
-        const spec = resolveOgCardSpec(
-            new URLSearchParams(
-                "type=blog&title=The%20Future%20of%20Codyn&description=Engineering%20notes%20for%20high-context%20analysis.&category=Insights&author=Codyn&readTime=5%20min%20read",
-            ),
-            "https://codyn.in",
-        );
-
-        expect(spec.eyebrow).toBe("Blog");
-        expect(spec.title).toBe("The Future of Codyn");
-        expect(spec.description).toContain("Engineering notes");
-        expect(spec.chips[0]).toBe("Insights");
-        expect(spec.chips[1]).toBe("Codyn");
-        expect(spec.chips[2]).toBe("5 min read");
-    });
-
     it("builds topic cards with repository counts", () => {
         const spec = resolveOgCardSpec(
             new URLSearchParams(

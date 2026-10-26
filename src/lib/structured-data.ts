@@ -106,42 +106,6 @@ export function buildSoftwareApplicationStructuredData(input: SoftwareApplicatio
   };
 }
 
-export function buildBlogPostingStructuredData(input: {
-  title: string;
-  excerpt: string;
-  image: string;
-  author: string;
-  slug: string;
-  publishedAtIso: string;
-  updatedAtIso: string;
-}) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: input.title,
-    description: input.excerpt,
-    image: input.image,
-    author: {
-      "@type": "Person",
-      name: input.author,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Codyn",
-      logo: {
-        "@type": "ImageObject",
-        url: `${getCanonicalSiteUrl()}/icon.svg`,
-      },
-    },
-    datePublished: input.publishedAtIso,
-    dateModified: input.updatedAtIso,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": toAbsoluteUrl(`/blog/${input.slug}`),
-    },
-  };
-}
-
 export function buildItemListStructuredData(input: {
   name: string;
   items: Array<{ name: string; path: string }>;

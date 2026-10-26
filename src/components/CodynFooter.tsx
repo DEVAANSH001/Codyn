@@ -29,7 +29,6 @@ export const footerLinks = {
     explore: [
         { name: "Solutions", href: "/solutions" },
         { name: "Compare", href: "/compare" },
-        { name: "Insights", href: "/blog" },
         { name: "SEO Topics", href: "/explore" },
         { name: "FAQ", href: "/faq" },
     ],

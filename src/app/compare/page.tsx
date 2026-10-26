@@ -84,8 +84,8 @@ export default function ComparePage() {
           <Link href="/solutions" className="px-5 py-3 rounded-lg border border-zinc-700 text-zinc-200 hover:bg-zinc-900 transition-colors">
             Explore Solutions
           </Link>
-          <Link href="/blog" className="px-5 py-3 rounded-lg bg-white text-black font-medium hover:bg-zinc-200 transition-colors">
-            Read Comparison Guides
+          <Link href="/explore" className="px-5 py-3 rounded-lg bg-white text-black font-medium hover:bg-zinc-200 transition-colors">
+            Explore Topics
           </Link>
         </div>
       </div>

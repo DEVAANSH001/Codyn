@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { getCanonicalSiteUrl } from "@/lib/site-url";
-import { getPublishedPosts } from "@/lib/services/blog-service";
 import { getCuratedRepos, getIndexableTopics } from "@/lib/repo-catalog";
 import fs from "node:fs";
 import path from "node:path";
@@ -23,8 +22,6 @@ function getFileModDate(relativePath: string): Date {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = getCanonicalSiteUrl();
-    const blogPosts = await getPublishedPosts();
-    
     // Catalog data is the source of truth for repo/topic routes
     const catalogModDate = getFileModDate("public/data/top-repos.json");
 
@@ -34,12 +31,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: getFileModDate("src/app/page.tsx"),
             changeFrequency: "daily",
             priority: 1,
-        },
-        {
-            url: `${baseUrl}/blog`,
-            lastModified: getFileModDate("src/app/blog/page.tsx"),
-            changeFrequency: "daily",
-            priority: 0.9,
         },
         {
             url: `${baseUrl}/solutions`,
@@ -155,12 +146,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: "weekly",
             priority: 0.75,
         },
-        ...blogPosts.map((post) => ({
-            url: `${baseUrl}/blog/${post.slug}`,
-            lastModified: post.updatedAt,
-            changeFrequency: "monthly" as const,
-            priority: 0.7,
-        })),
     ];
 
     let repoRoutes: MetadataRoute.Sitemap = [];

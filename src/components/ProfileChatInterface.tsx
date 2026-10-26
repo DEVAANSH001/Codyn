@@ -667,7 +667,7 @@ export function ProfileChatInterface({
                 }));
                 setShowToolQuotaModal(true);
             } else if (errorCode === "NEBIUS_DAILY_LIMIT") {
-                toast.error("Premium model limit reached", { description: "You have used 30 premium-model questions today. Use Gemini or try again after midnight UTC." });
+                toast.error("Premium model limit reached", { description: "You have used 50 premium-model questions today. Use Gemini or try again after midnight UTC." });
             } else if (errorCode === "DAILY_QUERY_LIMIT") {
                 toast.error("Daily query limit reached", { description: "Your allowance resets at midnight UTC. You can also choose a higher plan." });
                 setShowToolQuotaModal(true);

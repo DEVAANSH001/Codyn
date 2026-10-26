@@ -33,6 +33,7 @@ model User {
   emailDeliveries              TransactionalEmailDelivery[]
   planAssignment               UserPlan?
   dailyQueryUsages              DailyQueryUsage[]
+  paymentTransactions           PaymentTransaction[]
 }
 
 model Plan {
@@ -45,6 +46,7 @@ model Plan {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   assignments        UserPlan[]
+  paymentTransactions PaymentTransaction[]
 }
 
 model UserPlan {
@@ -67,6 +69,25 @@ model DailyQueryUsage {
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, day])
+}
+
+model PaymentTransaction {
+  id                String    @id @default(cuid())
+  userId            String
+  planId            String
+  razorpayOrderId   String    @unique
+  razorpayPaymentId String?   @unique
+  razorpaySignature String?
+  amount            Int
+  currency          String
+  status            String    @default("pending")
+  createdAt         DateTime  @default(now())
+  verifiedAt        DateTime?
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan              Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }
 
 model Account {
@@ -428,27 +449,6 @@ model TransactionalEmailDelivery {
   @@unique([userId, template])
   @@index([status, nextRetryAt])
   @@index([providerMessageId])
-}
-
-model BlogPost {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  title     String
-  excerpt   String
-  content   String
-  date      String?
-  author    String
-  category  String
-  image     String
-  keywords  String?
-  published Boolean  @default(false)
-  publishedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([published, publishedAt(sort: Desc)])
-  @@index([published, createdAt(sort: Desc)])
-  @@index([slug])
 }
 
 enum FindingLifecycleStatus {

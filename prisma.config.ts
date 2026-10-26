@@ -24,7 +24,6 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
-    seed: "tsx scripts/seed-blog.ts",
   },
   engine: "classic",
   datasource: {

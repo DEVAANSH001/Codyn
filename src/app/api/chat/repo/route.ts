@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
         }
         const dailyAllowance = userId ? await consumeDailyQuery(userId, entitlement.dailyQueryLimit, requestedModelPreference.startsWith("nebius:")) : "ok";
         if (dailyAllowance !== "ok") {
-            return NextResponse.json({ error: dailyAllowance === "nebius" ? "Premium model limit reached (30 per day). Try again tomorrow or switch to Gemini." : "Daily query limit reached. Try again tomorrow or upgrade your plan.", code: dailyAllowance === "nebius" ? "NEBIUS_DAILY_LIMIT" : "DAILY_QUERY_LIMIT" }, { status: 429 });
+            return NextResponse.json({ error: dailyAllowance === "nebius" ? "Premium model limit reached (50 per day). Try again tomorrow or switch to Gemini." : "Daily query limit reached. Try again tomorrow or upgrade your plan.", code: dailyAllowance === "nebius" ? "NEBIUS_DAILY_LIMIT" : "DAILY_QUERY_LIMIT" }, { status: 429 });
         }
 
         const stream = new ReadableStream({

@@ -410,7 +410,7 @@ export function ChatInput({
                                                 <span className="text-[10px] opacity-50">Standard performance</span>
                                             </div>
                                         </button>
-                                        {availablePaidModels.map((modelId) => { const model = getNebiusModelDetails(modelId); return <button key={modelId} type="button" onClick={() => { setModelPreference?.(`nebius:${modelId}`); setShowModelDropdown(false); }} className={cn("w-full rounded-xl px-3 py-2.5 text-left text-xs hover:bg-white/5", modelPreference === `nebius:${modelId}` ? "bg-cyan-400/10 text-cyan-200" : "text-zinc-300")}><span className="block font-semibold">{model.name}</span><span className="block text-[10px] text-zinc-500">{model.summary}</span><span className="block text-[10px] text-zinc-600">Premium model · maximum 30/day</span></button>; })}
+                                        {availablePaidModels.map((modelId) => { const model = getNebiusModelDetails(modelId); return <button key={modelId} type="button" onClick={() => { setModelPreference?.(`nebius:${modelId}`); setShowModelDropdown(false); }} className={cn("w-full rounded-xl px-3 py-2.5 text-left text-xs hover:bg-white/5", modelPreference === `nebius:${modelId}` ? "bg-cyan-400/10 text-cyan-200" : "text-zinc-300")}><span className="block font-semibold">{model.name}</span><span className="block text-[10px] text-zinc-500">{model.summary}</span><span className="block text-[10px] text-zinc-600">Premium model · maximum 50/day</span></button>; })}
                                         <button
                                             type="button"
                                             onClick={() => {

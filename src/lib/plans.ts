@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 
 export const FREE_DAILY_QUERIES = 10;
-export const NEBIUS_DAILY_QUERIES = 30;
+export const NEBIUS_DAILY_QUERIES = 50;
 
 export async function getUserEntitlement(userId: string | null) {
   if (!userId) return { name: "Free", dailyQueryLimit: FREE_DAILY_QUERIES, modelIds: [] as string[], expiresAt: null };

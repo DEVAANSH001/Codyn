@@ -35,18 +35,6 @@ const MARKETING_PRESETS: Record<string, Omit<OgCardSpec, "asset" | "assetAlt" | 
             { label: "UI", value: "Flowcharts" },
         ],
     },
-    blog: {
-        eyebrow: "Engineering",
-        title: "Codyn Engineering Notes",
-        description: "Deep dives into Agentic CAG, AI-driven code analysis, and high-context security research from the Codyn team.",
-        asset: "/og.png",
-        accent: "#22c55e",
-        chips: ["Engineering", "Security", "AI"],
-        stats: [
-            { label: "Insights", value: "Deep Dive" },
-            { label: "Focus", value: "Practical" },
-        ],
-    },
     solutions: {
         eyebrow: "Solutions",
         title: "Scalable Repository Intelligence | Codyn",
@@ -378,35 +366,6 @@ function reportSpec(params: URLSearchParams, baseUrl: string): OgCardSpec {
     };
 }
 
-function blogSpec(params: URLSearchParams, baseUrl: string): OgCardSpec {
-    const title = normalizeMetaText(params.get("title")) || "Codyn Insights";
-    const description = truncateMetaText(params.get("description") || "Engineering notes, security writeups, and product thinking from Codyn.", 170);
-    const category = normalizeMetaText(params.get("category")) || "Insights";
-    const author = normalizeMetaText(params.get("author"));
-    const readTime = normalizeMetaText(params.get("readTime"));
-    const accent = normalizeAccent(params.get("accent"), "#42a5ff");
-
-    return {
-        eyebrow: "Blog",
-        title: truncateMetaText(title, 90),
-        description,
-        asset: assetUrl(baseUrl, params.get("image"), "/og.png"),
-        assetAlt: `${title} cover image`,
-        accent,
-        chips: [
-            category,
-            author || "Codyn",
-            readTime || "Fresh insight",
-        ],
-        stats: [
-            { label: "Format", value: "Article" },
-            { label: "Lens", value: "Engineering" },
-        ],
-        footer: DEFAULT_FOOTER,
-        layout: "centered",
-    };
-}
-
 function topicSpec(params: URLSearchParams, baseUrl: string): OgCardSpec {
     const topic = normalizeMetaText(params.get("topic")) || "topic";
     const description = truncateMetaText(params.get("description") || `Curated open-source repositories for ${topic}.`, 170);
@@ -446,9 +405,6 @@ export function resolveOgCardSpec(params: URLSearchParams, baseUrl: string): OgC
     }
     if (rawType === "report") {
         return reportSpec(params, baseUrl);
-    }
-    if (rawType === "blog") {
-        return blogSpec(params, baseUrl);
     }
     if (rawType === "topic") {
         return topicSpec(params, baseUrl);

@@ -60,14 +60,14 @@ export default async function ComingSoonPage({
         <p className="text-cyan-300 text-xs uppercase tracking-[0.22em] mb-4">Coming Soon</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">{label} is on the roadmap</h1>
         <p className="text-zinc-300 leading-relaxed mb-8">
-          We are actively building this page. You can explore current capabilities from Solutions and Insights meanwhile.
+          We are actively building this page. You can explore current capabilities from Solutions and Explore meanwhile.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link href="/solutions" className="px-5 py-3 rounded-xl bg-white text-black font-medium hover:bg-zinc-200 transition-colors">
             Explore Solutions
           </Link>
-          <Link href="/blog" className="px-5 py-3 rounded-xl border border-white/15 text-zinc-200 hover:bg-zinc-800/60 transition-colors">
-            Read Insights
+          <Link href="/explore" className="px-5 py-3 rounded-xl border border-white/15 text-zinc-200 hover:bg-zinc-800/60 transition-colors">
+            Explore Topics
           </Link>
         </div>
       </div>

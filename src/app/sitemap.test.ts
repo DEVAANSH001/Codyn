@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getPublishedPostsMock, getCanonicalSiteUrlMock, getCuratedReposMock, getIndexableTopicsMock } = vi.hoisted(() => ({
-  getPublishedPostsMock: vi.fn(),
+const { getCanonicalSiteUrlMock, getCuratedReposMock, getIndexableTopicsMock } = vi.hoisted(() => ({
   getCanonicalSiteUrlMock: vi.fn(),
   getCuratedReposMock: vi.fn(),
   getIndexableTopicsMock: vi.fn(),
@@ -13,14 +12,7 @@ vi.mock("node:fs", () => ({
   },
 }));
 
-vi.mock("@/lib/services/blog-service", () => ({
-  getPublishedPosts: getPublishedPostsMock,
-}));
-
-vi.mock("@/lib/site-url", () => ({
-  getCanonicalSiteUrl: getCanonicalSiteUrlMock,
-}));
-
+vi.mock("@/lib/site-url", () => ({ getCanonicalSiteUrl: getCanonicalSiteUrlMock }));
 vi.mock("@/lib/repo-catalog", () => ({
   getCuratedRepos: getCuratedReposMock,
   getIndexableTopics: getIndexableTopicsMock,
@@ -28,35 +20,14 @@ vi.mock("@/lib/repo-catalog", () => ({
 
 import sitemap from "@/app/sitemap";
 
-describe("sitemap blog metadata", () => {
+describe("sitemap metadata", () => {
   beforeEach(() => {
-    getPublishedPostsMock.mockReset();
-    getCanonicalSiteUrlMock.mockReset();
-    getCuratedReposMock.mockReset();
-    getIndexableTopicsMock.mockReset();
-
     getCanonicalSiteUrlMock.mockReturnValue("https://codyn.in");
     getCuratedReposMock.mockResolvedValue([]);
     getIndexableTopicsMock.mockResolvedValue([]);
   });
 
-  it("uses each blog post updatedAt as sitemap lastModified", async () => {
-    const updatedAt = new Date("2026-03-14T12:00:00.000Z");
-    getPublishedPostsMock.mockResolvedValue([
-      {
-        slug: "my-post",
-        updatedAt,
-      },
-    ]);
-
-    const routes = await sitemap();
-    const blogRoute = routes.find((entry) => entry.url === "https://codyn.in/blog/my-post");
-
-    expect(blogRoute?.lastModified).toEqual(updatedAt);
-  });
-
   it("indexes only curated repos and indexable topics", async () => {
-    getPublishedPostsMock.mockResolvedValue([]);
     getCuratedReposMock.mockResolvedValue([
       { owner: "facebook", repo: "react" },
       { owner: "vercel", repo: "next.js" },
@@ -71,19 +42,12 @@ describe("sitemap blog metadata", () => {
     expect(routes.some((entry) => entry.url === "https://codyn.in/topics/react")).toBe(true);
   });
 
-  it("includes core SEO landing pages and excludes coming-soon routes", async () => {
-    getPublishedPostsMock.mockResolvedValue([]);
-    getCuratedReposMock.mockResolvedValue([]);
-    getIndexableTopicsMock.mockResolvedValue([]);
-
+  it("includes core SEO landing pages and excludes blog and coming-soon routes", async () => {
     const routes = await sitemap();
 
     expect(routes.some((entry) => entry.url === "https://codyn.in/faq")).toBe(true);
     expect(routes.some((entry) => entry.url === "https://codyn.in/github-code-analyzer")).toBe(true);
-    expect(routes.some((entry) => entry.url === "https://codyn.in/typescript-code-analyzer")).toBe(true);
-    expect(routes.some((entry) => entry.url === "https://codyn.in/nodejs-security-scanner")).toBe(true);
-    expect(routes.some((entry) => entry.url === "https://codyn.in/open-source-security-scanner")).toBe(true);
-    expect(routes.some((entry) => entry.url === "https://codyn.in/repository-risk-analysis")).toBe(true);
+    expect(routes.some((entry) => entry.url.includes("/blog"))).toBe(false);
     expect(routes.some((entry) => entry.url.includes("/coming-soon"))).toBe(false);
   });
 });

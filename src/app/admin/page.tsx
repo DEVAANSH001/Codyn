@@ -2,8 +2,7 @@ import { auth } from "@/lib/auth";
 import { isAdminUser } from "@/lib/admin-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { FileText, Users, ArrowRight, BarChart2, Activity, Database, Hash, CreditCard } from "lucide-react";
-import { getAllPosts } from "@/lib/services/blog-service";
+import { Users, ArrowRight, BarChart2, Activity, Database, Hash, CreditCard } from "lucide-react";
 import { getAnalyticsSummary } from "@/lib/analytics";
 import { getCatalogStats } from "@/lib/repo-catalog";
 
@@ -14,16 +13,12 @@ export default async function AdminDashboardPage() {
     redirect("/");
   }
 
-  const [posts, analytics, catalogStats] = await Promise.all([
-    getAllPosts(),
+  const [analytics, catalogStats] = await Promise.all([
     getAnalyticsSummary(),
     getCatalogStats(),
   ]);
 
-  const publishedCount = posts.filter((post) => post.published).length;
-
   const stats = [
-    { label: "Total Posts", value: posts.length.toString(), icon: FileText, color: "text-blue-400" },
     { label: "Curated Repos", value: catalogStats.totalRepos.toLocaleString(), icon: Database, color: "text-cyan-400" },
     { label: "Indexable Topics", value: catalogStats.totalTopics.toLocaleString(), icon: Hash, color: "text-pink-400" },
     { label: "Total Visitors", value: analytics.totalVisitors.toString(), icon: Users, color: "text-orange-400" },
@@ -34,7 +29,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-12">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-3 bg-linear-to-r from-white to-zinc-500 bg-clip-text text-transparent">
             Admin Command Center
           </h1>
           <p className="text-zinc-400 max-w-2xl">
@@ -63,25 +58,6 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Link href="/admin/plans" className="group rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-8 transition hover:bg-cyan-500/10"><h2 className="mb-4 flex items-center gap-3 text-2xl font-bold"><CreditCard className="text-cyan-400" />Plans & Access</h2><p className="text-sm leading-6 text-zinc-400">Set prices, daily limits, and available models. Grant customers 30 days of paid access by email.</p><span className="mt-6 inline-flex items-center gap-2 font-semibold text-cyan-300">Manage plans <ArrowRight size={18} /></span></Link>
-        <Link 
-          href="/admin/blog"
-          className="group relative bg-zinc-900/40 border border-white/5 rounded-3xl p-8 hover:bg-zinc-900/60 hover:border-cyan-500/30 transition-all overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 p-8 text-zinc-800/20 group-hover:text-cyan-500/10 transition-colors">
-            <FileText size={120} />
-          </div>
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
-            <FileText className="text-cyan-400" />
-            Blog CMS
-          </h2>
-          <p className="text-zinc-400 mb-6 relative z-10 max-w-md text-sm leading-relaxed">
-            Manage your articles and drafts. Published {publishedCount} posts across {posts.length} total.
-          </p>
-          <div className="flex items-center gap-2 text-zinc-300 font-bold group-hover:gap-4 transition-all mt-auto pt-4 shadow-sm">
-            Manage Posts <ArrowRight size={18} />
-          </div>
-        </Link>
-
         <Link 
           href="/admin/index"
           className="group relative bg-zinc-900/40 border border-white/5 rounded-3xl p-8 hover:bg-zinc-900/60 hover:border-pink-500/30 transition-all overflow-hidden"

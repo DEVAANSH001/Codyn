@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export type OgCardVariant = "home" | "repo" | "profile" | "report" | "blog" | "topic" | "marketing";
+export type OgCardVariant = "home" | "repo" | "profile" | "report" | "topic" | "marketing";
 
 export type ChatIntent = "architecture" | "security" | "explain" | "general";
 
@@ -22,7 +22,6 @@ const STATIC_OG_VARIANTS: Record<string, string> = {
     "explore": "/og/explore.png",
     "trending": "/og/trending.png",
     "github-repository-analysis": "/og/github-repository-analysis.png",
-    "blog": "/og/blogs.png",
     "privacy": "/og/privacy.png",
     "terms": "/og/terms.png",
 };
@@ -32,7 +31,6 @@ const STATIC_OG_TYPES: Partial<Record<OgCardVariant, string>> = {
     repo: "/og/repository-analysis.png",
     profile: "/og/homepage.png",
     report: "/og/security-scan-report.png",
-    blog: "/og/blogs.png",
     topic: "/og/trending-topics.png",
 };
 

@@ -4,11 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/LogoMark";
 import { 
-  FileText, 
   LayoutDashboard, 
   Settings, 
   LogOut, 
-  ExternalLink,
   ChevronLeft,
   PlusCircle,
   BarChart2,
@@ -22,7 +20,6 @@ import { signOut } from "next-auth/react";
 const menuItems = [
   { icon: LayoutDashboard, label: "Admin Home", href: "/admin" },
   { icon: BarChart2, label: "Analytics", href: "/admin/stats" },
-  { icon: FileText, label: "Blog Posts", href: "/admin/blog" },
   { icon: Search, label: "Index Manager", href: "/admin/index" },
   { icon: CreditCard, label: "Plans & Access", href: "/admin/plans" },
   { icon: Settings, label: "Account Settings", href: "/dashboard/settings" },
@@ -86,16 +83,6 @@ export default function AdminSidebar() {
           );
         })}
 
-        <div className="pt-4 mt-4 border-t border-white/5">
-            <Link
-              href="/blog"
-              target="_blank"
-              className="flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all group"
-            >
-              <ExternalLink className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
-              {!isCollapsed && <span className="font-medium">View Public Blog</span>}
-            </Link>
-        </div>
       </nav>
 
       <div className="p-4 border-t border-white/5">

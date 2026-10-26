@@ -1,16 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck } from "lucide-react";
+import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck, CreditCard, CheckCircle2, Clock3 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { readScans } from "@/lib/dashboard-storage";
 import type { ScanRecord } from "@/lib/codyn-dashboard";
 import { mergeScanHistory, type AccountScanHistory } from "@/lib/scan-history";
 
+type PaymentRecord = {
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    createdAt: string;
+    verifiedAt: string | null;
+    plan: { name: string };
+};
+
 export default function RecentScans({ userId, limit, showViewAll = false }: { userId?: string; limit?: number; showViewAll?: boolean }) {
     const [accountScans, setAccountScans] = useState<AccountScanHistory[]>([]);
     const [browserScans, setBrowserScans] = useState<ScanRecord[]>([]);
+    const [payments, setPayments] = useState<PaymentRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState("");
     const scans = useMemo(() => mergeScanHistory(accountScans, browserScans, limit), [accountScans, browserScans, limit]);
@@ -38,14 +49,27 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
         }
     }, [limit, userId]);
 
+    const fetchPayments = useCallback(async () => {
+        if (!userId) return;
+        try {
+            const response = await fetch("/api/dashboard/payments", { cache: "no-store" });
+            const data = await response.json() as { payments?: PaymentRecord[] };
+            if (response.ok) setPayments(Array.isArray(data.payments) ? data.payments : []);
+        } catch (error) {
+            console.error("Failed to fetch payment history:", error);
+        }
+    }, [userId]);
+
     useEffect(() => {
         const syncBrowserScans = () => setBrowserScans(readScans());
         syncBrowserScans();
         void fetchScans();
+        void fetchPayments();
 
         const refreshWhenVisible = () => {
             if (document.visibilityState === "visible") {
                 void fetchScans();
+                void fetchPayments();
             }
         };
         const refreshFromAnotherTab = (event: StorageEvent) => {
@@ -68,7 +92,7 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
             window.removeEventListener("codyn:scans-updated", syncBrowserScans);
             window.removeEventListener("storage", refreshFromAnotherTab);
         };
-    }, [fetchScans]);
+    }, [fetchPayments, fetchScans]);
 
     if (loading) {
         return (
@@ -167,6 +191,33 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                             <ExternalLink className="w-5 h-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                         </Link>
                     ))}
+                </div>
+            )}
+
+            {payments.length > 0 && (
+                <div className="border-t border-white/5">
+                    <div className="flex items-center justify-between border-b border-white/5 p-6">
+                        <div className="flex items-center gap-2">
+                            <CreditCard className="h-5 w-5 text-cyan-400" />
+                            <h2 className="font-bold text-xl">Payment history</h2>
+                        </div>
+                        <span className="text-xs text-zinc-500">Latest {payments.length}</span>
+                    </div>
+                    <div className="divide-y divide-white/5">
+                        {payments.map((payment) => {
+                            const verified = payment.status === "verified";
+                            return <div key={payment.id} className="flex items-center justify-between gap-4 p-5">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    {verified ? <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" /> : <Clock3 className="h-5 w-5 shrink-0 text-amber-400" />}
+                                    <div className="min-w-0">
+                                        <p className="truncate text-sm font-semibold text-white">{payment.plan.name} plan</p>
+                                        <p className="text-xs text-zinc-500">{new Date(payment.createdAt).toLocaleDateString()} · {verified ? "Payment verified" : "Payment pending"}</p>
+                                    </div>
+                                </div>
+                                <span className="shrink-0 text-sm font-semibold text-white">{payment.currency} {(payment.amount / 100).toLocaleString("en-IN")}</span>
+                            </div>;
+                        })}
+                    </div>
                 </div>
             )}
         </motion.div>
