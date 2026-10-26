@@ -9,9 +9,11 @@ import type { SearchHistoryItem } from "@/lib/services/history-service";
 
 export default function ChatPageClient({
     recentSearches = [],
+    conversations = [],
     isSessionActive = false,
 }: {
     recentSearches?: SearchHistoryItem[];
+    conversations?: { id: string; label: string; query: string; updatedAt: string }[];
     isSessionActive?: boolean;
 }) {
     const searchParams = useSearchParams();
@@ -20,7 +22,7 @@ export default function ChatPageClient({
     const query = parseWorkspaceInput(rawQuery);
 
     if (!query) {
-        return <WorkspaceStart invalidQuery={Boolean(rawQuery)} recentSearches={recentSearches} isSessionActive={isSessionActive} />;
+        return <WorkspaceStart invalidQuery={Boolean(rawQuery)} recentSearches={recentSearches} conversations={conversations} isSessionActive={isSessionActive} />;
     }
 
     if (!query.includes("/")) {

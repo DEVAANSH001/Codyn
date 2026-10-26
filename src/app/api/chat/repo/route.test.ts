@@ -9,6 +9,8 @@ const {
     getToolBudgetUsageMock,
     consumeToolBudgetUsageMock,
     getAnonymousActorIdMock,
+    getUserEntitlementMock,
+    consumeDailyQueryMock,
 } = vi.hoisted(() => ({
     authMock: vi.fn(),
     generateAnswerStreamMock: vi.fn(),
@@ -17,7 +19,11 @@ const {
     getToolBudgetUsageMock: vi.fn(),
     consumeToolBudgetUsageMock: vi.fn(),
     getAnonymousActorIdMock: vi.fn(),
+    getUserEntitlementMock: vi.fn(),
+    consumeDailyQueryMock: vi.fn(),
 }));
+
+vi.mock("@/lib/plans", () => ({ getUserEntitlement: getUserEntitlementMock, consumeDailyQuery: consumeDailyQueryMock }));
 
 vi.mock("@/lib/auth", () => ({
     auth: authMock,
@@ -55,10 +61,50 @@ describe("POST /api/chat/repo", () => {
         getToolBudgetUsageMock.mockReset();
         consumeToolBudgetUsageMock.mockReset();
         getAnonymousActorIdMock.mockReset();
+        getUserEntitlementMock.mockReset();
+        consumeDailyQueryMock.mockReset();
+        getUserEntitlementMock.mockResolvedValue({ name: "Free", dailyQueryLimit: 10, modelIds: [] });
+        consumeDailyQueryMock.mockResolvedValue("ok");
 
         getToolBudgetUsageMock.mockResolvedValue({ used: 0, limit: 10, remaining: 10 });
         consumeToolBudgetUsageMock.mockResolvedValue({ used: 1, limit: 10, remaining: 9 });
         getAnonymousActorIdMock.mockReturnValue("anon_actor");
+    });
+
+    it("rejects a Nebius model outside the user's plan", async () => {
+        authMock.mockResolvedValue({ user: { id: "user_123", email: "user@example.com" } });
+        const response = await POST(new NextRequest("http://localhost/api/chat/repo", {
+            method: "POST",
+            body: JSON.stringify({ query: "Explain this", repoDetails: { owner: "owner", repo: "repo" }, modelPreference: "nebius:vendor/expensive-model" }),
+        }));
+        expect(response.status).toBe(403);
+        expect(consumeDailyQueryMock).not.toHaveBeenCalled();
+        expect(generateAnswerStreamMock).not.toHaveBeenCalled();
+    });
+
+    it("stops queries when the daily plan limit is reached", async () => {
+        authMock.mockResolvedValue({ user: { id: "user_123", email: "user@example.com" } });
+        consumeDailyQueryMock.mockResolvedValue("plan");
+        const response = await POST(new NextRequest("http://localhost/api/chat/repo", {
+            method: "POST",
+            body: JSON.stringify({ query: "Explain this", repoDetails: { owner: "owner", repo: "repo" }, modelPreference: "flash" }),
+        }));
+        expect(response.status).toBe(429);
+        expect(generateAnswerStreamMock).not.toHaveBeenCalled();
+    });
+
+    it("stops Nebius requests at the separate paid-model limit", async () => {
+        authMock.mockResolvedValue({ user: { id: "user_123", email: "user@example.com" } });
+        getUserEntitlementMock.mockResolvedValue({ name: "Pro", dailyQueryLimit: 100, modelIds: ["vendor/model"], expiresAt: "2099-01-01" });
+        consumeDailyQueryMock.mockResolvedValue("nebius");
+        const response = await POST(new NextRequest("http://localhost/api/chat/repo", {
+            method: "POST",
+            body: JSON.stringify({ query: "Explain this", repoDetails: { owner: "owner", repo: "repo" }, modelPreference: "nebius:vendor/model" }),
+        }));
+        expect(response.status).toBe(429);
+        expect(await response.json()).toMatchObject({ code: "NEBIUS_DAILY_LIMIT" });
+        expect(consumeDailyQueryMock).toHaveBeenCalledWith("user_123", 100, true);
+        expect(generateAnswerStreamMock).not.toHaveBeenCalled();
     });
 
     it("allows unauthenticated users in flash mode", async () => {

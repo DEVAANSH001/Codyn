@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { isAdminUser } from "@/lib/admin-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { FileText, Users, ArrowRight, BarChart2, Activity, Database, Hash } from "lucide-react";
+import { FileText, Users, ArrowRight, BarChart2, Activity, Database, Hash, CreditCard } from "lucide-react";
 import { getAllPosts } from "@/lib/services/blog-service";
 import { getAnalyticsSummary } from "@/lib/analytics";
 import { getCatalogStats } from "@/lib/repo-catalog";
@@ -61,7 +61,8 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Link href="/admin/plans" className="group rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-8 transition hover:bg-cyan-500/10"><h2 className="mb-4 flex items-center gap-3 text-2xl font-bold"><CreditCard className="text-cyan-400" />Plans & Access</h2><p className="text-sm leading-6 text-zinc-400">Set prices, daily limits, and available models. Grant customers 30 days of paid access by email.</p><span className="mt-6 inline-flex items-center gap-2 font-semibold text-cyan-300">Manage plans <ArrowRight size={18} /></span></Link>
         <Link 
           href="/admin/blog"
           className="group relative bg-zinc-900/40 border border-white/5 rounded-3xl p-8 hover:bg-zinc-900/60 hover:border-cyan-500/30 transition-all overflow-hidden"

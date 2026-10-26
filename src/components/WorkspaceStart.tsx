@@ -1,25 +1,35 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, FileCode2, GitBranch, LayoutDashboard, Network, ShieldCheck } from 'lucide-react';
 import { LogoMark } from './LogoMark';
 import RepoSearch from './RepoSearch';
 import { workspaceHref } from '@/lib/workspace-navigation';
 import type { SearchHistoryItem } from '@/lib/services/history-service';
+import { getLocalConversationHistory } from '@/lib/storage';
 
 export function WorkspaceStart({
   invalidQuery = false,
   recentSearches = [],
+  conversations = [],
   isSessionActive = false,
 }: {
   invalidQuery?: boolean;
   recentSearches?: SearchHistoryItem[];
+  conversations?: { id: string; label: string; query: string; updatedAt: string }[];
   isSessionActive?: boolean;
 }) {
   const router = useRouter();
   const [error, setError] = useState('');
+  const [localConversations, setLocalConversations] = useState<typeof conversations>([]);
+  useEffect(() => {
+    if (isSessionActive) return;
+    const timer = window.setTimeout(() => setLocalConversations(getLocalConversationHistory()), 0);
+    return () => window.clearTimeout(timer);
+  }, [isSessionActive]);
+  const allConversations = [...conversations, ...localConversations.filter((local) => !conversations.some((cloud) => cloud.query.toLowerCase() === local.query.toLowerCase()))];
 
   function openRepository(input: string) {
     const destination = workspaceHref(input);
@@ -48,6 +58,7 @@ export function WorkspaceStart({
           <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">Open a codebase.<br /><span className="text-[#8deaff]">Understand how it works.</span></h1>
           <p className="mt-5 max-w-xl text-sm leading-7 text-white/50">Explore the source, ask questions, map the architecture, and review security in one workspace. Open a public repository, or connect GitHub to chat with a private repository you can access.</p>
         </div>
+        {allConversations.length > 0 && <section id="history" className="mt-8"><h2 className="mb-4 text-sm font-semibold text-white/80">Your chat history</h2><div className="grid gap-2 sm:grid-cols-2">{allConversations.map((conversation) => <Link key={conversation.id} href={workspaceHref(conversation.query) ?? "/chat"} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-400/5"><span className="block truncate text-sm text-white">{conversation.label}</span><span className="text-xs text-white/40">{new Date(conversation.updatedAt).toLocaleDateString()}</span></Link>)}</div></section>}
         <div className="codyn-panel rounded-3xl border border-white/10 p-6 sm:p-10">
           <h2 className="mb-6 text-sm font-medium text-white/75">Which project are we working on?</h2>
           <RepoSearch onSearchSubmit={openRepository} loading={false} trendingRepos={[]} recentSearches={recentSearches} isSessionActive={isSessionActive} />

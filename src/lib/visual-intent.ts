@@ -55,6 +55,7 @@ export interface VisualModelRoutingDecision {
 }
 
 export function normalizeModelPreference(value: unknown): ModelPreference {
+    if (typeof value === "string" && value.startsWith("nebius:") && value.length > 7 && value.length < 210) return value as ModelPreference;
     return value === "thinking" ? "thinking" : "flash";
 }
 

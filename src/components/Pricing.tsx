@@ -1,200 +1,21 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { Check, ArrowRight } from 'lucide-react';
-import { SectionEyebrow } from './SectionEyebrow';
-import { useRouter } from 'next/navigation';
+"use client";
 
-export const Pricing: React.FC = () => {
-  const router = useRouter();
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-20 md:py-32 relative z-10 border-t border-white/10" id="pricing">
-      {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <SectionEyebrow label="Pricing" tag="Flexible Plans" />
-        <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
-          Simple, transparent pricing for every developer & team.
-        </h2>
-        <p className="mt-4 text-white/60 text-base leading-relaxed">
-          Start exploring open-source repositories for free. Upgrade as your codebase context window and team scale.
-        </p>
+import { useEffect, useState } from "react";
+import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
+import { SectionEyebrow } from "./SectionEyebrow";
+import { getNebiusModelDetails } from "@/lib/nebius-models";
 
-      </div>
+type PublicPlan = { id: string; name: string; description: string; priceInr: number; dailyQueryLimit: number | null; modelIds: string[] };
 
-      {/* Pricing Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-6xl mx-auto">
-        
-        {/* Free Plan */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="min-h-[620px] rounded-3xl p-8 border border-white/10 bg-black/60 backdrop-blur-xl flex flex-col justify-between hover:border-[#63b3ff]/40 hover:-translate-y-1 transition-all duration-300 group"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-white/50">
-                Free
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-bold text-white">₹0</span>
-              <span className="text-xs text-white/50">/ forever</span>
-            </div>
-
-            <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For individual developers exploring open-source repositories with Codyn.
-            </p>
-
-            <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/80">
-              {[
-                'Up to 3 public repos analyzed',
-                'Basic architecture flowcharts',
-                'Ask Your Repo (10 queries/day)',
-                'Tech stack & dependency detection',
-                'Access via web interface and CLI'
-              ].map((feat) => (
-                <div key={feat} className="flex items-center gap-2.5">
-                  <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white/70 flex-shrink-0">
-                    <Check className="w-2.5 h-2.5" />
-                  </div>
-                  <span>{feat}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <button 
-            onClick={() => {
-              router.push('/chat');
-            }}
-            className="mt-8 w-full py-3 px-4 rounded-xl border border-white/20 bg-white/5 text-white font-medium text-xs hover:bg-white/15 transition-all cursor-pointer"
-          >
-            Get Started Free
-          </button>
-        </motion.div>
-
-        {/* Standard Plan (Featured / Popular) */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="relative min-h-[660px] rounded-3xl p-8 border border-[#42a5ff]/50 bg-gradient-to-b from-[#0b5fb8]/20 via-black/80 to-black backdrop-blur-xl flex flex-col justify-between shadow-[0_0_40px_rgba(36,133,255,0.16)] -translate-y-3 group"
-        >
-          {/* Top Popular Badge */}
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#1769d2] to-[#8deaff] text-black font-mono font-bold text-[10px] uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
-            Most Popular
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-4 mt-1">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#00d2ff]">
-                Standard
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-bold text-white">
-                ₹99
-              </span>
-              <span className="text-xs text-white/50">/ month</span>
-            </div>
-
-            <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For engineers and developers who need deep, full-file repository intelligence.
-            </p>
-
-            <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/90">
-              {[
-                'Up to 50 public & private repos',
-                'Agentic CAG full-file AST context',
-                'Context-aware PR & code review',
-                'Security audit & risk prioritization',
-                'Export Mermaid diagrams & PDF reports'
-              ].map((feat) => (
-                <div key={feat} className="flex items-center gap-2.5">
-                  <div className="w-4 h-4 rounded-full bg-[#00d2ff]/20 border border-[#00d2ff]/40 flex items-center justify-center text-[#00d2ff] flex-shrink-0">
-                    <Check className="w-2.5 h-2.5" />
-                  </div>
-                  <span>{feat}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <button 
-            onClick={() => {
-              const inputEl = document.querySelector('input[type="text"]') as HTMLInputElement;
-              if (inputEl) {
-                inputEl.focus();
-                inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }}
-            className="mt-8 w-full py-3.5 px-4 rounded-xl bg-[#00d2ff] text-black font-semibold text-xs hover:bg-white transition-all shadow-[0_0_20px_rgba(0,210,255,0.4)] cursor-pointer flex items-center justify-center gap-1.5"
-          >
-            <span>Start 14-Day Free Trial</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </motion.div>
-
-        {/* Pro Plan */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="min-h-[620px] rounded-3xl p-8 border border-white/10 bg-black/60 backdrop-blur-xl flex flex-col justify-between hover:border-[#63b3ff]/40 hover:-translate-y-1 transition-all duration-300 group"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
-                Pro Team
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-bold text-white">
-                ₹999
-              </span>
-              <span className="text-xs text-white/50">/ month</span>
-            </div>
-
-            <p className="text-xs text-white/60 leading-relaxed mb-6">
-              For high-velocity engineering teams, security auditors, and lead architects.
-            </p>
-
-            <div className="space-y-3 pt-4 border-t border-white/10 text-xs text-white/80">
-              {[
-                'Unlimited public & private repos',
-                'Unlimited Agentic CAG queries',
-                'Developer Intel & contributor mapping',
-                'Priority AI processing pipeline',
-                '5 team seats & custom integrations'
-              ].map((feat) => (
-                <div key={feat} className="flex items-center gap-2.5">
-                  <div className="w-4 h-4 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 flex-shrink-0">
-                    <Check className="w-2.5 h-2.5" />
-                  </div>
-                  <span>{feat}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <button 
-            onClick={() => {
-              const el = document.getElementById('mockup');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="mt-8 w-full py-3 px-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-medium text-xs hover:bg-cyan-500/20 transition-all cursor-pointer"
-          >
-            Upgrade to Pro
-          </button>
-        </motion.div>
-
-      </div>
-    </section>
-  );
+export const Pricing = () => {
+  const [plans, setPlans] = useState<PublicPlan[]>([]);
+  useEffect(() => { fetch("/api/plans").then((response) => response.ok ? response.json() : []).then((data) => setPlans(Array.isArray(data) ? data : [])).catch(() => {}); }, []);
+  return <section className="relative z-10 mx-auto max-w-6xl border-t border-white/10 px-6 py-20 md:py-28" id="pricing">
+    <div className="mx-auto mb-10 max-w-2xl text-center"><SectionEyebrow label="Pricing" tag="Flexible plans" /><h2 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-5xl">Choose your model and daily limit.</h2><p className="mt-4 text-sm leading-7 text-white/60">Start free with Gemini. Paid access is currently activated manually for 30 days after purchase; contact us to arrange payment and activation.</p></div>
+    <div className="grid gap-5 md:grid-cols-3">
+      <article className="flex h-full flex-col rounded-3xl border border-white/10 bg-zinc-950/80 p-7"><p className="text-xs font-mono uppercase tracking-widest text-cyan-300">Free</p><p className="mt-5 text-4xl font-semibold">₹0 <span className="text-sm font-normal text-white/40">forever</span></p><p className="mt-4 min-h-20 text-sm leading-6 text-white/55">Explore public repositories and save chat history when signed in.</p><ul className="mt-5 space-y-3 border-t border-white/10 pt-5 text-sm text-white/75"><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />10 queries per day for signed-in users</li><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />Gemini Lite and Thinking</li></ul><Link href="/chat" className="mt-auto pt-7"><span className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-3 text-sm font-semibold hover:bg-white/10">Start free <ArrowRight size={15} /></span></Link></article>
+      {plans.map((plan) => <article key={plan.id} className="flex h-full flex-col rounded-3xl border border-cyan-400/25 bg-gradient-to-b from-cyan-950/35 to-zinc-950 p-7"><p className="text-xs font-mono uppercase tracking-widest text-cyan-300">{plan.name}</p><p className="mt-5 text-4xl font-semibold">₹{plan.priceInr}<span className="text-sm font-normal text-white/40"> / 30 days</span></p><p className="mt-4 min-h-20 text-sm leading-6 text-white/55">{plan.description}</p><ul className="mt-5 space-y-3 border-t border-white/10 pt-5 text-sm text-white/75"><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />{plan.dailyQueryLimit === null ? "Unlimited total questions" : `${plan.dailyQueryLimit} total questions per UTC day`}</li><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />Up to 30 premium-model questions daily</li><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />Gemini plus {plan.modelIds.length} premium model{plan.modelIds.length === 1 ? "" : "s"}</li></ul><div className="mt-5"><p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Included premium models</p><div className="mt-2 flex flex-wrap gap-2">{plan.modelIds.map((id) => { const model = getNebiusModelDetails(id); return <span key={id} className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] font-medium text-white/65">{model.name}</span>; })}</div></div><p className="mt-5 text-xs leading-5 text-white/40">Per-account limits reset at 00:00 UTC. Premium requests pause at the daily limit; Gemini remains available until the total plan limit is reached.</p><a href={`mailto:devaanshdubey@gmail.com?subject=${encodeURIComponent(`Codyn ${plan.name} plan`)}`} className="mt-auto pt-7"><span className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-black hover:bg-cyan-300">Contact for activation <ArrowRight size={15} /></span></a></article>)}
+    </div>
+  </section>;
 };

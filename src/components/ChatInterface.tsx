@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, Wrench, Folder, Network } from "lucide-react";
+import { FileCode, ChevronRight, ArrowLeft, Sparkles, Menu, MessageCircle, Shield, Download, Trash2, X, Wrench, Folder, Network, History } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { createChatRun } from "@/lib/chat-run-client";
@@ -72,6 +72,10 @@ interface ToolQuotaState {
     resetAt: string;
     windowSecondsRemaining: number;
     exhausted: boolean;
+    unlimited?: boolean;
+    nebiusUsed?: number;
+    nebiusLimit?: number;
+    plan?: string;
 }
 
 const SUPPORT_EMAIL = "devaanshdubey@gmail.com";
@@ -827,7 +831,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
             console.error(error);
             const errorStatus = getErrorStatus(error);
             const errorCode = (error as HttpError | undefined)?.code;
-            const isAuthError = errorStatus === 401 || errorStatus === 403;
+            const isAuthError = errorStatus === 401;
             const isPayloadTooLarge = errorStatus === 413;
             const isAnonUsageLimit = errorCode === "ANON_USAGE_LIMIT_EXCEEDED";
             const isAuthUsageLimit = errorCode === "AUTH_USAGE_LIMIT_EXCEEDED";
@@ -847,6 +851,13 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                     content: "Usage limit reached for repo chat tools.\n\nPlease contact **devaanshdubey@gmail.com** for extended limits.",
                 }));
                 setShowToolQuotaModal(true);
+            } else if (errorCode === "NEBIUS_DAILY_LIMIT") {
+                toast.error("Premium model limit reached", { description: "You have used 30 premium-model questions today. Use Gemini or try again after midnight UTC." });
+            } else if (errorCode === "DAILY_QUERY_LIMIT") {
+                toast.error("Daily query limit reached", { description: "Your allowance resets at midnight UTC. You can also choose a higher plan." });
+                setShowToolQuotaModal(true);
+            } else if (errorStatus === 403) {
+                toast.error("Model unavailable", { description: userFacingError });
             } else if (isAuthError) {
                 toast.error("Sign in required", {
                     description: "Your session has expired or is invalid. Please sign in and try again.",
@@ -896,8 +907,8 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                 previousToolQuotaRemaining > 0 &&
                 latestQuota.remaining === 0
             ) {
-                toast.error("Tool calls paused", {
-                    description: "Repo tool calls are now paused for this window. You can continue in no-tool mode.",
+                toast.error(latestQuota.audience === "authenticated" ? "Daily queries used" : "Tool calls paused", {
+                    description: latestQuota.audience === "authenticated" ? "Your query allowance resets at midnight UTC." : "Repo tool calls are now paused for this window. You can continue in no-tool mode.",
                     duration: 5500,
                 });
                 setShowToolQuotaModal(true);
@@ -988,6 +999,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Link>
+                        <Link href="/chat#history" className="hidden items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-zinc-400 hover:bg-white/5 hover:text-white sm:flex" title="Chat history"><History className="h-4 w-4" />History</Link>
 
                         <div className="flex items-center gap-2 min-w-0 ml-2">
                             <h1 className="text-sm font-medium text-zinc-400 truncate flex items-center gap-1.5">
@@ -1073,7 +1085,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                                 title="Open tool quota details"
                             >
                                 <Wrench className="w-3.5 h-3.5" />
-                                <span>{toolQuota.remaining} / {toolQuota.limit}</span>
+                                <span>{toolQuota.unlimited ? "Unlimited" : `${toolQuota.remaining} / ${toolQuota.limit}`}</span>
                             </button>
                         )}
 
@@ -1401,7 +1413,7 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                             >
                                 <Wrench className="w-3 h-3" />
                                 <span className="uppercase tracking-wider">
-                                    {toolQuota.remaining} / {toolQuota.limit}
+                                    {toolQuota.unlimited ? "Unlimited" : `${toolQuota.remaining} / ${toolQuota.limit}`}
                                 </span>
                             </button>
                         )}
@@ -1480,6 +1492,10 @@ export function ChatInterface({ repoContext, onToggleSidebar, initialPrompt }: C
                     remaining={toolQuota.remaining}
                     resetCountdown={quotaResetLabel}
                     supportEmail={SUPPORT_EMAIL}
+                    unlimited={toolQuota.unlimited}
+                    nebiusUsed={toolQuota.nebiusUsed}
+                    nebiusLimit={toolQuota.nebiusLimit}
+                    plan={toolQuota.plan}
                 />
             )}
         </div>

@@ -1,0 +1,40 @@
+import { prisma } from "@/lib/db";
+import { listNebiusModels } from "@/lib/nebius";
+import { grantPlan, revokePlan, savePlan } from "./actions";
+
+const input = "w-full rounded-xl border border-white/15 bg-zinc-950 px-3 py-2 text-sm text-white";
+
+export default async function AdminPlansPage({ searchParams }: { searchParams: Promise<{ error?: string; granted?: string }> }) {
+  const notice = await searchParams;
+  const [plans, assignments, catalog] = await Promise.all([
+    prisma.plan.findMany({ orderBy: { priceInr: "asc" } }),
+    prisma.userPlan.findMany({ where: { expiresAt: { gt: new Date() } }, include: { user: { select: { email: true, githubLogin: true } }, plan: { select: { name: true } } }, orderBy: { expiresAt: "desc" }, take: 100 }),
+    listNebiusModels().catch(() => []),
+  ]);
+  return <div className="space-y-10 pb-16">
+    <div><h1 className="text-3xl font-semibold">Plans & access</h1><p className="mt-2 text-zinc-400">Create plans, then grant a signed-in customer 30 days of access by email or GitHub username. Grants expire automatically. Premium models are capped at 30 questions per user per day, even if the plan allows more total questions.</p></div>
+    {notice.error === "account_not_found" && <p role="alert" className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-200">Account or plan not found. The customer must sign in at least once before you can grant access.</p>}
+    {notice.granted === "1" && <p role="status" className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-3 text-sm text-emerald-200">30-day access activated.</p>}
+    <section className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 space-y-4">
+      <h2 className="text-xl font-semibold">Grant paid access</h2>
+      <form action={grantPlan} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+        <input className={input} name="account" placeholder="Customer email or GitHub username" required />
+        <select className={input} name="planId" required defaultValue=""><option value="" disabled>Select plan</option>{plans.map((plan) => <option key={plan.id} value={plan.id}>{plan.name}</option>)}</select>
+        <button className="rounded-xl bg-cyan-400 px-5 py-2 font-semibold text-black">Activate for 30 days</button>
+      </form>
+      <p className="text-xs text-zinc-500">Granting again restarts the 30-day period. The customer must have signed in at least once.</p>
+    </section>
+    <section className="space-y-4"><h2 className="text-xl font-semibold">Plan definitions</h2>
+      <div className="grid gap-4 lg:grid-cols-2">{[...plans, null].map((plan) => <form key={plan?.id ?? "new"} action={savePlan} className="rounded-2xl border border-white/10 bg-zinc-900/60 p-5 space-y-3">
+        <h3 className="font-semibold">{plan?.name ?? "New plan"}</h3><input type="hidden" name="id" value={plan?.id ?? ""} />
+        <input className={input} name="name" defaultValue={plan?.name ?? ""} placeholder="Name" required />
+        <textarea className={input} name="description" defaultValue={plan?.description ?? ""} placeholder="Description shown on pricing" required rows={2} />
+        <div className="grid grid-cols-2 gap-3"><label className="text-xs text-zinc-400">Price in ₹<input className={`${input} mt-1`} name="priceInr" type="number" min="0" defaultValue={plan?.priceInr ?? 99} required /></label><label className="text-xs text-zinc-400">Queries/day (blank = unlimited)<input className={`${input} mt-1`} name="dailyQueryLimit" type="number" min="1" defaultValue={plan?.dailyQueryLimit ?? ""} /></label></div>
+        <label className="block text-xs text-zinc-400">Allowed premium model IDs, one per line<textarea className={`${input} mt-1 font-mono`} name="modelIds" rows={3} defaultValue={Array.isArray(plan?.modelIds) ? plan.modelIds.join("\n") : ""} /></label>
+        <button className="rounded-xl border border-cyan-400/50 px-4 py-2 text-sm text-cyan-300">Save plan</button>
+      </form>)}</div>
+    </section>
+    <section className="space-y-3"><h2 className="text-xl font-semibold">Active grants</h2>{assignments.map((assignment) => <div key={assignment.userId} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 p-4 text-sm"><span>{assignment.user.email || assignment.user.githubLogin || assignment.userId} · {assignment.plan.name} · until {assignment.expiresAt.toLocaleDateString("en-IN")}</span><form action={revokePlan}><input type="hidden" name="userId" value={assignment.userId} /><button className="text-red-300">Revoke</button></form></div>)}</section>
+    <section className="rounded-2xl border border-white/10 p-5"><h2 className="font-semibold">Premium model catalog</h2><p className="mt-1 text-sm text-zinc-400">{catalog.length ? `${catalog.length} models available to this API key. Copy exact IDs into a plan.` : "Configure the premium-model API key on the server to load available models."}</p><div className="mt-3 grid gap-1 text-xs font-mono text-zinc-300 sm:grid-cols-2">{catalog.map((id) => <div key={id} className="break-all rounded bg-white/5 p-2">{id}</div>)}</div></section>
+  </div>;
+}

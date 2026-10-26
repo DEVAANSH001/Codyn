@@ -34,7 +34,17 @@ import {
     loadConversation,
     clearConversation,
     loadProfileConversation,
+    getLocalConversationHistory,
 } from "@/lib/storage";
+
+describe("local conversation history", () => {
+    it("lists repo and profile chats with user messages", () => {
+        localStorage.setItem("codyn_chat_owner_repo", JSON.stringify({ owner: "owner", repo: "repo", timestamp: 1000, messages: [{ role: "user", content: "Hi" }] }));
+        localStorage.setItem("codyn_profile_alice", JSON.stringify({ username: "alice", timestamp: 2000, messages: [{ role: "user", content: "Hi" }] }));
+        localStorage.setItem("codyn_chat_empty", JSON.stringify({ owner: "empty", repo: "repo", messages: [{ role: "model", content: "Welcome" }] }));
+        expect(getLocalConversationHistory().map((item) => item.query)).toEqual(["alice", "owner/repo"]);
+    });
+});
 
 beforeEach(() => {
     Object.keys(_store).forEach(k => delete _store[k]);

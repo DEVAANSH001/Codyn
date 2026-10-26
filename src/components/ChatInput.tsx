@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Send, Zap, Brain, ChevronDown, Network, FileCode, X, Folder } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getNebiusModelDetails } from "@/lib/nebius-models";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ModelPreference } from "@/lib/ai-client";
 
@@ -50,6 +51,10 @@ export function ChatInput({
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [showModelDropdown, setShowModelDropdown] = useState(false);
+    const [paidModels, setPaidModels] = useState<string[]>([]);
+    const [activePlan, setActivePlan] = useState<{ name: string; expiresAt: string | null }>({ name: "Free", expiresAt: null });
+    const sessionEmail = session?.user?.email;
+    const availablePaidModels = sessionEmail ? paidModels : [];
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Tagging state
@@ -57,6 +62,19 @@ export function ChatInput({
     const [mentionQuery, setMentionQuery] = useState("");
     const [mentionIndex, setMentionIndex] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        if (!sessionEmail) return;
+        let active = true;
+        fetch("/api/chat/plan").then((response) => response.ok ? response.json() : null)
+            .then((data: { name?: string; expiresAt?: string | null; modelIds?: string[] } | null) => {
+                if (!active) return;
+                setPaidModels(Array.isArray(data?.modelIds) ? data.modelIds : []);
+                setActivePlan({ name: data?.name || "Free", expiresAt: data?.expiresAt || null });
+            })
+            .catch(() => { if (active) { setPaidModels([]); setActivePlan({ name: "Free", expiresAt: null }); } });
+        return () => { active = false; };
+    }, [sessionEmail]);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -359,7 +377,7 @@ export function ChatInput({
                                     <Brain className="w-3.5 h-3.5 text-cyan-400" />
                                 )}
                                 <span className="uppercase tracking-wider hidden xs:inline">
-                                    {modelPreference === "flash" ? "Lite" : "Thinking"}
+                                    {modelPreference === "flash" ? "Gemini Lite" : modelPreference === "thinking" ? "Gemini Thinking" : modelPreference.slice(7).split("/").pop()}
                                 </span>
                                 <ChevronDown className={cn("w-3 h-3 transition-transform duration-200", showModelDropdown && "rotate-180")} />
                             </button>
@@ -370,8 +388,9 @@ export function ChatInput({
                                         initial={{ opacity: 0, scale: 0.95, y: 5 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95, y: 5 }}
-                                        className="absolute bottom-full left-0 md:left-auto md:right-0 mb-4 w-52 bg-zinc-900/90 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5 flex flex-col gap-1"
+                                        className="absolute bottom-full left-0 md:left-auto md:right-0 mb-4 w-64 max-h-80 overflow-y-auto bg-zinc-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-50 p-1.5 flex flex-col gap-1"
                                     >
+                                        {sessionEmail && <div className="mx-1 mb-1 rounded-xl border border-cyan-400/15 bg-cyan-400/[0.06] px-3 py-2 text-[10px] text-zinc-400"><span className="font-semibold text-cyan-300">{activePlan.name} plan</span>{activePlan.expiresAt ? <span className="block mt-0.5">Paid access active until {new Date(activePlan.expiresAt).toLocaleDateString()}</span> : <span className="block mt-0.5">Free access · upgrade for premium models</span>}</div>}
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -391,6 +410,7 @@ export function ChatInput({
                                                 <span className="text-[10px] opacity-50">Standard performance</span>
                                             </div>
                                         </button>
+                                        {availablePaidModels.map((modelId) => { const model = getNebiusModelDetails(modelId); return <button key={modelId} type="button" onClick={() => { setModelPreference?.(`nebius:${modelId}`); setShowModelDropdown(false); }} className={cn("w-full rounded-xl px-3 py-2.5 text-left text-xs hover:bg-white/5", modelPreference === `nebius:${modelId}` ? "bg-cyan-400/10 text-cyan-200" : "text-zinc-300")}><span className="block font-semibold">{model.name}</span><span className="block text-[10px] text-zinc-500">{model.summary}</span><span className="block text-[10px] text-zinc-600">Premium model · maximum 30/day</span></button>; })}
                                         <button
                                             type="button"
                                             onClick={() => {

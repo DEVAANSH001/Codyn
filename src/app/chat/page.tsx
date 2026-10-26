@@ -5,6 +5,7 @@ import ChatPageClient from "./ChatPageClient";
 import { auth } from "@/lib/auth";
 import { getRecentSearches } from "@/lib/services/history-service";
 import { getSessionUserId } from "@/lib/session-guard";
+import { prisma } from "@/lib/db";
 
 const CHAT_ROBOTS: NonNullable<Metadata["robots"]> = {
     index: false,
@@ -38,10 +39,11 @@ export default async function ChatPage() {
             return [];
         })
         : [];
+    const conversations = userId ? await prisma.chatConversation.findMany({ where: { userId }, orderBy: { updatedAt: "desc" }, take: 30, select: { id: true, scope: true, owner: true, repo: true, username: true, updatedAt: true } }).catch(() => []) : [];
 
     return (
         <Suspense fallback={null}>
-            <ChatPageClient recentSearches={recentSearches} isSessionActive={Boolean(userId)} />
+            <ChatPageClient recentSearches={recentSearches} conversations={conversations.map((item) => ({ id: item.id, label: item.scope === "repo" ? `${item.owner}/${item.repo}` : item.username ?? "Profile", query: item.scope === "repo" ? `${item.owner}/${item.repo}` : item.username ?? "", updatedAt: item.updatedAt.toISOString() }))} isSessionActive={Boolean(userId)} />
         </Suspense>
     );
 }

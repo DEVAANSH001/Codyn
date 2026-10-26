@@ -20,7 +20,7 @@ export interface PlantUmlPreviewGraph {
     edges: PlantUmlPreviewEdge[];
 }
 
-const NODE_PATTERN = /^\s*(actor|component|database|queue|cloud|node|rectangle|storage|folder)\s+(?:"([^"]+)"|([^\s{]+))(?:\s+as\s+([\w.-]+))?/i;
+const NODE_PATTERN = /^\s*(actor|component|database|queue|cloud|node|rectangle|storage|folder)\s+(?:"([^"]+)"|([^\s{]+))(?:\s+as\s+([\w.-]+))?\s*$/i;
 const BRACKET_NODE_PATTERN = /^\s*\[([^\]]+)]\s+as\s+([\w.-]+)/i;
 const EDGE_PATTERN = /^\s*([\w.-]+)\s*(-->|->|\.\.>|--|<--|<-)\s*([\w.-]+)(?:\s*:\s*(.+))?\s*$/;
 const GROUP_PATTERN = /^\s*(?:package|frame|node|rectangle|cloud)\s+"([^"]+)"\s*\{\s*$/i;

@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   PlusCircle,
   BarChart2,
-  Search
+  Search,
+  CreditCard
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -23,6 +24,7 @@ const menuItems = [
   { icon: BarChart2, label: "Analytics", href: "/admin/stats" },
   { icon: FileText, label: "Blog Posts", href: "/admin/blog" },
   { icon: Search, label: "Index Manager", href: "/admin/index" },
+  { icon: CreditCard, label: "Plans & Access", href: "/admin/plans" },
   { icon: Settings, label: "Account Settings", href: "/dashboard/settings" },
 ];
 

@@ -6,7 +6,7 @@
   "scripts": {
     "setup:local": "node scripts/setup-local.mjs",
     "dev": "next dev --port 3000",
-    "build": "prisma generate && next build",
+    "build": "node scripts/prisma-deploy.mjs && prisma generate && next build",
     "start": "next start",
     "clean": "node -e \"for (const path of ['.next','dist','server.js']) require('fs').rmSync(path,{recursive:true,force:true})\"",
     "lint": "node scripts/eslint-baseline.mjs check",

@@ -15,6 +15,10 @@ interface ToolQuotaModalProps {
     remaining: number;
     resetCountdown: string;
     supportEmail: string;
+    unlimited?: boolean;
+    nebiusUsed?: number;
+    nebiusLimit?: number;
+    plan?: string;
 }
 
 export function ToolQuotaModal({
@@ -27,16 +31,21 @@ export function ToolQuotaModal({
     remaining,
     resetCountdown,
     supportEmail,
+    unlimited = false,
+    nebiusUsed,
+    nebiusLimit,
+    plan,
 }: ToolQuotaModalProps) {
     if (!isOpen) {
         return null;
     }
 
-    const isExhausted = remaining <= 0;
+    const isExhausted = !unlimited && remaining <= 0;
+    const isQueryAllowance = audience === "authenticated";
     const scopeLabel = scope === "repo" ? "Repo chat tools" : "Profile chat tools";
     const authNote = audience === "anonymous"
         ? "Sign in to unlock 30 tool calls per day."
-        : "Tool calling is disabled until the window resets.";
+        : "Your query allowance resets at midnight UTC.";
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -55,23 +64,25 @@ export function ToolQuotaModal({
                     </div>
 
                     <h2 className="text-xl font-bold text-white mb-2 pr-8">
-                        {isExhausted ? "Tool Calls Paused" : "Tool Call Allowance"}
+                        {isQueryAllowance ? (isExhausted ? "Daily query limit reached" : "Daily query allowance") : (isExhausted ? "Tool Calls Paused" : "Tool Call Allowance")}
                     </h2>
                     <p className="text-zinc-300 text-sm leading-relaxed">
-                        {isExhausted
+                        {isQueryAllowance ? "Repository and profile questions share this daily allowance." : isExhausted
                             ? `${scopeLabel} reached the current window limit.`
                             : `${scopeLabel} remaining for the current window.`}
                     </p>
 
                     <div className="mt-4 rounded-xl border border-white/10 bg-zinc-950/70 p-3 text-sm">
+                        {isQueryAllowance && plan && <div className="mb-2 flex items-center justify-between border-b border-white/10 pb-2 text-zinc-300"><span>Current plan</span><span className="font-semibold text-cyan-300">{plan}</span></div>}
                         <div className="flex items-center justify-between text-zinc-300">
                             <span>Remaining</span>
-                            <span className="font-semibold text-white">{remaining} / {limit}</span>
+                            <span className="font-semibold text-white">{unlimited ? "Unlimited" : `${remaining} / ${limit}`}</span>
                         </div>
                         <div className="flex items-center justify-between text-zinc-300">
                             <span>Usage</span>
-                            <span className="font-semibold text-white">{used} / {limit}</span>
+                            <span className="font-semibold text-white">{unlimited ? used : `${used} / ${limit}`}</span>
                         </div>
+                        {isQueryAllowance && nebiusLimit !== undefined && <div className="flex items-center justify-between text-zinc-300"><span>Premium models</span><span className="font-semibold text-white">{nebiusUsed ?? 0} / {nebiusLimit}</span></div>}
                         <div className="mt-2 flex items-center justify-between text-zinc-300">
                             <span className="flex items-center gap-1.5">
                                 <Clock3 className="w-3.5 h-3.5 text-blue-300" />
@@ -82,10 +93,10 @@ export function ToolQuotaModal({
                     </div>
 
                     <p className="text-zinc-400 text-sm mt-4 leading-relaxed">
-                        Each billable tool execution uses its reported number of units (at least one). A single request can use more than one tool; direct answers, non-billable results, and Google Search do not reduce this allowance.
+                        {isQueryAllowance ? "Each question uses one Codyn query. Premium models also use the separate premium daily allowance shown above." : "Each billable tool execution uses at least one unit. Direct answers do not reduce this tool allowance."}
                     </p>
                     <p className="text-zinc-500 text-xs mt-2 leading-relaxed">
-                        {authNote} Repo and profile chats have separate daily allowances, which reset at midnight UTC.
+                        {authNote} {isQueryAllowance ? "" : "Repo and profile tool allowances are separate."}
                     </p>
                     <p className="text-zinc-500 text-xs mt-2 leading-relaxed">
                         Need extended limits? Contact {supportEmail}.

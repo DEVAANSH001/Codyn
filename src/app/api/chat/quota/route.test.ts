@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+vi.mock("@/lib/plans", () => ({ getUserEntitlement: vi.fn().mockResolvedValue({ name: "Free", dailyQueryLimit: 10, modelIds: [] }), getDailyQueryCount: vi.fn().mockResolvedValue(0), getDailyNebiusCount: vi.fn().mockResolvedValue(0), NEBIUS_DAILY_QUERIES: 30 }));
 
 const {
     authMock,

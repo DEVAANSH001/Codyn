@@ -14,6 +14,7 @@ import type { StreamUpdate } from "@/lib/streaming-types";
 import { prisma } from "@/lib/db";
 import type { ModelPreference } from "@/lib/ai-client";
 import { normalizeModelPreference, resolveVisualModelPreference } from "@/lib/visual-intent";
+import { consumeDailyQuery, getUserEntitlement } from "@/lib/plans";
 
 function getErrorMessage(error: unknown, fallback: string): string {
     return error instanceof Error ? error.message : fallback;
@@ -46,6 +47,13 @@ export async function POST(req: NextRequest) {
         const { query, repoDetails, filePaths, fileShas, history, profileData, modelPreference, runId, revision } = body;
         const normalizedQuery = typeof query === "string" ? query : "";
         const requestedModelPreference = normalizeModelPreference(modelPreference) as ModelPreference;
+        if (!normalizedQuery.trim() || typeof repoDetails?.owner !== "string" || typeof repoDetails?.repo !== "string") {
+            return NextResponse.json({ error: "A question and repository are required." }, { status: 400 });
+        }
+        const entitlement = await getUserEntitlement(userId);
+        if (requestedModelPreference.startsWith("nebius:") && !entitlement.modelIds.includes(requestedModelPreference.slice(7))) {
+            return NextResponse.json({ error: "This model is not included in your active plan." }, { status: 403 });
+        }
         const visualRouting = resolveVisualModelPreference(requestedModelPreference, normalizedQuery, Boolean(userId));
         const effectiveModelPreference = visualRouting.effectiveModelPreference;
 
@@ -60,7 +68,7 @@ export async function POST(req: NextRequest) {
         }
 
         const usage = await getToolBudgetUsage("repo", audience, actorId);
-        const disableToolCalls = usage.remaining <= 0;
+        const disableToolCalls = !entitlement.expiresAt && usage.remaining <= 0;
 
         const userAgent = req.headers.get("user-agent") ?? "";
         const country = req.headers.get("x-vercel-ip-country") ?? "Unknown";
@@ -96,6 +104,10 @@ export async function POST(req: NextRequest) {
             if (!canWrite) {
                 return NextResponse.json({ error: "Invalid runId" }, { status: 403 });
             }
+        }
+        const dailyAllowance = userId ? await consumeDailyQuery(userId, entitlement.dailyQueryLimit, requestedModelPreference.startsWith("nebius:")) : "ok";
+        if (dailyAllowance !== "ok") {
+            return NextResponse.json({ error: dailyAllowance === "nebius" ? "Premium model limit reached (30 per day). Try again tomorrow or switch to Gemini." : "Daily query limit reached. Try again tomorrow or upgrade your plan.", code: dailyAllowance === "nebius" ? "NEBIUS_DAILY_LIMIT" : "DAILY_QUERY_LIMIT" }, { status: 429 });
         }
 
         const stream = new ReadableStream({

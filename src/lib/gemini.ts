@@ -799,13 +799,19 @@ ${isDeepThinking ?
 
   try {
     // For large/complex selections, we use the reasoning model with HIGH thinking for better accuracy
-    const model = getGenAI().getGenerativeModel({
-      model: FILE_SELECTOR_MODEL,
-      generationConfig: getThinkingGenerationConfig(modelPreference === "thinking", "HIGH"),
-    });
-
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
+    let response: string;
+    if (modelPreference.startsWith("nebius:")) {
+      const { answerWithNebius } = await import("@/lib/nebius");
+      response = "";
+      for await (const chunk of answerWithNebius(prompt, modelPreference.slice(7))) response += chunk;
+    } else {
+      const model = getGenAI().getGenerativeModel({
+        model: FILE_SELECTOR_MODEL,
+        generationConfig: getThinkingGenerationConfig(modelPreference === "thinking", "HIGH"),
+      });
+      const result = await model.generateContent(prompt);
+      response = result.response.text();
+    }
     const parsed = asObject(extractJson(response));
     const selectedFiles = getStringArray(parsed.files);
     const normalizedSelection = Array.from(new Set(selectedFiles))
@@ -895,7 +901,7 @@ export async function answerWithContext(
 ): Promise<string> {
   const historyText = formatHistoryText(history);
   let enrichedContext = context;
-  if (shouldUseWebSearch(question)) {
+  if (!modelPreference.startsWith("nebius:") && shouldUseWebSearch(question)) {
     try {
       const snapshot = await fetchWebSearchSnapshot(question, modelPreference, repoDetails);
       if (snapshot.summary && snapshot.summary !== "No useful external updates found.") {
@@ -926,6 +932,13 @@ export async function answerWithContext(
     - TOOL TRANSPARENCY: If a tool response includes \`githubCallPolicy.limitedByCap=true\`, you MUST include \`githubCallPolicy.note\` verbatim in your answer.
     - **STRICT GROUNDING**: If the user asks for more than 10, you MUST fetch 10 and explicitly state: "Note: Currently, the limit for fetching commits is 10. Please contact **${SUPPORT_EMAIL}** if you need more usage. I will provide the answer on the basis of the latest 10 commits."
     - Do NOT hallucinate commits. Only use what the tool provides.`;
+  }
+
+  if (modelPreference.startsWith("nebius:")) {
+    const { answerWithNebius } = await import("@/lib/nebius");
+    let answer = "";
+    for await (const chunk of answerWithNebius(prompt, modelPreference.slice(7))) answer += chunk;
+    return stripEmojiCharacters(answer);
   }
 
   const tools = buildTools(repoDetails);
@@ -966,7 +979,7 @@ export async function* answerWithContextStream(
 ): AsyncGenerator<string> {
   const historyText = formatHistoryText(history);
   let enrichedContext = context;
-  if (shouldUseWebSearch(question)) {
+  if (!modelPreference.startsWith("nebius:") && shouldUseWebSearch(question)) {
     try {
       const snapshot = await fetchWebSearchSnapshot(question, modelPreference, repoDetails);
       yield `STATUS:Searching Google for ${snapshot.searchQuery}`;
@@ -993,6 +1006,12 @@ export async function* answerWithContextStream(
     ? buildCodynVisualPrompt({ question, context: enrichedContext, repoDetails, historyText })
     : buildCodynPrompt({ question, context: enrichedContext, repoDetails, historyText });
   const isProfileContext = repoDetails.repo === "profile";
+  if (modelPreference.startsWith("nebius:")) {
+    const { answerWithNebius } = await import("@/lib/nebius");
+    yield "STATUS:Generating answer with a premium model...";
+    yield* answerWithNebius(prompt, modelPreference.slice(7));
+    return;
+  }
   if (isProfileContext) {
     prompt += `\n\n[PROFILE TOOLS MODE]:
     - Use \`fetch_recent_commits\` for coding activity. Limit: 20 (overall) or 10 (specific repo).

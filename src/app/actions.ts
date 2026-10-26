@@ -773,7 +773,7 @@ export async function* processProfileQueryStream(
             };
         }
 
-        console.log(`[processProfileQueryStream] Context built (${context.length} chars). Launching Gemini answer stream...`);
+        console.log(`[processProfileQueryStream] Context built (${context.length} chars). Launching AI answer stream...`);
         yield {
             type: "status",
             message: isThinking

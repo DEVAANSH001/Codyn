@@ -30,4 +30,11 @@ api --> db : SQL
         expect(layout.positions.get("user")?.x).toBeLessThan(layout.positions.get("api")?.x ?? 0);
         expect(layout.width).toBeGreaterThanOrEqual(720);
     });
+
+    it("does not mistake an edge from a queue alias for another queue node", () => {
+        const graph = parsePlantUmlPreview("@startuml\nqueue \"Jobs\" as queue\ncomponent Worker as worker\nqueue --> worker : consume\n@enduml");
+        expect(graph.nodes).toHaveLength(2);
+        expect(graph.nodes).not.toContainEqual(expect.objectContaining({ label: "-->" }));
+        expect(graph.edges).toEqual([expect.objectContaining({ from: "queue", to: "worker" })]);
+    });
 });

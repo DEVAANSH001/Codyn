@@ -1,0 +1,1 @@
+ALTER TABLE "DailyQueryUsage" ADD COLUMN "nebiusCount" INTEGER NOT NULL DEFAULT 0;

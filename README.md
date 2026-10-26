@@ -573,6 +573,7 @@ Create a `.env.local` file (or let `npm run setup:local` create one for you). In
 # 1. CORE AI (Required for Chat & Triaging)
 # ==========================================
 GEMINI_API_KEY=AIzaSy...
+NEBIUS_API_KEY=your_nebius_token_factory_key
 GEMINI_FILE_SELECTOR_MODEL=gemini-2.5-flash
 GEMINI_LITE_MODEL=gemini-2.5-flash
 GEMINI_THINKING_MODEL=gemini-2.5-flash
@@ -623,6 +624,12 @@ CRON_SECRET=...
 - **`GEMINI_API_KEY` Only:** Enables real-time AI repository and profile chat, architecture diagrams, and quick security scans (in-memory mode).
 - **`DATABASE_URL` Connected:** Enables user accounts, saved scan histories, report sharing links, and false-positive submissions.
 - **`UPSTASH_REDIS` Connected:** Enables cross-session index caching, quota tracking, and compressed tree caches.
+
+### Manual paid access
+
+Run `npm run prisma:deploy`, then open `/admin/plans` with the configured admin GitHub account. The migrations create Standard (₹99, 30 total queries/day) and Max (₹499, 100 total queries/day). Nebius model use has a separate hard cap of 30 questions per user per UTC day on either paid plan. Edit plan descriptions, prices, overall limits, and Nebius model IDs in the admin screen. A blank overall limit means unlimited total questions, but the 30 Nebius question cap remains. Grant access using the email or GitHub username of a user who has already signed in; each grant lasts 30 days from activation and can be revoked there. Re-granting or changing a customer's plan restarts their 30-day access period. Pricing reads the live plan definitions. Free signed-in accounts receive 10 questions per UTC day. The model selector permits only the Nebius IDs on an active plan. Nebius chat requests cap their output at 2,048 tokens and input at 120,000 characters.
+
+Set `NEBIUS_API_KEY` only in the server environment (`.env.local` locally and deployment secrets in production). Do not use a `NEXT_PUBLIC_` prefix. The admin page reads the live public Nebius catalog; inference uses the server key. A Codyn question may make multiple Gemini requests for file selection or tool use, so the Codyn daily count is separate from Google AI Studio's project-level API limits.
 
 ---
 

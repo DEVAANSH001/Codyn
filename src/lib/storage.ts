@@ -17,6 +17,23 @@ const PROFILE_PREFIX = 'codyn_profile_';
 const CHAT_ROLES = new Set<ChatRole>(["user", "model"]);
 const cloudMutationTails = new Map<string, Promise<void>>();
 
+export function getLocalConversationHistory(): { id: string; label: string; query: string; updatedAt: string }[] {
+    if (typeof localStorage === "undefined") return [];
+    const result: { id: string; label: string; query: string; updatedAt: string }[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (!key || (!key.startsWith(STORAGE_PREFIX) && !key.startsWith(PROFILE_PREFIX))) continue;
+        try {
+            const row = JSON.parse(localStorage.getItem(key) ?? "null") as { owner?: string; repo?: string; username?: string; timestamp?: number; messages?: { role?: string }[] } | null;
+            if (!row || !Array.isArray(row.messages) || !row.messages.some((message) => message.role === "user")) continue;
+            const query = row.owner && row.repo ? `${row.owner}/${row.repo}` : row.username;
+            if (!query) continue;
+            result.push({ id: key, label: query, query, updatedAt: new Date(row.timestamp || Date.now()).toISOString() });
+        } catch { /* Ignore corrupt local entries. */ }
+    }
+    return result.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 30);
+}
+
 function getRepoStorageKey(owner: string, repo: string): string {
     return `${STORAGE_PREFIX}${owner}_${repo}`;
 }
