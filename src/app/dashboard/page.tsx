@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import WelcomeBanner from "@/components/dashboard/WelcomeBanner";
 import QuickStats from "@/components/dashboard/QuickStats";
 import RecentScans from "@/components/dashboard/RecentScans";
+import SubscriptionCard from "@/components/dashboard/SubscriptionCard";
 import { redirect } from "next/navigation";
 import { buildInvalidSessionSignOutRedirect, getSessionAuthState, getSessionUserId } from "@/lib/session-guard";
 import { prisma } from "@/lib/db";
@@ -53,6 +54,7 @@ export default async function DashboardPage() {
                 </div>
                 <div className="space-y-8">
                     <QuickStats />
+                    <SubscriptionCard />
                 </div>
             </div>
         </div>
