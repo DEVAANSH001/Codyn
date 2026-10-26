@@ -1,12 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck, CreditCard, CheckCircle2, Clock3 } from "lucide-react";
+import { History, ArrowUpRight, Search, ShieldAlert, ExternalLink, ShieldCheck, CreditCard, CheckCircle2, Clock3, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { readScans } from "@/lib/dashboard-storage";
 import type { ScanRecord } from "@/lib/codyn-dashboard";
 import { mergeScanHistory, type AccountScanHistory } from "@/lib/scan-history";
+import { workspaceHref } from "@/lib/workspace-navigation";
+
+type ConversationRecord = {
+    id: string;
+    label: string;
+    query: string;
+    updatedAt: string;
+};
 
 type PaymentRecord = {
     id: string;
@@ -18,7 +26,7 @@ type PaymentRecord = {
     plan: { name: string };
 };
 
-export default function RecentScans({ userId, limit, showViewAll = false }: { userId?: string; limit?: number; showViewAll?: boolean }) {
+export default function RecentScans({ userId, limit, showViewAll = false, conversations = [] }: { userId?: string; limit?: number; showViewAll?: boolean; conversations?: ConversationRecord[] }) {
     const [accountScans, setAccountScans] = useState<AccountScanHistory[]>([]);
     const [browserScans, setBrowserScans] = useState<ScanRecord[]>([]);
     const [payments, setPayments] = useState<PaymentRecord[]>([]);
@@ -140,7 +148,7 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                         <Search className="w-8 h-8" />
                     </div>
                     <h3 className="text-white font-medium mb-1">No scans yet</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-[280px]">
+                    <p className="text-zinc-500 text-sm mb-6 max-w-70">
                         Run a security scan to see it here. Account reports expire after seven days; scans saved on this browser remain available here.
                     </p>
                     <Link
@@ -217,6 +225,24 @@ export default function RecentScans({ userId, limit, showViewAll = false }: { us
                                 <span className="shrink-0 text-sm font-semibold text-white">{payment.currency} {(payment.amount / 100).toLocaleString("en-IN")}</span>
                             </div>;
                         })}
+                    </div>
+                </div>
+            )}
+
+            {conversations.length > 0 && (
+                <div className="border-t border-white/5">
+                    <div className="flex items-center justify-between border-b border-white/5 p-6">
+                        <div className="flex items-center gap-2">
+                            <MessageSquare className="h-5 w-5 text-cyan-400" />
+                            <h2 className="font-bold text-xl">Chat history</h2>
+                        </div>
+                        <Link href="/chat#history" className="text-xs text-zinc-400 hover:text-white transition-colors">View all</Link>
+                    </div>
+                    <div className="divide-y divide-white/5">
+                        {conversations.map((conversation) => <Link key={conversation.id} href={workspaceHref(conversation.query) ?? "/chat"} className="flex items-center justify-between gap-4 p-5 transition-colors hover:bg-white/5">
+                            <div className="min-w-0"><p className="truncate text-sm font-semibold text-white">{conversation.label}</p><p className="text-xs text-zinc-500">{new Date(conversation.updatedAt).toLocaleDateString()}</p></div>
+                            <ExternalLink className="h-4 w-4 shrink-0 text-zinc-700" />
+                        </Link>)}
                     </div>
                 </div>
             )}
