@@ -122,7 +122,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <a href="#dashboard-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-white focus:p-3 focus:text-black">
                 Skip to dashboard content
             </a>
-            <aside className={`codyn-sidebar hidden md:flex shrink-0 flex-col border-r backdrop-blur-xl transition-[width] duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"}`}>
+            <aside className={`codyn-sidebar hidden md:flex shrink-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain border-r backdrop-blur-xl transition-[width] duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"}`}>
                 <div className={`flex items-center p-5 ${isCollapsed ? "flex-col gap-4" : "justify-between"}`}>
                     <Brand compact={isCollapsed} />
                     <button
@@ -200,7 +200,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="codyn-sidebar fixed inset-y-0 left-0 w-72 max-w-[90vw] border-r z-70 p-5 flex flex-col md:hidden"
+                            className="codyn-sidebar fixed inset-y-0 left-0 w-72 max-w-[90vw] overflow-x-hidden overflow-y-auto overscroll-contain border-r z-70 p-5 flex flex-col md:hidden"
                         >
                             <div className="mb-7 flex items-center justify-between">
                                 <Brand />
