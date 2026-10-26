@@ -1,14 +1,7 @@
-import Razorpay from "razorpay";
 import { auth } from "@/lib/auth";
 import { getSessionUserId } from "@/lib/session-guard";
 import { prisma } from "@/lib/db";
-
-function getRazorpayClient() {
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (!keyId || !keySecret) throw new Error("Razorpay is not configured");
-  return new Razorpay({ key_id: keyId, key_secret: keySecret });
-}
+import { getRazorpayClient } from "@/lib/razorpay";
 
 export async function POST(request: Request) {
   const userId = getSessionUserId(await auth());
@@ -25,7 +18,7 @@ export async function POST(request: Request) {
     } catch {
       return Response.json({ error: "Invalid request body" }, { status: 400 });
     }
-    const planId = typeof body.planId === "string" ? body.planId.trim() : "";
+    const planId = body && typeof body.planId === "string" ? body.planId.trim() : "";
     if (!planId) return Response.json({ error: "A plan is required" }, { status: 400 });
 
     const plan = await prisma.plan.findUnique({ where: { id: planId }, select: { id: true, name: true, priceInr: true } });
@@ -45,7 +38,7 @@ export async function POST(request: Request) {
       data: { userId, planId: plan.id, razorpayOrderId: order.id, amount, currency: "INR" },
     });
 
-    return Response.json({ order_id: order.id, amount, currency: "INR", plan_name: plan.name });
+    return Response.json({ order_id: order.id, amount, currency: "INR", plan_name: plan.name, key: process.env.RAZORPAY_KEY_ID });
   } catch (error: unknown) {
     const razorpayError = error as { statusCode?: number; error?: { description?: string } };
     console.error("Razorpay order creation failed:", error);

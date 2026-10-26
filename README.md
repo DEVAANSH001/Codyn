@@ -625,6 +625,12 @@ CRON_SECRET=...
 - **`DATABASE_URL` Connected:** Enables user accounts, saved scan histories, report sharing links, and false-positive submissions.
 - **`UPSTASH_REDIS` Connected:** Enables cross-session index caching, quota tracking, and compressed tree caches.
 
+### Razorpay checkout setup
+
+Run `npm run prisma:deploy` before accepting payments. Set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in the server environment, using keys from the same Razorpay mode (test or live). The checkout receives the public key from the order endpoint; the secret stays on the server. Enable automatic payment capture in the Razorpay dashboard.
+
+Create a Razorpay webhook at `https://YOUR_DOMAIN/api/razorpay/webhook`, subscribe to `payment.captured`, and set `RAZORPAY_WEBHOOK_SECRET` on the server to the exact secret entered in the Razorpay dashboard. Configure the webhook separately in test and live mode. This activates plans when a customer closes checkout before the browser callback completes. A signed-in customer returning to `/dashboard/plans` also reconciles pending orders. Test a successful payment and a failed payment in Razorpay test mode before switching to live keys. Paid access is granted only after Razorpay reports a captured payment with the expected order, amount, and currency.
+
 ### Manual paid access
 
 Run `npm run prisma:deploy`, then open `/admin/plans` with the configured admin GitHub account. The migrations create Standard (₹99, 30 total queries/day) and Max (₹499, 100 total queries/day). Nebius model use has a separate hard cap of 30 questions per user per UTC day on either paid plan. Edit plan descriptions, prices, overall limits, and Nebius model IDs in the admin screen. A blank overall limit means unlimited total questions, but the 30 Nebius question cap remains. Grant access using the email or GitHub username of a user who has already signed in; each grant lasts 30 days from activation and can be revoked there. Re-granting or changing a customer's plan restarts their 30-day access period. Pricing reads the live plan definitions. Free signed-in accounts receive 10 questions per UTC day. The model selector permits only the Nebius IDs on an active plan. Nebius chat requests cap their output at 2,048 tokens and input at 120,000 characters.
