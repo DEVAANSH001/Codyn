@@ -40,6 +40,6 @@ describe("manual plan entitlements", () => {
     dailyFindUnique.mockResolvedValue({ count: 5 });
     const result = await consumeDailyQuery("user-1", 100, true);
     expect(result).toBe("nebius");
-    expect(updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ nebiusCount: { lt: 30 } }), data: expect.objectContaining({ nebiusCount: { increment: 1 } }) }));
+    expect(updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ nebiusCount: { lt: 50 } }), data: expect.objectContaining({ nebiusCount: { increment: 1 } }) }));
   });
 });
