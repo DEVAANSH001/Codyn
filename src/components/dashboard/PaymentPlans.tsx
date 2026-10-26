@@ -1,0 +1,60 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import Script from "next/script";
+import { ArrowRight, Check } from "lucide-react";
+
+type Plan = { id: string; name: string; description: string; priceInr: number; dailyQueryLimit: number | null; modelIds: string[] };
+type PaymentResult = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
+type Razorpay = { open: () => void; on: (event: string, handler: (response: { error?: { description?: string } }) => void) => void };
+type RazorpayOptions = { key: string; amount: number; currency: string; name: string; description: string; order_id: string; prefill: { email?: string | null }; theme: { color: string }; handler: (response: PaymentResult) => void };
+type RazorpayConstructor = new (options: RazorpayOptions) => Razorpay;
+
+declare global { interface Window { Razorpay?: RazorpayConstructor } }
+
+export default function PaymentPlans() {
+  const { data: session, status: sessionStatus } = useSession();
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/plans").then((response) => response.ok ? response.json() : []).then((data) => setPlans(Array.isArray(data) ? data : [])).catch(() => setMessage({ type: "error", text: "Unable to load plans." }));
+  }, []);
+
+  async function buy(plan: Plan) {
+    if (sessionStatus !== "authenticated" || !session) {
+      await signIn("github", { callbackUrl: "/dashboard/plans" });
+      return;
+    }
+    setBusy(plan.id);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: plan.id }) });
+      const order = await response.json() as { order_id?: string; amount?: number; currency?: string; error?: string };
+      if (!response.ok) throw new Error(order.error || `Unable to create order (${response.status})`);
+      if (!order.order_id || !order.amount || !order.currency) throw new Error("The payment order response was incomplete.");
+      const Razorpay = window.Razorpay;
+      const key = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!Razorpay || !key) throw new Error("Payment checkout is not configured. Please contact support.");
+      const checkout = new Razorpay({ key, amount: order.amount, currency: order.currency, name: "Codyn", description: `${plan.name} plan · 30 days`, order_id: order.order_id, prefill: { email: session.user?.email }, theme: { color: "#22d3ee" }, handler: async (result) => {
+        try {
+          const verifyResponse = await fetch("/api/verify-payment", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(result) });
+          const verification = await verifyResponse.json() as { success?: boolean; error?: string };
+          if (!verifyResponse.ok || !verification.success) throw new Error(verification.error || "Payment verification failed.");
+          setMessage({ type: "success", text: `${plan.name} is active for 30 days.` });
+        } catch (error) {
+          setMessage({ type: "error", text: error instanceof Error ? error.message : "Payment verification failed." });
+        } finally { setBusy(null); }
+      } });
+      checkout.on("payment.failed", (result) => { setMessage({ type: "error", text: result.error?.description || "Payment failed. Please try again." }); setBusy(null); });
+      checkout.open();
+    } catch (error) {
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Unable to create order." });
+      setBusy(null);
+    }
+  }
+
+  return <main className="space-y-8"><Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" /><header><p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Subscription</p><h1 className="mt-2 text-3xl font-semibold text-white">Choose a plan</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">Review your monthly access and activate it securely. Your plan starts automatically after payment verification.</p></header>{message && <p role={message.type === "error" ? "alert" : "status"} className={`rounded-xl border p-3 text-sm ${message.type === "error" ? "border-red-400/30 bg-red-400/10 text-red-200" : "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"}`}>{message.text}</p>}<div className="grid gap-5 lg:grid-cols-2">{plans.map((plan) => <article key={plan.id} className="flex flex-col rounded-3xl border border-cyan-400/25 bg-linear-to-b from-cyan-950/35 to-zinc-950 p-7"><p className="text-xs font-mono uppercase tracking-widest text-cyan-300">{plan.name}</p><p className="mt-5 text-4xl font-semibold text-white">₹{plan.priceInr}<span className="text-sm font-normal text-white/40"> / 30 days</span></p><p className="mt-4 text-sm leading-6 text-white/60">{plan.description}</p><ul className="mt-6 space-y-3 border-t border-white/10 pt-5 text-sm text-white/75"><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />{plan.dailyQueryLimit === null ? "Unlimited total questions" : `${plan.dailyQueryLimit} total questions per UTC day`}</li><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />Up to 50 premium-model questions daily</li><li className="flex gap-2"><Check size={16} className="shrink-0 text-cyan-300" />{plan.modelIds.length} premium model{plan.modelIds.length === 1 ? "" : "s"}</li></ul><button type="button" onClick={() => void buy(plan)} disabled={busy !== null || sessionStatus === "loading"} className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-black hover:bg-cyan-300 disabled:cursor-wait disabled:opacity-60">{busy === plan.id ? "Opening checkout..." : sessionStatus === "authenticated" ? "Buy plan" : "Sign in to continue"}<ArrowRight size={15} /></button></article>)}</div></main>;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock3, Wrench, X } from "lucide-react";
+import Link from "next/link";
 
 type ToolQuotaScope = "repo" | "profile";
 type ToolQuotaAudience = "anonymous" | "authenticated";
@@ -48,7 +49,7 @@ export function ToolQuotaModal({
         : "Your query allowance resets at midnight UTC.";
 
     return (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-120 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-md overflow-hidden flex flex-col relative shadow-2xl">
                 <button
                     onClick={onClose}
@@ -102,12 +103,19 @@ export function ToolQuotaModal({
                         Need extended limits? Contact {supportEmail}.
                     </p>
 
-                    <button
-                        onClick={onClose}
-                        className="mt-6 w-full px-4 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-all shadow-lg"
-                    >
-                        Continue
-                    </button>
+                    <div className="mt-6 flex gap-3">
+                        {isQueryAllowance && isExhausted && audience === "authenticated" && (
+                            <Link href="/dashboard/plans" onClick={onClose} className="inline-flex flex-1 items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-cyan-300">
+                                Buy a paid plan
+                            </Link>
+                        )}
+                        <button
+                            onClick={onClose}
+                            className={`${isQueryAllowance && isExhausted && audience === "authenticated" ? "flex-1" : "w-full"} px-4 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-all shadow-lg`}
+                        >
+                            Continue
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

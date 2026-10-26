@@ -33,7 +33,7 @@ export default function QuickStats() {
     }, []);
 
     const stats = [
-        { label: "Repos Scanned", value: statsData.reposScanned.toString(), icon: Search, color: "text-blue-400", bg: "bg-blue-400" },
+        { label: "Repositories", value: statsData.reposScanned.toString(), icon: Search, color: "text-blue-400", bg: "bg-blue-400" },
         { label: "Issues Found", value: statsData.issuesFound.toString(), icon: Shield, color: "text-red-400", bg: "bg-red-400" },
         { label: "Deep Scans", value: statsData.deepScans.toString(), icon: Zap, color: "text-cyan-400", bg: "bg-cyan-400" },
     ];
@@ -77,7 +77,7 @@ export default function QuickStats() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-cyan-600/20 to-blue-600/20 border border-cyan-500/20"
+                className="p-6 rounded-2xl bg-linear-to-br from-cyan-600/20 to-blue-600/20 border border-cyan-500/20"
             >
                 <h3 className="font-semibold text-white mb-2 italic">Pro Tip</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">

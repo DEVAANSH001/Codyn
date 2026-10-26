@@ -142,7 +142,7 @@ export default function RecentScans({ userId, limit, showViewAll = false, conver
 
             {loadError && <p role="alert" className="mx-6 mt-5 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-sm text-amber-200">{loadError}</p>}
 
-            {scans.length === 0 ? (
+            {scans.length === 0 && conversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-12 text-center">
                     <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 text-zinc-500">
                         <Search className="w-8 h-8" />
@@ -159,7 +159,7 @@ export default function RecentScans({ userId, limit, showViewAll = false, conver
                         <ArrowUpRight className="w-4 h-4" />
                     </Link>
                 </div>
-            ) : (
+            ) : scans.length > 0 ? (
                 <div className="divide-y divide-white/5">
                     {scans.map((scan) => (
                         <Link
@@ -200,7 +200,7 @@ export default function RecentScans({ userId, limit, showViewAll = false, conver
                         </Link>
                     ))}
                 </div>
-            )}
+            ) : <p className="border-b border-white/5 px-6 py-5 text-sm text-zinc-500">No security scans yet. Your repository conversations are shown below.</p>}
 
             {payments.length > 0 && (
                 <div className="border-t border-white/5">

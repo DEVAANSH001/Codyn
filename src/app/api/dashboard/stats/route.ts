@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { getUserScans } from "@/lib/services/scan-storage";
 import { NextResponse } from "next/server";
 import { getInvalidSessionApiError, getSessionAuthState, getSessionUserId } from "@/lib/session-guard";
@@ -20,7 +21,13 @@ export async function GET() {
     }
 
     try {
-        const scans = await getUserScans(userId);
+        const [scans, conversations] = await Promise.all([
+            getUserScans(userId),
+            prisma.chatConversation.findMany({
+                where: { userId, scope: "repo" },
+                select: { owner: true, repo: true },
+            }),
+        ]);
 
         const reposScanned = new Set<string>();
         let issuesFound = 0;
@@ -31,6 +38,12 @@ export async function GET() {
             issuesFound += scan.summary.total || 0;
             if (scan.depth === 'deep') {
                 deepScans += 1;
+            }
+        }
+
+        for (const conversation of conversations) {
+            if (conversation.owner && conversation.repo) {
+                reposScanned.add(`${conversation.owner}/${conversation.repo}`);
             }
         }
 

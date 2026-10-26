@@ -10,7 +10,7 @@ type Entitlement = {
     modelIds?: string[];
 };
 
-export default function SubscriptionCard() {
+export default function SubscriptionCard({ compact = false }: { compact?: boolean }) {
     const [entitlement, setEntitlement] = useState<Entitlement>({ name: "Free", modelIds: [] });
 
     useEffect(() => {
@@ -24,19 +24,19 @@ export default function SubscriptionCard() {
     const expiry = entitlement.expiresAt ? new Date(entitlement.expiresAt).toLocaleDateString("en-IN") : null;
 
     return (
-        <section className="rounded-2xl border border-cyan-500/20 bg-linear-to-br from-cyan-950/40 to-zinc-900 p-6">
+        <section className={`rounded-2xl border border-cyan-500/20 bg-linear-to-br from-cyan-950/40 to-zinc-900 ${compact ? "p-4" : "p-6"}`}>
             <div className="flex items-center justify-between">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300">
-                    <CreditCard className="h-5 w-5" />
+                <div className={`grid place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 ${compact ? "h-8 w-8" : "h-10 w-10"}`}>
+                    <CreditCard className={compact ? "h-4 w-4" : "h-5 w-5"} />
                 </div>
                 <Sparkles className="h-4 w-4 text-cyan-300/50" />
             </div>
-            <p className="mt-5 text-xs font-medium uppercase tracking-[0.18em] text-cyan-200/70">Subscription</p>
-            <h2 className="mt-2 text-xl font-semibold text-white">{entitlement.name || "Free"} plan</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-400">
+            <p className={`${compact ? "mt-3" : "mt-5"} text-xs font-medium uppercase tracking-[0.18em] text-cyan-200/70`}>Subscription</p>
+            <h2 className={`${compact ? "mt-1 text-base" : "mt-2 text-xl"} font-semibold text-white`}>{entitlement.name || "Free"} plan</h2>
+            <p className={`${compact ? "mt-1 text-xs leading-5" : "mt-2 text-sm leading-6"} text-zinc-400`}>
                 {isPaid ? `Active until ${expiry}. ${entitlement.modelIds?.length ?? 0} premium models included.` : "Unlock premium models and higher daily limits."}
             </p>
-            <Link href="/#pricing" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-black transition hover:bg-cyan-300">
+            <Link href="/dashboard/plans" className={`${compact ? "mt-3 px-3 py-2 text-xs" : "mt-5 px-4 py-3 text-sm"} inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 font-semibold text-black transition hover:bg-cyan-300`}>
                 {isPaid ? "View plans" : "Upgrade with Razorpay"}
                 <ArrowRight className="h-4 w-4" />
             </Link>

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/LogoMark";
 import { DEFAULT_ADMIN_GITHUB_USERNAME } from "@/lib/admin-auth";
+import SubscriptionCard from "@/components/dashboard/SubscriptionCard";
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
@@ -118,7 +119,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <div className="codyn-product flex h-dvh overflow-hidden text-white">
-            <a href="#dashboard-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:p-3 focus:text-black">
+            <a href="#dashboard-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-white focus:p-3 focus:text-black">
                 Skip to dashboard content
             </a>
             <aside className={`codyn-sidebar hidden md:flex shrink-0 flex-col border-r backdrop-blur-xl transition-[width] duration-300 z-50 ${isCollapsed ? "w-20" : "w-64"}`}>
@@ -144,6 +145,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className={`flex flex-1 flex-col ${isCollapsed ? "px-3" : "px-4"}`}>
                     {!isCollapsed && <p className="mb-3 px-3 text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">Workspace</p>}
                     <DashboardNav compact={isCollapsed} isAdmin={isAdmin} />
+                    {!isCollapsed && <div className="mt-6"><SubscriptionCard compact /></div>}
                 </div>
 
                 <div className="m-3 border-t border-white/10 pt-3">
@@ -186,7 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             exit={{ opacity: 0 }}
                             onClick={() => setIsMobileOpen(false)}
                             aria-hidden="true"
-                            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] md:hidden"
+                            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-60 md:hidden"
                         />
                         <motion.aside
                             ref={mobilePanel}
@@ -198,7 +200,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="codyn-sidebar fixed inset-y-0 left-0 w-72 max-w-[90vw] border-r z-[70] p-5 flex flex-col md:hidden"
+                            className="codyn-sidebar fixed inset-y-0 left-0 w-72 max-w-[90vw] border-r z-70 p-5 flex flex-col md:hidden"
                         >
                             <div className="mb-7 flex items-center justify-between">
                                 <Brand />
@@ -210,6 +212,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <Plus aria-hidden="true" className="h-4 w-4" /> New analysis
                             </Link>
                             <DashboardNav onNavigate={() => setIsMobileOpen(false)} isAdmin={isAdmin} />
+                            <div className="mt-6"><SubscriptionCard compact /></div>
                             <button onClick={() => signOut({ callbackUrl: "/" })} className="mt-6 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 py-4 text-sm text-zinc-400 hover:text-red-400">
                                 <LogOut aria-hidden="true" className="h-5 w-5" /> Sign out
                             </button>
