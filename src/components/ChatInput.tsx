@@ -52,7 +52,7 @@ export function ChatInput({
     const [isMobile, setIsMobile] = useState(false);
     const [showModelDropdown, setShowModelDropdown] = useState(false);
     const [paidModels, setPaidModels] = useState<string[]>([]);
-    const [activePlan, setActivePlan] = useState<{ name: string; expiresAt: string | null }>({ name: "Free", expiresAt: null });
+    const [activePlan, setActivePlan] = useState<{ name: string; expiresAt: string | null; premiumDailyQueryLimit: number }>({ name: "Free", expiresAt: null, premiumDailyQueryLimit: 0 });
     const sessionEmail = session?.user?.email;
     const availablePaidModels = sessionEmail ? paidModels : [];
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -67,12 +67,12 @@ export function ChatInput({
         if (!sessionEmail) return;
         let active = true;
         fetch("/api/chat/plan").then((response) => response.ok ? response.json() : null)
-            .then((data: { name?: string; expiresAt?: string | null; modelIds?: string[] } | null) => {
+            .then((data: { name?: string; expiresAt?: string | null; premiumDailyQueryLimit?: number; modelIds?: string[] } | null) => {
                 if (!active) return;
                 setPaidModels(Array.isArray(data?.modelIds) ? data.modelIds : []);
-                setActivePlan({ name: data?.name || "Free", expiresAt: data?.expiresAt || null });
+                setActivePlan({ name: data?.name || "Free", expiresAt: data?.expiresAt || null, premiumDailyQueryLimit: data?.premiumDailyQueryLimit ?? 0 });
             })
-            .catch(() => { if (active) { setPaidModels([]); setActivePlan({ name: "Free", expiresAt: null }); } });
+            .catch(() => { if (active) { setPaidModels([]); setActivePlan({ name: "Free", expiresAt: null, premiumDailyQueryLimit: 0 }); } });
         return () => { active = false; };
     }, [sessionEmail]);
 
@@ -410,7 +410,7 @@ export function ChatInput({
                                                 <span className="text-[10px] opacity-50">Standard performance</span>
                                             </div>
                                         </button>
-                                        {availablePaidModels.map((modelId) => { const model = getNebiusModelDetails(modelId); return <button key={modelId} type="button" onClick={() => { setModelPreference?.(`nebius:${modelId}`); setShowModelDropdown(false); }} className={cn("w-full rounded-xl px-3 py-2.5 text-left text-xs hover:bg-white/5", modelPreference === `nebius:${modelId}` ? "bg-cyan-400/10 text-cyan-200" : "text-zinc-300")}><span className="block font-semibold">{model.name}</span><span className="block text-[10px] text-zinc-500">{model.summary}</span><span className="block text-[10px] text-zinc-600">Premium model · maximum 50/day</span></button>; })}
+                                        {availablePaidModels.map((modelId) => { const model = getNebiusModelDetails(modelId); return <button key={modelId} type="button" onClick={() => { setModelPreference?.(`nebius:${modelId}`); setShowModelDropdown(false); }} className={cn("w-full rounded-xl px-3 py-2.5 text-left text-xs hover:bg-white/5", modelPreference === `nebius:${modelId}` ? "bg-cyan-400/10 text-cyan-200" : "text-zinc-300")}><span className="block font-semibold">{model.name}</span><span className="block text-[10px] text-zinc-500">{model.summary}</span><span className="block text-[10px] text-zinc-600">Premium model · up to {activePlan.premiumDailyQueryLimit}/day</span></button>; })}
                                         <button
                                             type="button"
                                             onClick={() => {

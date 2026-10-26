@@ -95,7 +95,7 @@ describe("POST /api/chat/repo", () => {
 
     it("stops Nebius requests at the separate paid-model limit", async () => {
         authMock.mockResolvedValue({ user: { id: "user_123", email: "user@example.com" } });
-        getUserEntitlementMock.mockResolvedValue({ name: "Pro", dailyQueryLimit: 100, modelIds: ["vendor/model"], expiresAt: "2099-01-01" });
+        getUserEntitlementMock.mockResolvedValue({ name: "Pro", dailyQueryLimit: 100, premiumDailyQueryLimit: 50, modelIds: ["vendor/model"], expiresAt: "2099-01-01" });
         consumeDailyQueryMock.mockResolvedValue("nebius");
         const response = await POST(new NextRequest("http://localhost/api/chat/repo", {
             method: "POST",
@@ -103,7 +103,7 @@ describe("POST /api/chat/repo", () => {
         }));
         expect(response.status).toBe(429);
         expect(await response.json()).toMatchObject({ code: "NEBIUS_DAILY_LIMIT" });
-        expect(consumeDailyQueryMock).toHaveBeenCalledWith("user_123", 100, true);
+        expect(consumeDailyQueryMock).toHaveBeenCalledWith("user_123", 100, true, 50);
         expect(generateAnswerStreamMock).not.toHaveBeenCalled();
     });
 

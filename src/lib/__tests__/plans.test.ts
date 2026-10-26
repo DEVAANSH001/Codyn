@@ -25,8 +25,8 @@ describe("manual plan entitlements", () => {
   });
 
   it("allows only models on an active grant", async () => {
-    findUnique.mockResolvedValue({ expiresAt: new Date("2099-01-01"), plan: { name: "Standard", dailyQueryLimit: 30, modelIds: ["vendor/model", 42] } });
-    expect(await getUserEntitlement("user-1")).toMatchObject({ name: "Standard", dailyQueryLimit: 30, modelIds: ["vendor/model"] });
+    findUnique.mockResolvedValue({ expiresAt: new Date("2099-01-01"), plan: { id: "standard", name: "Standard", dailyQueryLimit: 50, modelIds: ["vendor/model", 42] } });
+    expect(await getUserEntitlement("user-1")).toMatchObject({ name: "Standard", dailyQueryLimit: 50, premiumDailyQueryLimit: 20, modelIds: ["vendor/model"] });
   });
 
   it("increments only while the daily count remains below the limit", async () => {
@@ -41,5 +41,12 @@ describe("manual plan entitlements", () => {
     const result = await consumeDailyQuery("user-1", 100, true);
     expect(result).toBe("nebius");
     expect(updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ nebiusCount: { lt: 50 } }), data: expect.objectContaining({ nebiusCount: { increment: 1 } }) }));
+  });
+
+  it("enforces Standard's 20 premium questions within its 50 total questions", async () => {
+    updateMany.mockResolvedValue({ count: 0 });
+    dailyFindUnique.mockResolvedValue({ count: 20 });
+    expect(await consumeDailyQuery("user-1", 50, true, 20)).toBe("nebius");
+    expect(updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ count: { lt: 50 }, nebiusCount: { lt: 20 } }) }));
   });
 });
