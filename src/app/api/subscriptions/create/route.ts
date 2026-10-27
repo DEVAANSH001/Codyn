@@ -27,7 +27,8 @@ export async function POST(request: Request) {
     const waiting = existing.find((item) => item.status === "created" || item.status === "authenticated");
     if (waiting) {
       if (waiting.planId !== planId) return Response.json({ error: "You already have a plan change waiting to begin. Cancel that subscription before selecting another plan." }, { status: 409 });
-      return Response.json({ subscription_id: waiting.razorpaySubscriptionId, key: process.env.RAZORPAY_KEY_ID, amount: waiting.amount, currency: waiting.currency });
+      const assignment = await prisma.userPlan.findUnique({ where: { userId }, select: { expiresAt: true } });
+      return Response.json({ subscription_id: waiting.razorpaySubscriptionId, key: process.env.RAZORPAY_KEY_ID, amount: waiting.amount, currency: waiting.currency, starts_at: assignment?.expiresAt && assignment.expiresAt > new Date() ? Math.floor(assignment.expiresAt.getTime() / 1000) : null });
     }
     const active = existing.find((item) => ["active", "pending", "halted"].includes(item.status) && !item.cancelAtCycleEnd);
     if (active?.planId === planId) return Response.json({ error: "This plan is already active." }, { status: 409 });
