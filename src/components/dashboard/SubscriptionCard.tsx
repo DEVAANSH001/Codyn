@@ -37,7 +37,7 @@ export default function SubscriptionCard({ compact = false }: { compact?: boolea
                 {isPaid ? `Active until ${expiry}. ${entitlement.modelIds?.length ?? 0} premium models included.` : "Unlock premium models and higher daily limits."}
             </p>
             <Link href="/dashboard/plans" className={`${compact ? "mt-3 px-3 py-2 text-xs" : "mt-5 px-4 py-3 text-sm"} inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 font-semibold text-black transition hover:bg-cyan-300`}>
-                {isPaid ? "View plans" : "Upgrade with Razorpay"}
+                {isPaid ? "View plans" : "Explore plans"}
                 <ArrowRight className="h-4 w-4" />
             </Link>
         </section>
