@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { processTransactionalEmailRetries } from "@/lib/emails/delivery-service";
+import { retrySubscriptionReceipts } from "@/lib/billing";
 
 function getAllowedSecrets(): string[] {
-    const secrets = [process.env.EMAIL_RETRY_JOB_SECRET?.trim()].filter(
+    const secrets = [process.env.EMAIL_RETRY_JOB_SECRET?.trim(), process.env.CRON_SECRET?.trim()].filter(
         (value): value is string => Boolean(value)
     );
 
@@ -36,8 +37,8 @@ async function handleRetry(request: NextRequest) {
     const parsedLimit = limitParam ? Number.parseInt(limitParam, 10) : 25;
     const limit = Number.isFinite(parsedLimit) ? parsedLimit : 25;
 
-    const result = await processTransactionalEmailRetries(limit);
-    return NextResponse.json({ ok: true, ...result });
+    const [result, subscriptionReceiptsRetried] = await Promise.all([processTransactionalEmailRetries(limit), retrySubscriptionReceipts(limit)]);
+    return NextResponse.json({ ok: true, ...result, subscriptionReceiptsRetried });
 }
 
 export async function GET(request: NextRequest) {

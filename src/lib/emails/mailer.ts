@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import WelcomeEmail from "./welcome";
+import SubscriptionReceiptEmail from "./subscription-receipt";
 
 let resendClient: Resend | null = null;
 
@@ -13,6 +14,31 @@ export interface SendEmailResult {
     success: boolean;
     messageId?: string;
     error?: string;
+}
+
+export async function sendSubscriptionReceipt(input: {
+    to: string;
+    name: string;
+    planName: string;
+    amount: number;
+    chargedAt: Date;
+    idempotencyKey: string;
+}): Promise<SendEmailResult> {
+    const client = getResendClient();
+    const from = getFromEmail();
+    if (!client || !from) return { success: false, error: "Email sender is not configured" };
+    try {
+        const { data, error } = await client.emails.send({
+            from,
+            to: [input.to],
+            subject: `Thanks for subscribing to Codyn ${input.planName}`,
+            react: SubscriptionReceiptEmail(input),
+            tags: [{ name: "template", value: "subscription_receipt" }],
+        }, { idempotencyKey: input.idempotencyKey });
+        return error ? { success: false, error: `${error.name}: ${error.message}` } : { success: true, messageId: data?.id };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
 }
 
 function getResendClient(): Resend | null {

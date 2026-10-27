@@ -627,9 +627,11 @@ CRON_SECRET=...
 
 ### Razorpay checkout setup
 
-Run `npm run prisma:deploy` before accepting payments. Set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in the server environment, using keys from the same Razorpay mode (test or live). The checkout receives the public key from the order endpoint; the secret stays on the server. Enable automatic payment capture in the Razorpay dashboard.
+New purchases use monthly auto-renewing subscriptions. Run `npm run prisma:deploy` before accepting new purchases. Configure `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET` in Vercel Production using values from the same Razorpay mode. Keep the API secret and webhook secret server-side. On the Razorpay webhook at `https://www.codyn.app/api/razorpay/webhook`, enable `subscription.authenticated`, `subscription.activated`, `subscription.charged`, `subscription.pending`, `subscription.halted`, `subscription.cancelled`, and `subscription.completed` in addition to the existing `payment.captured` event. A captured subscription charge grants access for the provider's current billing period; a signed checkout authorization alone does not grant access. Plan changes take effect at the next renewal after the customer authorizes the replacement subscription. The customer can cancel renewal or a scheduled change on `/dashboard/plans`.
 
-Create a Razorpay webhook at `https://YOUR_DOMAIN/api/razorpay/webhook`, subscribe to `payment.captured`, and set `RAZORPAY_WEBHOOK_SECRET` on the server to the exact secret entered in the Razorpay dashboard. Configure the webhook separately in test and live mode. This activates plans when a customer closes checkout before the browser callback completes. A signed-in customer returning to `/dashboard/plans` also reconciles pending orders. Test a successful payment and a failed payment in Razorpay test mode before switching to live keys. Paid access is granted only after Razorpay reports a captured payment with the expected order, amount, and currency.
+Razorpay customer notifications remain enabled for recurring-payment notices. Codyn also sends a branded receipt after each captured charge using `RESEND_API_KEY` and a verified `RESEND_FROM_EMAIL`. Set a random `CRON_SECRET` in Vercel Production; the daily Vercel cron at `/api/internal/email/retry` retries unsent receipts and other transactional emails. Test the first subscription payment and one renewal in Razorpay test mode, including a failed payment and cancellation, before switching to live mode. Model-level admin usage starts accumulating only after this migration.
+
+The previous one-time order routes remain available to reconcile payments started before this subscription release.
 
 ### Manual paid access
 

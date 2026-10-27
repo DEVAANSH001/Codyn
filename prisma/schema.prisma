@@ -32,21 +32,27 @@ model User {
   sessions                     Session[]
   emailDeliveries              TransactionalEmailDelivery[]
   planAssignment               UserPlan?
-  dailyQueryUsages              DailyQueryUsage[]
-  paymentTransactions           PaymentTransaction[]
+  dailyQueryUsages             DailyQueryUsage[]
+  paymentTransactions          PaymentTransaction[]
+  billingSubscriptions         BillingSubscription[]
+  dailyModelUsages             DailyModelUsage[]
 }
 
 model Plan {
-  id                 String     @id @default(cuid())
-  name               String     @unique
-  description        String
-  priceInr           Int
-  dailyQueryLimit    Int?       // null means unlimited; admin controlled
-  modelIds           Json       // Nebius model IDs allowed for this plan
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  assignments        UserPlan[]
-  paymentTransactions PaymentTransaction[]
+  id                   String                @id @default(cuid())
+  name                 String                @unique
+  description          String
+  priceInr             Int
+  dailyQueryLimit      Int? // null means unlimited; admin controlled
+  modelIds             Json // Nebius model IDs allowed for this plan
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  assignments          UserPlan[]
+  paymentTransactions  PaymentTransaction[]
+  billingSubscriptions BillingSubscription[]
+  razorpayPlanId       String?
+  razorpayPlanAmount   Int?
+  razorpayKeyId        String?
 }
 
 model UserPlan {
@@ -62,13 +68,63 @@ model UserPlan {
 }
 
 model DailyQueryUsage {
-  userId String
-  day    String
-  count  Int      @default(0)
-  nebiusCount Int @default(0)
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  day         String
+  count       Int    @default(0)
+  nebiusCount Int    @default(0)
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, day])
+}
+
+model DailyModelUsage {
+  userId  String
+  day     String
+  modelId String
+  scope   String
+  count   Int    @default(0)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, day, modelId, scope])
+  @@index([day, modelId])
+}
+
+model BillingSubscription {
+  id                     String               @id @default(cuid())
+  userId                 String
+  planId                 String
+  razorpaySubscriptionId String               @unique
+  razorpayPlanId         String
+  amount                 Int
+  currency               String               @default("INR")
+  status                 String               @default("created")
+  currentStart           DateTime?
+  currentEnd             DateTime?
+  cancelAtCycleEnd       Boolean              @default(false)
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                   Plan                 @relation(fields: [planId], references: [id], onDelete: Restrict)
+  charges                SubscriptionCharge[]
+
+  @@index([userId, status])
+  @@index([planId, createdAt])
+}
+
+model SubscriptionCharge {
+  id                    String              @id @default(cuid())
+  billingSubscriptionId String
+  razorpayPaymentId     String              @unique
+  amount                Int
+  currency              String
+  chargedAt             DateTime            @default(now())
+  receiptSentAt         DateTime?
+  receiptAttempts       Int                 @default(0)
+  receiptLastError      String?
+  billingSubscription   BillingSubscription @relation(fields: [billingSubscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([billingSubscriptionId, chargedAt])
+  @@index([receiptSentAt, chargedAt])
 }
 
 model PaymentTransaction {
@@ -284,7 +340,7 @@ model ChatConversation {
 
 model ChatRun {
   id              String        @id @default(cuid())
-  actorId          String
+  actorId         String
   userId          String?
   conversationKey String
   scope           String
@@ -299,7 +355,7 @@ model ChatRun {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  user            User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([actorId, conversationKey, clientRequestId])
   @@index([actorId, updatedAt(sort: Desc)])
@@ -307,22 +363,22 @@ model ChatRun {
 }
 
 model RepositoryIndex {
-  id             String                      @id @default(cuid())
+  id             String                  @id @default(cuid())
   owner          String
   repo           String
   revision       String
   treeSha        String
-  schemaVersion  Int                         @default(1)
-  status         RepositoryIndexStatus       @default(QUEUED)
-  totalFiles     Int                         @default(0)
-  processedFiles Int                         @default(0)
-  skippedFiles   Int                         @default(0)
-  failedFiles    Int                         @default(0)
+  schemaVersion  Int                     @default(1)
+  status         RepositoryIndexStatus   @default(QUEUED)
+  totalFiles     Int                     @default(0)
+  processedFiles Int                     @default(0)
+  skippedFiles   Int                     @default(0)
+  failedFiles    Int                     @default(0)
   errorMessage   String?
   startedAt      DateTime?
   completedAt    DateTime?
-  createdAt      DateTime                    @default(now())
-  updatedAt      DateTime                    @updatedAt
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
   jobs           RepositoryAnalysisJob[]
   files          RepositoryIndexedFile[]
   dependencies   RepositoryDependency[]
@@ -333,17 +389,17 @@ model RepositoryIndex {
 }
 
 model RepositoryIndexedFile {
-  id                String            @id @default(cuid())
+  id                String             @id @default(cuid())
   repositoryIndexId String
   path              String
   sha               String?
   size              Int?
   language          String?
-  parseStatus       String            @default("PENDING")
+  parseStatus       String             @default("PENDING")
   parseError        String?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  repositoryIndex   RepositoryIndex   @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  repositoryIndex   RepositoryIndex    @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
   symbols           RepositorySymbol[]
 
   @@unique([repositoryIndexId, path])
@@ -384,20 +440,20 @@ model RepositoryDependency {
 }
 
 model RepositoryAnalysisJob {
-  id            String                      @id @default(cuid())
+  id                String                      @id @default(cuid())
   repositoryIndexId String
   requestedByUserId String?
-  status        RepositoryAnalysisJobStatus @default(QUEUED)
-  attempts      Int                         @default(0)
-  maxAttempts   Int                         @default(3)
-  payload       Json?
-  errorMessage  String?
-  claimedAt     DateTime?
-  completedAt   DateTime?
-  createdAt     DateTime                    @default(now())
-  updatedAt     DateTime                    @updatedAt
-  repositoryIndex RepositoryIndex           @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
-  requestedByUser User?                     @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+  status            RepositoryAnalysisJobStatus @default(QUEUED)
+  attempts          Int                         @default(0)
+  maxAttempts       Int                         @default(3)
+  payload           Json?
+  errorMessage      String?
+  claimedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  repositoryIndex   RepositoryIndex             @relation(fields: [repositoryIndexId], references: [id], onDelete: Cascade)
+  requestedByUser   User?                       @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([repositoryIndexId, createdAt(sort: Desc)])

@@ -28,7 +28,7 @@ export async function getUserEntitlement(userId: string | null) {
   };
 }
 
-export async function consumeDailyQuery(userId: string, limit: number | null, isNebius = false, premiumLimit = NEBIUS_DAILY_QUERIES): Promise<"ok" | "plan" | "nebius"> {
+export async function consumeDailyQuery(userId: string, limit: number | null, isNebius = false, premiumLimit = NEBIUS_DAILY_QUERIES, modelId?: string, scope?: "repo" | "profile"): Promise<"ok" | "plan" | "nebius"> {
   const day = new Date().toISOString().slice(0, 10);
   return prisma.$transaction(async (tx) => {
     await tx.dailyQueryUsage.createMany({ data: [{ userId, day }], skipDuplicates: true });
@@ -36,7 +36,16 @@ export async function consumeDailyQuery(userId: string, limit: number | null, is
       where: { userId, day, ...(limit === null ? {} : { count: { lt: limit } }), ...(isNebius ? { nebiusCount: { lt: premiumLimit } } : {}) },
       data: { count: { increment: 1 }, ...(isNebius ? { nebiusCount: { increment: 1 } } : {}) },
     });
-    if (result.count > 0) return "ok";
+    if (result.count > 0) {
+      if (modelId && scope) {
+        await tx.dailyModelUsage.upsert({
+          where: { userId_day_modelId_scope: { userId, day, modelId, scope } },
+          create: { userId, day, modelId, scope, count: 1 },
+          update: { count: { increment: 1 } },
+        });
+      }
+      return "ok";
+    }
     if (isNebius) {
       const row = await tx.dailyQueryUsage.findUnique({ where: { userId_day: { userId, day } }, select: { count: true } });
       if (limit === null || (row && row.count < limit)) return "nebius";

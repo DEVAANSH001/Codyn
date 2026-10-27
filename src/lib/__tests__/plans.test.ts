@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { findUnique, dailyFindUnique, createMany, updateMany, transaction } = vi.hoisted(() => ({
-  findUnique: vi.fn(), dailyFindUnique: vi.fn(), createMany: vi.fn(), updateMany: vi.fn(), transaction: vi.fn(),
+const { findUnique, dailyFindUnique, createMany, updateMany, modelUpsert, transaction } = vi.hoisted(() => ({
+  findUnique: vi.fn(), dailyFindUnique: vi.fn(), createMany: vi.fn(), updateMany: vi.fn(), modelUpsert: vi.fn(), transaction: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({ prisma: {
   userPlan: { findUnique },
   dailyQueryUsage: { findUnique: dailyFindUnique, createMany, updateMany },
+  dailyModelUsage: { upsert: modelUpsert },
   $transaction: transaction,
 } }));
 
@@ -15,7 +16,7 @@ import { consumeDailyQuery, getUserEntitlement } from "@/lib/plans";
 describe("manual plan entitlements", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    transaction.mockImplementation((callback) => callback({ dailyQueryUsage: { createMany, updateMany, findUnique: dailyFindUnique } }));
+    transaction.mockImplementation((callback) => callback({ dailyQueryUsage: { createMany, updateMany, findUnique: dailyFindUnique }, dailyModelUsage: { upsert: modelUpsert } }));
     createMany.mockResolvedValue({ count: 1 });
   });
 
@@ -33,6 +34,15 @@ describe("manual plan entitlements", () => {
     updateMany.mockResolvedValue({ count: 0 });
     expect(await consumeDailyQuery("user-1", 30)).toBe("plan");
     expect(updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ count: { lt: 30 } }) }));
+  });
+
+  it("records a model only after a query consumes quota", async () => {
+    updateMany.mockResolvedValueOnce({ count: 1 }).mockResolvedValueOnce({ count: 0 });
+    await consumeDailyQuery("user-1", 30, true, 20, "nebius:vendor/model", "repo");
+    expect(modelUpsert).toHaveBeenCalledWith(expect.objectContaining({ create: expect.objectContaining({ modelId: "nebius:vendor/model", scope: "repo", count: 1 }) }));
+    modelUpsert.mockClear();
+    await consumeDailyQuery("user-1", 30, true, 20, "nebius:vendor/model", "repo");
+    expect(modelUpsert).not.toHaveBeenCalled();
   });
 
   it("caps Nebius separately from the overall plan", async () => {

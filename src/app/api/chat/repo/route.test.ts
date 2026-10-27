@@ -103,7 +103,7 @@ describe("POST /api/chat/repo", () => {
         }));
         expect(response.status).toBe(429);
         expect(await response.json()).toMatchObject({ code: "NEBIUS_DAILY_LIMIT" });
-        expect(consumeDailyQueryMock).toHaveBeenCalledWith("user_123", 100, true, 50);
+        expect(consumeDailyQueryMock).toHaveBeenCalledWith("user_123", 100, true, 50, "nebius:vendor/model", "repo");
         expect(generateAnswerStreamMock).not.toHaveBeenCalled();
     });
 
