@@ -9,7 +9,7 @@ export default async function ScansPage() {
     const authState = getSessionAuthState(session);
 
     if (authState === "unauthenticated") {
-        redirect("/");
+        redirect("/signin?callbackUrl=%2Fdashboard%2Fscans");
     }
     if (authState === "invalid") {
         redirect(buildInvalidSessionSignOutRedirect());

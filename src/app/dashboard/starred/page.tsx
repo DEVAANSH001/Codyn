@@ -10,7 +10,7 @@ export default async function StarredPage() {
     const authState = getSessionAuthState(session);
 
     if (authState === "unauthenticated") {
-        redirect("/");
+        redirect("/signin?callbackUrl=%2Fdashboard%2Fstarred");
     }
     if (authState === "invalid") {
         redirect(buildInvalidSessionSignOutRedirect());
@@ -18,7 +18,7 @@ export default async function StarredPage() {
 
     const user = session?.user;
     if (!user) {
-        redirect("/");
+        redirect("/signin?callbackUrl=%2Fdashboard%2Fstarred");
     }
 
     const username =
