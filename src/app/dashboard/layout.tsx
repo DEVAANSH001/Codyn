@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import {
-    LayoutDashboard, History, Star, Settings, ChevronLeft, Menu, LogOut, BookOpen, Plus, X, BarChart3,
+    LayoutDashboard, History, Star, Settings, ChevronLeft, Menu, LogIn, LogOut, BookOpen, Plus, X, BarChart3,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -150,7 +150,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 <div className="m-3 border-t border-white/10 pt-3">
                     {!isCollapsed && session?.user?.name && <p className="truncate px-3 pb-2 text-xs text-zinc-400">{session.user.name}</p>}
-                    <button
+                    {session?.user ? <button
                         onClick={() => signOut({ callbackUrl: "/" })}
                         aria-label="Sign out"
                         title={isCollapsed ? "Sign out" : undefined}
@@ -158,7 +158,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     >
                         <LogOut aria-hidden="true" className="h-5 w-5 shrink-0" />
                         {!isCollapsed && "Sign out"}
-                    </button>
+                    </button> : status !== "loading" && <Link href="/signin?callbackUrl=%2Fdashboard%2Fplans" aria-label="Sign in" title={isCollapsed ? "Sign in" : undefined} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-zinc-400 transition-colors hover:bg-cyan-400/5 hover:text-cyan-300 ${isCollapsed ? "justify-center" : ""}`}><LogIn aria-hidden="true" className="h-5 w-5 shrink-0" />{!isCollapsed && "Sign in"}</Link>}
                 </div>
             </aside>
 
@@ -213,9 +213,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </Link>
                             <DashboardNav onNavigate={() => setIsMobileOpen(false)} isAdmin={isAdmin} />
                             <div className="mt-6"><SubscriptionCard compact /></div>
-                            <button onClick={() => signOut({ callbackUrl: "/" })} className="mt-6 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 py-4 text-sm text-zinc-400 hover:text-red-400">
+                            {session?.user ? <button onClick={() => signOut({ callbackUrl: "/" })} className="mt-6 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 py-4 text-sm text-zinc-400 hover:text-red-400">
                                 <LogOut aria-hidden="true" className="h-5 w-5" /> Sign out
-                            </button>
+                            </button> : status !== "loading" && <Link href="/signin?callbackUrl=%2Fdashboard%2Fplans" onClick={() => setIsMobileOpen(false)} className="mt-6 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 py-4 text-sm text-zinc-400 hover:text-cyan-300"><LogIn aria-hidden="true" className="h-5 w-5" /> Sign in</Link>}
                         </motion.aside>
                     </>
                 )}
