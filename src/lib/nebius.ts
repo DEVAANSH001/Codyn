@@ -1,14 +1,21 @@
 const BASE_URL = "https://api.tokenfactory.nebius.com/v1";
 
-export async function listNebiusModels(): Promise<string[]> {
+export type NebiusCatalogModel = { id: string; status: string; type: string };
+
+export async function listNebiusModelCatalog(): Promise<NebiusCatalogModel[]> {
   const response = await fetch("https://tokenfactory.nebius.com/api/public/models_info", {
     cache: "no-store",
   });
   if (!response.ok) throw new Error(`Premium model catalog returned ${response.status}`);
   const payload = await response.json() as { status?: string; type?: string; flavors?: { model_id?: unknown }[] }[];
-  return payload.filter((item) => item.status === "active" && item.type !== "embedding")
-    .flatMap((item) => item.flavors ?? [])
-    .flatMap((item) => typeof item.model_id === "string" ? [item.model_id] : []).sort();
+  return payload.flatMap((item) => (item.flavors ?? []).flatMap((flavor) => typeof flavor.model_id === "string"
+    ? [{ id: flavor.model_id, status: item.status ?? "unknown", type: item.type ?? "unknown" }]
+    : [])).sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export async function listNebiusModels(): Promise<string[]> {
+  const catalog = await listNebiusModelCatalog();
+  return catalog.filter((model) => model.status === "active" && model.type !== "embedding").map((model) => model.id);
 }
 
 export async function* answerWithNebius(prompt: string, modelId: string): AsyncGenerator<string> {
